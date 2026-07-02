@@ -9,6 +9,7 @@ Why this works: `az` is fully logged in via `az login`. We just call it via shel
 """
 from __future__ import annotations
 import json
+import os
 import subprocess
 import time
 from dataclasses import dataclass
@@ -24,7 +25,11 @@ class AzCliCredential:
     """Minimal credential that shells out to `az account get-access-token`."""
 
     def __init__(self, tenant_id: str | None = None):
-        self.tenant_id = tenant_id
+        # Pin the tenant so token acquisition survives az default-subscription
+        # changes (observed 2026-07-02: another process flipped the default
+        # mid-run and get-access-token started minting wrong-tenant tokens).
+        # Set STJP_AZURE_TENANT_ID in stjp_core/.env to the resource tenant.
+        self.tenant_id = tenant_id or os.environ.get("STJP_AZURE_TENANT_ID")
         self._cache: dict[str, _Token] = {}
 
     def get_token(self, *scopes: str) -> _Token:

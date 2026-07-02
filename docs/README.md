@@ -27,6 +27,7 @@ since 2026-06-12); `pitch/` keeps only presentation assets (demo HTML, decks).
 | `DIARY.md` | Project journal, newest first. The history of every decision. |
 | `EXPERIMENT_DESIGN_v2.md` | The working 8-arm experiment design (supersedes v1, now in archive). |
 | `EXPERIMENT_DESIGN_V3_EXECUTION.md` | **Pre-registered** unconfounded finance demo: same decentralized plane for all arms + the EFSM enabled-sender scheduler wired to real agents (`min_llmvalid_gate`, `min_llmvalid_sched` arms); predictions P1–P4. |
+| `RUN_REPORT_2026-07-02.md` | **Headline result**: the full STJP stack (projected skill + gate + EFSM scheduler) is 100% goal-complete, 0 disasters, AND the cheapest/fastest arm — 13.3k tokens & 32s per delivered report, 9× cheaper than global-text on the same runner; P1–P4 graded honestly. |
 | `RESULTS_finance_n10.md` | Canonical finance n=10 results with trace-level examples. |
 | `SCRIBBLE_EXTENSIONS.md` | How STJP extends Scribble: refinements, composition, higher-order sessions. |
 | `PROTOCOL_EVOLUTION.md` | Change-request → updated, re-validated global type (basis of the evolution demo). |

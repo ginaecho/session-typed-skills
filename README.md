@@ -33,9 +33,12 @@ deterministic artifacts — one finite-automaton step per message, no LLM judge.
   24.1k tokens (intent-only) vs **8.8k** (projected skill) — agents stop
   deliberating about *how to coordinate*. → [`docs/TOKEN_EFFICIENCY_DEMO.md`](docs/TOKEN_EFFICIENCY_DEMO.md)
 - **The projection also schedules.** The local types say who can act at every
-  state, so the runtime never polls idle agents: **11 calls / 15.8k tokens**
-  vs 40 calls / 46.6k for round-robin, identical prompts and enforcement.
-  → [`docs/EXPERIMENT_DESIGN_V3_EXECUTION.md`](docs/EXPERIMENT_DESIGN_V3_EXECUTION.md) (pre-registered)
+  state, so the runtime never polls idle agents. Pre-registered n=10 result:
+  the full stack (projected skill + gate + scheduler) is **100% goal-complete
+  with 0 disasters AND the cheapest, fastest arm in the study** — 13.3k tokens
+  / 11.4 calls / 32s per delivered report, **−65% tokens vs the identical
+  prompts on round-robin and 9× cheaper than the same protocol pasted as
+  text**. → [`docs/RUN_REPORT_2026-07-02.md`](docs/RUN_REPORT_2026-07-02.md)
 
 We publish the negative results too: on a strong model, pasting the validated
 protocol as plain text already fixes correctness — the protocol does that work;
