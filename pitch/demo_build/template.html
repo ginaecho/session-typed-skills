@@ -347,12 +347,16 @@ const DATA = __STJP_DATA__;
 const ARM_META = {
   intent:    {title:"A · Intent only",        color:"var(--orange)", raw:"#ff9f6b",
               sub:"MAF GroupChat",
-              desc:"Agents get the user intent + role descriptions. No protocol. An LLM orchestrator picks who speaks.",
+              desc:"Agents get the user intent + role descriptions. No protocol anywhere.",
               bullets:["<b>No shared vocabulary</b> — agents invent message labels","Monitor projects the canonical global type they never saw","This is today's default multi-agent stack"]},
   global:    {title:"B · + Global type",      color:"var(--cyan)", raw:"#5dd6ff",
               sub:"MAF GroupChat",
-              desc:"Setting A plus the full Scribble-validated global type pasted into every agent's prompt as text.",
+              desc:"Setting A plus the full Scribble-validated global type pasted into every agent's prompt as text. A central LLM orchestrator picks who speaks.",
               bullets:["Shared vocabulary, <b>whole-protocol reading burden</b>","Each agent must find its own lines in the script","Monitor projects the same global type"]},
+  global_dec:{title:"B-dec · Global type, decentralized", color:"#7cc4ff", raw:"#7cc4ff",
+              sub:"Foundry round-robin",
+              desc:"Same pasted global type, but NO orchestrator — autonomous agents on the same round-robin runner as the C settings. The fair comparison.",
+              bullets:["Isolates the protocol text from the orchestrator","<b>Each agent still reads the whole script every turn</b>","Monitor projects the same global type"]},
   local:     {title:"C · Projected local types", color:"var(--mint)", raw:"#92ffd5",
               sub:"Foundry agents + monitors",
               desc:"Each agent gets only its own projected local contract: an EFSM SEND/RECV table + payload refinement guards.",
@@ -365,8 +369,16 @@ const ARM_META = {
               sub:"Foundry agents + gate",
               desc:"Setting C plus an in-line monitor that REJECTS off-contract sends before delivery and re-prompts the role.",
               bullets:["<b>Wrong messages are never delivered</b> — not unlikely, non-completable","Liveness nudge: enabled senders are told to act","Choice guards enforced at the gate too"]},
+  gate_min:  {title:"C+min · Gate on lean contract", color:"#ffe08a", raw:"#ffe08a",
+              sub:"Foundry agents + gate",
+              desc:"The enforcement gate on the MINIMAL projected contract — same prompts as C-min, same rejection gate as C+.",
+              bullets:["Decomposes enforcement from contract verbosity","<b>100% completion where the observer stalls</b>","Lean contract slightly beats verbose under enforcement"]},
+  sched:     {title:"STJP · Gate + EFSM scheduler", color:"#66ffc2", raw:"#66ffc2",
+              sub:"Foundry + STJP runtime",
+              desc:"The full stack: lean projected contract + gate + a scheduler that polls ONLY roles whose local type says they can act now — derived statically from the same projection.",
+              bullets:["<b>No idle-agent polling — one call per protocol message</b>","Text-based settings cannot have this scheduler","Safest AND cheapest arm in the study"]},
 };
-const ARM_ORDER = ["intent","global","local","local_min","gate"];
+const ARM_ORDER = ["intent","global","global_dec","local","local_min","gate","gate_min","sched"];
 
 /* protocol graphs (message-flow view of the global type) */
 const GRAPHS = {
@@ -625,13 +637,18 @@ $("vt-valid").onclick=()=>{unsafeMode=false;$("vt-valid").classList.add("on");$(
 $("vt-unsafe").onclick=()=>{unsafeMode=true;$("vt-unsafe").classList.add("on");$("vt-valid").classList.remove("on");selArtifact("draft")};
 
 /* ════════════════════════ SETTINGS CARDS ════════════════════════ */
+/* sub-label reflects the actual runner behind each slot in THIS run (the
+   "intent" slot is MAF GroupChat in older runs but bare round-robin in the
+   2026-07-02 execution-plane run). */
+const SUB_BY_ARM = {bare:"Foundry round-robin", maf_groupchat:"MAF GroupChat"};
 function renderCards(){
   const c=$("armcards"); c.innerHTML="";
   for(const k of ARM_ORDER){
     if(!curRun().arms[k]) continue;
     const m=ARM_META[k];
+    const sub=SUB_BY_ARM[curRun().arms[k].arm_key]||m.sub;
     const d=document.createElement("div"); d.className="card"; d.style.setProperty("--accent",m.raw);
-    d.innerHTML=`<div class="ck">SETTING ${m.title.split(" ")[0]} · ${m.sub}</div>
+    d.innerHTML=`<div class="ck">SETTING ${m.title.split(" ")[0]} · ${sub}</div>
       <h3>${m.title.slice(m.title.indexOf("·")+2)}</h3><p>${m.desc}</p>
       <ul>${m.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>`;
     c.appendChild(d);

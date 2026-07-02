@@ -16,12 +16,15 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "STJP_Benchmark_Demo.html"
 
-ARMS = {  # demo key -> arm key
-    "intent": "maf_groupchat",
-    "global": "maf_groupchat_llmvalid",
-    "local": "spec_llmvalid",
-    "local_min": "min_llmvalid",
-    "gate": "spec_llmvalid_gate",
+ARMS = {  # demo key -> candidate arm keys (first with an events file wins)
+    "intent": ["maf_groupchat", "bare"],
+    "global": ["maf_groupchat_llmvalid"],
+    "global_dec": ["global_decentralized"],
+    "local": ["spec_llmvalid"],
+    "local_min": ["min_llmvalid"],
+    "gate": ["spec_llmvalid_gate"],
+    "gate_min": ["min_llmvalid_gate"],
+    "sched": ["min_llmvalid_sched"],
 }
 
 
@@ -97,9 +100,14 @@ def collect_run(run_dir, label):
 
     arms = {}
     n = 0
-    for demo_key, arm_key in ARMS.items():
-        ev_path = run_dir / f"events_{arm_key}.jsonl"
-        if not ev_path.exists():
+    for demo_key, candidates in ARMS.items():
+        arm_key = ev_path = None
+        for cand in candidates:
+            p = run_dir / f"events_{cand}.jsonl"
+            if p.exists():
+                arm_key, ev_path = cand, p
+                break
+        if ev_path is None:
             continue
         trials = extract_trials(ev_path)
         if not trials:
