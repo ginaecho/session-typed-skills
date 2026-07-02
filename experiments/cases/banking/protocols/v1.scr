@@ -1,0 +1,56 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol BankingTransfer(
+    role Initiator,
+    role SourceBank,
+    role DestBank,
+    role Approver,
+    role AuditLog
+) {
+    Request(Double) from Initiator to SourceBank;
+
+    choice at SourceBank {
+
+        // ===== LARGE — over the threshold; needs Approver authorization =====
+        LargeTransfer(Double) from SourceBank to Approver;
+        LargeNotice() from SourceBank to DestBank;
+        LargeNotice() from SourceBank to AuditLog;
+
+        choice at Approver {
+            // authorized — money moves
+            Authorized(String) from Approver to SourceBank;
+            AuthorizedNotice() from Approver to DestBank;
+            AuthorizedNotice() from Approver to AuditLog;
+            Debit(Double) from SourceBank to DestBank;
+            Credit(Double) from DestBank to AuditLog;
+            Settled(String) from AuditLog to Initiator;
+        } or {
+            // denied — nothing moves
+            Denied(String) from Approver to SourceBank;
+            DeniedNotice() from Approver to DestBank;
+            DeniedNotice() from Approver to AuditLog;
+            Settled(String) from AuditLog to Initiator;
+        }
+
+    } or {
+
+        // ===== SMALL — under the threshold; no approval required =====
+        SmallTransfer(Double) from SourceBank to Approver;
+        SmallTransfer(Double) from SourceBank to DestBank;
+        SmallNotice() from SourceBank to AuditLog;
+        Debit(Double) from SourceBank to DestBank;
+        Credit(Double) from DestBank to AuditLog;
+        Settled(String) from AuditLog to Initiator;
+
+    } or {
+
+        // ===== REJECTED — insufficient funds; no money moves =====
+        NoFunds(String) from SourceBank to Approver;
+        NoFunds(String) from SourceBank to DestBank;
+        NoFunds(String) from SourceBank to AuditLog;
+        Settled(String) from AuditLog to Initiator;
+    }
+}

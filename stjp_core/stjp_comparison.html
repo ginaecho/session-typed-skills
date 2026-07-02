@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>STJP — Comparison: WITHOUT vs WITH Local-Type Skills</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111a2e;
+    --panel2: #0e1628;
+    --line: #1f2c4d;
+    --text: #d8e2ff;
+    --muted: #6f7fa6;
+    --accent: #6ad6ff;
+    --ok: #5dd39e;
+    --warn: #ffb84d;
+    --err: #ff6b6b;
+    --node: #2f4a8a;
+    --node-visited: #3a4f78;
+    --node-active: #6ad6ff;
+    --edge: #2c3a64;
+    --edge-visited: #4a78b4;
+    --edge-active: #6ad6ff;
+    --bare-accent: #ff9e64;
+    --spec-accent: #6ad6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ── top-level layout ── */
+  #app {
+    display: grid;
+    grid-template-rows: 44px auto 1fr 28px;
+    height: 100vh;
+  }
+
+  /* ── header ── */
+  #head {
+    background: var(--panel);
+    padding: 0 18px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 2px solid var(--line);
+  }
+  #head h1 { font-size: 14px; font-weight: 700; letter-spacing: .03em; }
+  .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+           background: var(--accent); box-shadow: 0 0 12px var(--accent);
+           animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+  .badge { padding: 2px 8px; border-radius: 10px; background: var(--line);
+           color: var(--muted); font-size: 11px; }
+  .controls { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .controls button { background: var(--line); color: var(--text); border: none;
+                     padding: 4px 12px; border-radius: 6px; font: inherit; cursor: pointer; }
+  .controls button:hover { background: var(--node); }
+  .controls label { font-size: 11px; color: var(--muted); }
+
+  /* ── collapsible protocol bar ── */
+  #proto-bar {
+    background: var(--panel2);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    transition: max-height .3s ease;
+    max-height: 0;
+  }
+  #proto-bar.open { max-height: 260px; }
+  #proto-bar-inner { padding: 8px 18px; overflow: auto; max-height: 252px; }
+  #proto-bar pre {
+    margin: 0; font: 12px/1.5 "SF Mono", Menlo, Consolas, monospace;
+    color: var(--muted);
+  }
+  #proto-bar pre .lnum { color: #4a5878; }
+  #proto-bar pre .hot { background: rgba(106, 214, 255, 0.18); color: var(--text);
+    border-left: 3px solid var(--accent); padding-left: 6px; margin-left: -9px;
+    display: inline-block; width: calc(100% + 9px); font-weight: 600;
+    transition: background .3s; }
+  #proto-bar pre .done { background: rgba(106,214,255,0.06); color: #aab8d8;
+    border-left: 3px solid var(--edge-visited); padding-left: 6px; margin-left: -9px;
+    display: inline-block; width: calc(100% + 9px); }
+  #proto-toggle { cursor: pointer; user-select: none; }
+  #proto-toggle:hover { color: var(--accent); }
+
+  /* ── main area: two panels ── */
+  #panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    min-height: 0;
+  }
+
+  .experiment {
+    display: grid;
+    grid-template-rows: 32px 1fr auto minmax(100px, 22%);
+    min-height: 0;
+    overflow: hidden;
+  }
+  .exp-header {
+    background: var(--panel);
+    padding: 4px 14px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 13px;
+  }
+  .exp-header.bare { border-top: 3px solid var(--bare-accent); color: var(--bare-accent); }
+  .exp-header.spec { border-top: 3px solid var(--spec-accent); color: var(--spec-accent); }
+  .exp-header .sub { font-weight: 400; font-size: 11px; color: var(--muted); }
+  .exp-header .stat-pills { margin-left: auto; display: flex; gap: 8px; font-size: 11px; font-weight: 400; }
+  .exp-header .stat-pills span b { font-weight: 600; }
+
+  .graph-area { background: var(--panel); position: relative; }
+  .graph-area svg { width: 100%; height: 100%; }
+
+  .log-area {
+    background: var(--panel2);
+    display: flex; flex-direction: column;
+    border-top: 1px solid var(--line);
+  }
+  .log-header { padding: 6px 12px; font-size: 11px; font-weight: 600;
+    color: var(--muted); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; }
+  .log-header .count { margin-left: auto; }
+  .loglist { flex: 1; overflow-y: auto; padding: 4px 8px;
+    font: 11px/1.4 "SF Mono", Menlo, monospace; }
+  .row { padding: 4px 8px; border-radius: 4px; margin: 1px 0;
+    border-left: 3px solid var(--edge); display: flex; gap: 6px;
+    align-items: baseline; animation: rowin .3s ease; }
+  @keyframes rowin { from { transform: translateX(6px); opacity: 0; } }
+  .row.ok   { border-left-color: var(--ok); }
+  .row.err  { border-left-color: var(--err); background: rgba(255,107,107,.07); }
+  .row.marker { border-left-color: var(--accent); background: rgba(106,214,255,.05);
+    color: var(--accent); font-weight: 600; }
+  .row .ts { color: var(--muted); font-size: 10px; flex: 0 0 auto; }
+  .row .body { flex: 1; word-break: break-word; }
+  .row .label { color: var(--accent); font-weight: 600; }
+  .row .pay { color: var(--muted); }
+  .row .vio { display: block; margin-top: 2px; color: var(--err); font-size: 10px; }
+
+  /* ── SVG graph styling ── */
+  .node-bg { fill: var(--node); stroke: var(--line); stroke-width: 2;
+    transition: fill .4s, stroke .4s, filter .4s; }
+  .node-bg.visited { fill: var(--node-visited); stroke: var(--edge-visited); }
+  .node-bg.active  { fill: var(--node-active); stroke: var(--accent);
+    filter: drop-shadow(0 0 14px var(--accent)); }
+  .node-bg.violator { fill: var(--err); stroke: #ffacac;
+    filter: drop-shadow(0 0 12px var(--err)); }
+  .node-label { fill: var(--text); font-size: 12px; font-weight: 600;
+    text-anchor: middle; pointer-events: none; }
+  .node-sub { fill: var(--muted); font-size: 9px; text-anchor: middle; pointer-events: none; }
+  .edge { stroke: var(--edge); stroke-width: 1.5; fill: none;
+    stroke-dasharray: 4 4;
+    transition: stroke .3s, stroke-width .3s, stroke-dasharray .3s; }
+  .edge.visited { stroke: var(--edge-visited); stroke-width: 2; stroke-dasharray: none; }
+  .edge.active  { stroke: var(--edge-active); stroke-width: 3.5; stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px var(--edge-active)); }
+  .edge.violator { stroke: var(--err); stroke-width: 3; stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px var(--err)); }
+  .arrow      { fill: var(--edge); transition: fill .3s; }
+  .arrow.visited  { fill: var(--edge-visited); }
+  .arrow.active   { fill: var(--edge-active); }
+  .arrow.violator { fill: var(--err); }
+  .msg-pip { font-size: 10px; fill: var(--text); text-anchor: middle; opacity: 0;
+    transition: opacity .3s; pointer-events: none; }
+  .msg-pip.show { opacity: 1; animation: pip 1.6s ease-out; }
+  @keyframes pip { 0% { opacity:0; } 20% { opacity:1; } 100% { opacity:0; transform: translateY(-14px); } }
+
+  /* ── protocol coverage flow ── */
+  .proto-flow {
+    background: var(--panel2);
+    border-top: 1px solid var(--line);
+    padding: 6px 10px;
+    overflow-y: auto;
+    max-height: 180px;
+  }
+  .proto-flow-title {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px;
+  }
+  .pf-row {
+    display: flex; align-items: center; gap: 4px;
+    padding: 2px 6px; border-radius: 4px; margin: 1px 0;
+    border-left: 3px solid var(--line);
+    background: rgba(26,37,64,.5);
+    font: 11px/1.3 "SF Mono", Menlo, monospace;
+    transition: all .4s;
+  }
+  .pf-row.touched {
+    border-left-color: var(--ok);
+    background: rgba(26,77,58,.4);
+  }
+  .pf-row.touched .pf-label { color: var(--ok); font-weight: 700; }
+  .pf-row.active {
+    border-left-color: var(--accent);
+    background: rgba(106,214,255,.12);
+    box-shadow: 0 0 8px rgba(106,214,255,.2);
+  }
+  .pf-row.active .pf-label { color: var(--accent); font-weight: 700; }
+  .pf-row .pf-sender { color: var(--text); width: 85px; font-size: 10px; }
+  .pf-row .pf-arrow { color: var(--muted); font-size: 10px; }
+  .pf-row .pf-receiver { color: var(--text); width: 95px; font-size: 10px; }
+  .pf-row .pf-label { color: var(--muted); font-size: 10px; flex: 1; }
+  .pf-row .pf-count { color: var(--muted); font-size: 9px; width: 28px; text-align: right; }
+  .pf-row.touched .pf-count { color: var(--ok); }
+  .pf-branch { font-size: 9px; color: var(--muted); font-weight: 700;
+    margin: 4px 0 2px; text-transform: uppercase; letter-spacing: .05em; }
+  .pf-branch.high { color: var(--err); }
+  .pf-branch.std { color: var(--warn); }
+  .pf-branch.shared { color: var(--accent); }
+
+  /* ── footer stats bar ── */
+  #stats {
+    background: var(--panel);
+    padding: 4px 18px;
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center; font-size: 12px;
+    border-top: 2px solid var(--line);
+  }
+  #stats span b { color: var(--text); font-weight: 500; }
+  .divider { width: 1px; height: 18px; background: var(--line); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── HEADER ── -->
+  <header id="head">
+    <span class="pulse" id="livedot"></span>
+    <h1>STJP — Comparison Demo</h1>
+    <span class="badge" id="mode">replay</span>
+    <span class="badge" id="proto-toggle" title="Toggle protocol view">▸ Protocol</span>
+    <div class="controls">
+      <button id="play">▶ Play</button>
+      <button id="pause">⏸ Pause</button>
+      <button id="reset">⟲ Reset</button>
+      <label>speed <input type="range" id="speed" min="50" max="2500" value="700"/></label>
+    </div>
+  </header>
+
+  <!-- ── COLLAPSIBLE PROTOCOL BAR ── -->
+  <div id="proto-bar">
+    <div id="proto-bar-inner">
+      <pre id="proto-text">loading protocol...</pre>
+    </div>
+  </div>
+
+  <!-- ── TWO SIDE-BY-SIDE EXPERIMENTS ── -->
+  <div id="panels">
+
+    <!-- LEFT: WITHOUT skills -->
+    <div class="experiment" id="exp-bare">
+      <div class="exp-header bare">
+        <span id="title-left">① Left arm</span>
+        <span class="sub" id="sub-left"></span>
+        <div class="stat-pills">
+          <span>events: <b class="s-evt">0</b></span>
+          <span>violations: <b class="s-viol" style="color:var(--err)">0</b></span>
+          <span>goals: <b class="s-goals">0/0</b></span>
+        </div>
+      </div>
+      <div class="graph-area"><svg id="graph-bare" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="proto-flow" id="pflow-bare">
+        <div class="proto-flow-title">Global Protocol Coverage</div>
+      </div>
+      <div class="log-area">
+        <div class="log-header">EVENT LOG <span class="count lc">0</span></div>
+        <div class="loglist" id="log-bare"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: WITH skills -->
+    <div class="experiment" id="exp-spec">
+      <div class="exp-header spec">
+        <span id="title-right">② Right arm</span>
+        <span class="sub" id="sub-right"></span>
+        <div class="stat-pills">
+          <span>events: <b class="s-evt">0</b></span>
+          <span>violations: <b class="s-viol" style="color:var(--err)">0</b></span>
+          <span>goals: <b class="s-goals">0/0</b></span>
+        </div>
+      </div>
+      <div class="graph-area"><svg id="graph-spec" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="proto-flow" id="pflow-spec">
+        <div class="proto-flow-title">Global Protocol Coverage</div>
+      </div>
+      <div class="log-area">
+        <div class="log-header">EVENT LOG <span class="count lc">0</span></div>
+        <div class="loglist" id="log-spec"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer id="stats">
+    <span id="foot-left" style="color:var(--bare-accent); font-weight:700;">left arm</span>
+    <span>events: <b id="sb-evt">0</b></span>
+    <span>violations: <b id="sb-viol" style="color:var(--err)">0</b></span>
+    <span>correct: <b id="sb-pct">--</b></span>
+    <span>goals: <b id="sb-goals">0/0</b></span>
+    <div class="divider"></div>
+    <span id="foot-right" style="color:var(--spec-accent); font-weight:700;">right arm</span>
+    <span>events: <b id="ss-evt">0</b></span>
+    <span>violations: <b id="ss-viol" style="color:var(--err)">0</b></span>
+    <span>correct: <b id="ss-pct">--</b></span>
+    <span>goals: <b id="ss-goals">0/0</b></span>
+    <div class="divider"></div>
+    <button id="show-report" style="background:var(--line);color:var(--text);border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font:inherit;">📊 Summary Report</button>
+  </footer>
+
+</div>
+
+<!-- ══════════ SUMMARY REPORT OVERLAY ══════════ -->
+<div id="report-overlay" style="display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  display:none; place-items:center;">
+  <div id="report-card" style="background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:28px 36px; max-width:860px; width:90%;
+    max-height:85vh; overflow:auto; box-shadow: 0 20px 60px rgba(0,0,0,.5);">
+    <h2 style="margin:0 0 18px; font-size:18px; letter-spacing:.03em;">
+      📊 Experiment Summary Report</h2>
+    <div id="report-body" style="font-size:13px; line-height:1.6;"></div>
+    <button id="close-report" style="margin-top:18px; background:var(--line);color:var(--text);
+      border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font:inherit;">Close</button>
+  </div>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════════════════
+// Graph builder — creates an independent graph panel for one experiment
+// ═════════════════════════════════════════════════════════════════════════════
+
+const ROLES = ["Fetcher", "TaxSpecialist", "RevenueAnalyst",
+               "TaxVerifier", "ExpenseAnalyst", "Writer"];
+const EDGES = [
+  ["Fetcher", "TaxSpecialist"],
+  ["Fetcher", "RevenueAnalyst"],
+  ["Fetcher", "ExpenseAnalyst"],
+  ["TaxSpecialist", "RevenueAnalyst"],
+  ["RevenueAnalyst", "TaxVerifier"],
+  ["TaxVerifier", "RevenueAnalyst"],
+  ["RevenueAnalyst", "Writer"],
+  ["ExpenseAnalyst", "Writer"],
+  ["Writer", "Fetcher"],
+];
+const PAIRS = new Set(EDGES.map(e => `${e[0]}|${e[1]}`));
+const NS = "http://www.w3.org/2000/svg";
+
+function buildGraph(svgId, logId, headerEl) {
+  const svg = document.getElementById(svgId);
+  const logEl = document.getElementById(logId);
+  const W = 900, H = 600, CX = 450, CY = 300, R = 210;
+  const NODE_POS = {};
+  ROLES.forEach((role, i) => {
+    const a = (i / ROLES.length) * Math.PI * 2 - Math.PI / 2;
+    NODE_POS[role] = { x: CX + Math.cos(a) * R, y: CY + Math.sin(a) * R };
+  });
+
+  // Defs (markers)
+  const defs = document.createElementNS(NS, "defs");
+  const uid = svgId; // unique prefix
+  defs.innerHTML = `
+    <marker id="${uid}-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="arrow" d="M 0 0 L 10 5 L 0 10 z"/></marker>
+    <marker id="${uid}-arr-vis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="arrow visited" d="M 0 0 L 10 5 L 0 10 z"/></marker>
+    <marker id="${uid}-arr-act" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="arrow active" d="M 0 0 L 10 5 L 0 10 z"/></marker>
+    <marker id="${uid}-arr-err" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="arrow violator" d="M 0 0 L 10 5 L 0 10 z"/></marker>`;
+  svg.appendChild(defs);
+
+  function curvedPath(a, b, bidir) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy), pad = 36;
+    const ux = dx/len, uy = dy/len;
+    const ax = a.x+ux*pad, ay = a.y+uy*pad;
+    const bx = b.x-ux*pad, by = b.y-uy*pad;
+    if (!bidir) return `M ${ax} ${ay} L ${bx} ${by}`;
+    const nx=-uy, ny=ux, off=22;
+    const mx=(ax+bx)/2+nx*off, my=(ay+by)/2+ny*off;
+    return `M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}`;
+  }
+  function midPoint(a, b, bidir) {
+    if (!bidir) return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+    const dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy);
+    return { x:(a.x+b.x)/2+(-dy/len)*22, y:(a.y+b.y)/2+(dx/len)*22 };
+  }
+
+  // Edges
+  const edgeG = document.createElementNS(NS, "g"); svg.appendChild(edgeG);
+  const EDGE_EL = {}, PIP_EL = {};
+  EDGES.forEach(([s, r]) => {
+    const a=NODE_POS[s], b=NODE_POS[r];
+    const bidir = PAIRS.has(`${r}|${s}`);
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", curvedPath(a,b,bidir));
+    p.setAttribute("class", "edge");
+    p.setAttribute("marker-end", `url(#${uid}-arr)`);
+    edgeG.appendChild(p);
+    EDGE_EL[`${s}|${r}`] = p;
+    const m = midPoint(a,b,bidir);
+    const t = document.createElementNS(NS, "text");
+    t.setAttribute("class", "msg-pip"); t.setAttribute("x",m.x); t.setAttribute("y",m.y);
+    edgeG.appendChild(t);
+    PIP_EL[`${s}|${r}`] = t;
+  });
+
+  // Nodes
+  const nodeG = document.createElementNS(NS, "g"); svg.appendChild(nodeG);
+  const NODE_EL = {};
+  ROLES.forEach(role => {
+    const n = NODE_POS[role], g = document.createElementNS(NS, "g");
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("cx",n.x); c.setAttribute("cy",n.y); c.setAttribute("r",30);
+    c.setAttribute("class", "node-bg");
+    g.appendChild(c);
+    const t = document.createElementNS(NS, "text");
+    t.setAttribute("x",n.x); t.setAttribute("y",n.y-1);
+    t.setAttribute("class", "node-label"); t.textContent = role;
+    g.appendChild(t);
+    const sub = document.createElementNS(NS, "text");
+    sub.setAttribute("x",n.x); sub.setAttribute("y",n.y+12);
+    sub.setAttribute("class", "node-sub"); sub.textContent = "idle";
+    g.appendChild(sub);
+    nodeG.appendChild(g);
+    NODE_EL[role] = { circle: c, sub: sub };
+  });
+
+  // State
+  let counters = { evt:0, viol:0, goalsPass:0, goalsTotal:0 };
+  let visited = { nodes: new Set(), edges: new Set() };
+  let activeEdgeKey = null, activeNodes = [];
+
+  // Stats elements from header
+  const sEvt = headerEl.querySelector('.s-evt');
+  const sViol = headerEl.querySelector('.s-viol');
+  const sGoals = headerEl.querySelector('.s-goals');
+  const lcEl = headerEl.closest('.experiment').querySelector('.lc');
+
+  function esc(s){ return (s+"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function clearActive() {
+    activeNodes.forEach(r => {
+      NODE_EL[r].circle.classList.remove("active","violator");
+      if (visited.nodes.has(r)) NODE_EL[r].circle.classList.add("visited");
+      NODE_EL[r].sub.textContent = visited.nodes.has(r) ? "visited" : "idle";
+    });
+    activeNodes = [];
+    if (activeEdgeKey) {
+      const e = EDGE_EL[activeEdgeKey];
+      if (e) {
+        e.classList.remove("active","violator");
+        if (visited.edges.has(activeEdgeKey)) {
+          e.classList.add("visited"); e.setAttribute("marker-end", `url(#${uid}-arr-vis)`);
+        } else { e.setAttribute("marker-end", `url(#${uid}-arr)`); }
+      }
+      activeEdgeKey = null;
+    }
+  }
+
+  function setActive(s, r, label, payload, ok) {
+    clearActive();
+    activeNodes = [s,r].filter(x => NODE_EL[x]);
+    activeNodes.forEach(role => {
+      NODE_EL[role].circle.classList.remove("visited");
+      NODE_EL[role].circle.classList.add(ok ? "active" : "violator");
+    });
+    if (NODE_EL[s]) NODE_EL[s].sub.textContent = `→ ${label}`;
+    if (NODE_EL[r]) NODE_EL[r].sub.textContent = `← ${label}`;
+    visited.nodes.add(s); visited.nodes.add(r);
+    const key = `${s}|${r}`;
+    activeEdgeKey = key;
+    const e = EDGE_EL[key];
+    if (e) {
+      e.classList.remove("visited");
+      e.classList.add(ok ? "active" : "violator");
+      e.setAttribute("marker-end", ok ? `url(#${uid}-arr-act)` : `url(#${uid}-arr-err)`);
+      visited.edges.add(key);
+    }
+    const pip = PIP_EL[key];
+    if (pip) {
+      pip.textContent = `${label}${payload ? "("+(""+payload).slice(0,16)+")" : ""}`;
+      pip.classList.add("show");
+      setTimeout(() => pip.classList.remove("show"), 1600);
+    }
+  }
+
+  function appendLog(ev) {
+    const ok = !ev.violation;
+    let cls = ev.marker ? "marker" : (ok ? "ok" : "err");
+    const div = document.createElement("div");
+    div.className = `row ${cls}`;
+    const ts = ev.ts ? new Date(ev.ts).toLocaleTimeString() : "";
+    if (ev.marker) {
+      div.innerHTML = `<span class="ts">${ts}</span><span class="body">— ${esc(ev.marker)} ${ev.branch ? "branch="+ev.branch : ""}</span>`;
+    } else {
+      const payText = ev.payload ? `(${(""+ev.payload).slice(0,32)})` : "()";
+      div.innerHTML = `<span class="ts">${ts}</span><span class="body">
+        <strong>${ev.sender||"?"}</strong> → <strong>${ev.receiver||"?"}</strong>
+        <span class="label">${ev.label||"?"}</span>
+        <span class="pay">${esc(payText)}</span>
+        ${ev.violation ? `<span class="vio">⚠ ${esc(ev.violation.type||"")}: ${esc((ev.violation.message||"").slice(0,160))}</span>` : ""}
+      </span>`;
+    }
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function updateStats() {
+    sEvt.textContent = counters.evt;
+    sViol.textContent = counters.viol;
+    sGoals.textContent = `${counters.goalsPass}/${counters.goalsTotal}`;
+    lcEl.textContent = `${counters.evt} events`;
+  }
+
+  function applyEvent(ev) {
+    if (ev.marker) { appendLog(ev); return; }
+    counters.evt++;
+    if (ev.violation) counters.viol++;
+    if (typeof ev.goals_pass === "number") {
+      counters.goalsPass = ev.goals_pass;
+      counters.goalsTotal = ev.goals_total || 0;
+    }
+    setActive(ev.sender, ev.receiver, ev.label, ev.payload, !ev.violation);
+    appendLog(ev);
+    updateStats();
+  }
+
+  function resetState() {
+    counters = { evt:0, viol:0, goalsPass:0, goalsTotal:0 };
+    visited = { nodes: new Set(), edges: new Set() };
+    activeEdgeKey = null; activeNodes = [];
+    logEl.innerHTML = "";
+    ROLES.forEach(r => {
+      NODE_EL[r].circle.classList.remove("active","violator","visited");
+      NODE_EL[r].sub.textContent = "idle";
+    });
+    Object.entries(EDGE_EL).forEach(([k,e]) => {
+      e.classList.remove("active","violator","visited");
+      e.setAttribute("marker-end", `url(#${uid}-arr)`);
+    });
+    updateStats();
+  }
+
+  return { applyEvent, resetState, counters: () => counters };
+}
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Instantiate two graphs
+// ═════════════════════════════════════════════════════════════════════════════
+
+const barePanel = buildGraph("graph-bare", "log-bare",
+  document.querySelector("#exp-bare .exp-header"));
+const specPanel = buildGraph("graph-spec", "log-spec",
+  document.querySelector("#exp-spec .exp-header"));
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Protocol Coverage Flow — shows which global protocol transitions are touched
+// ═════════════════════════════════════════════════════════════════════════════
+
+let protoTransitions = []; // loaded from protocol_graph.json
+const pflowState = {
+  bare: { hits: {}, els: {} },  // key = "sender|receiver|label" -> count
+  spec: { hits: {}, els: {} },
+};
+
+function normalizeLabel(label) {
+  if (!label) return '';
+  const idx = label.indexOf('(');
+  return idx > 0 ? label.substring(0, idx) : label;
+}
+
+function buildProtoFlow(containerId, stateKey) {
+  const container = document.getElementById(containerId);
+  if (!protoTransitions.length) {
+    container.innerHTML = '<div class="proto-flow-title">Global Protocol Coverage (loading...)</div>';
+    return;
+  }
+  container.innerHTML = '<div class="proto-flow-title">Global Protocol Coverage</div>';
+
+  const branches = ['high', 'standard', 'shared'];
+  const branchLabels = { high: '⬥ High Revenue Branch', standard: '⬥ Standard Branch', shared: '⬥ Shared (both)' };
+  const branchCls = { high: 'high', standard: 'std', shared: 'shared' };
+
+  branches.forEach(branch => {
+    const items = protoTransitions.filter(t => t.branch === branch);
+    if (!items.length) return;
+    const lbl = document.createElement('div');
+    lbl.className = `pf-branch ${branchCls[branch]}`;
+    lbl.textContent = branchLabels[branch];
+    container.appendChild(lbl);
+
+    items.forEach(t => {
+      const key = `${t.sender}|${t.receiver}|${t.label}`;
+      const row = document.createElement('div');
+      row.className = 'pf-row';
+      row.innerHTML = `<span class="pf-sender">${t.sender}</span>` +
+        `<span class="pf-arrow">→</span>` +
+        `<span class="pf-receiver">${t.receiver}</span>` +
+        `<span class="pf-label">${t.label}${t.payload_type ? '('+t.payload_type+')' : ''}</span>` +
+        `<span class="pf-count">—</span>`;
+      container.appendChild(row);
+      pflowState[stateKey].els[key] = row;
+    });
+  });
+}
+
+function updateProtoFlow(stateKey, ev) {
+  if (!ev || ev.marker) return;
+  const label = normalizeLabel(ev.label);
+  const key = `${ev.sender}|${ev.receiver}|${label}`;
+  const state = pflowState[stateKey];
+  if (!state.hits[key]) state.hits[key] = 0;
+  state.hits[key]++;
+
+  const row = state.els[key];
+  if (row) {
+    row.classList.remove('active');
+    row.classList.add('touched');
+    row.querySelector('.pf-count').textContent = state.hits[key] + 'x';
+    // brief highlight
+    row.classList.add('active');
+    setTimeout(() => row.classList.remove('active'), 1200);
+  }
+}
+
+function resetProtoFlow(stateKey) {
+  const state = pflowState[stateKey];
+  state.hits = {};
+  Object.values(state.els).forEach(row => {
+    row.classList.remove('touched', 'active');
+    row.querySelector('.pf-count').textContent = '—';
+  });
+}
+
+async function loadProtocolGraph() {
+  try {
+    const r = await fetch('protocol_graph.json?_=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      protoTransitions = data.transitions || [];
+      buildProtoFlow('pflow-bare', 'bare');
+      buildProtoFlow('pflow-spec', 'spec');
+    }
+  } catch(e) { console.warn('Could not load protocol_graph.json', e); }
+}
+
+// Monkey-patch the panel applyEvent to also update proto flow
+const origBareApply = barePanel.applyEvent;
+barePanel.applyEvent = function(ev) { origBareApply(ev); updateProtoFlow('bare', ev); };
+const origSpecApply = specPanel.applyEvent;
+specPanel.applyEvent = function(ev) { origSpecApply(ev); updateProtoFlow('spec', ev); };
+
+const origBareReset = barePanel.resetState;
+barePanel.resetState = function() { origBareReset(); resetProtoFlow('bare'); };
+const origSpecReset = specPanel.resetState;
+specPanel.resetState = function() { origSpecReset(); resetProtoFlow('spec'); };
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Protocol bar toggle
+// ═════════════════════════════════════════════════════════════════════════════
+
+const protoBar = document.getElementById("proto-bar");
+const protoToggle = document.getElementById("proto-toggle");
+const protoText = document.getElementById("proto-text");
+protoToggle.addEventListener("click", () => {
+  protoBar.classList.toggle("open");
+  protoToggle.textContent = protoBar.classList.contains("open")
+    ? "▾ Protocol" : "▸ Protocol";
+});
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Load artifacts (protocol text)
+// ═════════════════════════════════════════════════════════════════════════════
+
+let protocolLines = [];
+async function loadArtifacts() {
+  try {
+    const r = await fetch("artifacts.json?_="+Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    protocolLines = data.protocol_lines || [];
+    protoText.innerHTML = protocolLines.map(L => {
+      const num = `<span class="lnum">${String(L.line).padStart(3," ")}  </span>`;
+      return `<span id="pl-${L.line}">${num}${esc(L.text || "")}</span>`;
+    }).join("\n");
+  } catch (e) {
+    protoText.textContent = "(could not load artifacts.json: " + e.message + ")";
+  }
+}
+function esc(s){ return (s+"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ── dual-arm labels: which 2 of the 8 arms this view is showing ──
+// Written by stjp_dual_demo.py as dual_meta.json. Absent -> default labels.
+let dualMeta = null;
+async function loadDualMeta() {
+  try {
+    const r = await fetch("dual_meta.json?_=" + Date.now(), { cache: "no-store" });
+    if (r.ok) dualMeta = await r.json();
+  } catch (e) { /* no meta -> fall back to default WITHOUT/WITH labels */ }
+  const L = (dualMeta && dualMeta.left)  || { title: "WITHOUT skills", key: "" };
+  const R = (dualMeta && dualMeta.right) || { title: "WITH skills",    key: "" };
+  document.getElementById("title-left").textContent  = "① " + (L.title || L.key);
+  document.getElementById("title-right").textContent = "② " + (R.title || R.key);
+  document.getElementById("sub-left").textContent  = L.key ? "arm: " + L.key : "";
+  document.getElementById("sub-right").textContent = R.key ? "arm: " + R.key : "";
+  document.getElementById("foot-left").textContent  = L.title || L.key || "left";
+  document.getElementById("foot-right").textContent = R.title || R.key || "right";
+}
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Footer stats updater
+// ═════════════════════════════════════════════════════════════════════════════
+
+function updateFooter() {
+  const bc = barePanel.counters(), sc = specPanel.counters();
+  document.getElementById("sb-evt").textContent = bc.evt;
+  document.getElementById("sb-viol").textContent = bc.viol;
+  document.getElementById("sb-goals").textContent = `${bc.goalsPass}/${bc.goalsTotal}`;
+  const bPct = bc.evt > 0 ? ((bc.evt - bc.viol) / bc.evt * 100).toFixed(0) : "--";
+  document.getElementById("sb-pct").textContent = bPct === "--" ? "--" : bPct + "%";
+  document.getElementById("sb-pct").style.color = bPct !== "--" && parseInt(bPct) > 50 ? "var(--ok)" : "var(--err)";
+
+  document.getElementById("ss-evt").textContent = sc.evt;
+  document.getElementById("ss-viol").textContent = sc.viol;
+  document.getElementById("ss-goals").textContent = `${sc.goalsPass}/${sc.goalsTotal}`;
+  const sPct = sc.evt > 0 ? ((sc.evt - sc.viol) / sc.evt * 100).toFixed(0) : "--";
+  document.getElementById("ss-pct").textContent = sPct === "--" ? "--" : sPct + "%";
+  document.getElementById("ss-pct").style.color = sPct !== "--" && parseInt(sPct) > 50 ? "var(--ok)" : "var(--err)";
+}
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Event loading — replay or live
+// ═════════════════════════════════════════════════════════════════════════════
+
+let bareQueue = [], specQueue = [];
+let bareIdx = 0, specIdx = 0;
+let timer = null;
+const speedEl = document.getElementById("speed");
+const liveDot = document.getElementById("livedot");
+
+function play() {
+  if (timer) return;
+  liveDot.style.background = "var(--accent)";
+  liveDot.style.boxShadow = "0 0 12px var(--accent)";
+  function step() {
+    let did = false;
+    if (bareIdx < bareQueue.length) { barePanel.applyEvent(bareQueue[bareIdx++]); did = true; }
+    if (specIdx < specQueue.length) { specPanel.applyEvent(specQueue[specIdx++]); did = true; }
+    updateFooter();
+    if (!did) { timer = null; liveDot.style.background="var(--muted)"; liveDot.style.boxShadow="none"; return; }
+    timer = setTimeout(step, parseInt(speedEl.value));
+  }
+  step();
+}
+
+function pause() {
+  if (timer) { clearTimeout(timer); timer = null; }
+  liveDot.style.background = "var(--warn)"; liveDot.style.boxShadow = "none";
+}
+
+function resetAll() {
+  pause();
+  bareIdx = 0; specIdx = 0;
+  barePanel.resetState(); specPanel.resetState();
+  updateFooter();
+}
+
+document.getElementById("play").onclick = play;
+document.getElementById("pause").onclick = pause;
+document.getElementById("reset").onclick = resetAll;
+
+async function loadEventsFile(url) {
+  try {
+    const r = await fetch(url + "?_=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return [];
+    const text = await r.text();
+    return text.split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  } catch { return []; }
+}
+
+async function startLive() {
+  document.getElementById("mode").textContent = "live (poll)";
+  liveDot.style.background = "var(--accent)";
+  liveDot.style.boxShadow = "0 0 12px var(--accent)";
+
+  let lastBareSz = 0, lastSpecSz = 0;
+  async function poll() {
+    // bare
+    try {
+      const r = await fetch("events_left.jsonl?_="+Date.now(), { cache:"no-store" });
+      if (r.ok) {
+        const t = await r.text();
+        if (t.length !== lastBareSz) {
+          const lines = t.split("\n").filter(Boolean);
+          for (let i = bareQueue.length; i < lines.length; i++) {
+            try {
+              const ev = JSON.parse(lines[i]);
+              bareQueue.push(ev);
+              barePanel.applyEvent(ev);
+            } catch {}
+          }
+          lastBareSz = t.length;
+        }
+      }
+    } catch {}
+    // spec
+    try {
+      const r = await fetch("events_right.jsonl?_="+Date.now(), { cache:"no-store" });
+      if (r.ok) {
+        const t = await r.text();
+        if (t.length !== lastSpecSz) {
+          const lines = t.split("\n").filter(Boolean);
+          for (let i = specQueue.length; i < lines.length; i++) {
+            try {
+              const ev = JSON.parse(lines[i]);
+              specQueue.push(ev);
+              specPanel.applyEvent(ev);
+            } catch {}
+          }
+          lastSpecSz = t.length;
+        }
+      }
+    } catch {}
+    updateFooter();
+    setTimeout(poll, 500);
+  }
+  poll();
+}
+
+async function startReplay() {
+  document.getElementById("mode").textContent = "replay";
+  bareQueue = await loadEventsFile("events_left.jsonl");
+  specQueue = await loadEventsFile("events_right.jsonl");
+  play();
+}
+
+(async () => {
+  await loadDualMeta();
+  await loadArtifacts();
+  await loadProtocolGraph();
+  const params = new URLSearchParams(location.search);
+  if (params.get("live") === "1") { startLive(); }
+  else { startReplay(); }
+})();
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Summary Report
+// ═════════════════════════════════════════════════════════════════════════════
+
+const reportOverlay = document.getElementById("report-overlay");
+const reportBody = document.getElementById("report-body");
+document.getElementById("show-report").onclick = showReport;
+document.getElementById("close-report").onclick = () => { reportOverlay.style.display = "none"; };
+reportOverlay.addEventListener("click", e => { if (e.target === reportOverlay) reportOverlay.style.display = "none"; });
+
+function computeTrialStats(events) {
+  const trials = [];
+  let current = null;
+  for (const ev of events) {
+    if (ev.marker === "trial_start") {
+      current = { branch: ev.branch, events: [], violations: 0, ok: 0,
+                  goalsPass: 0, goalsTotal: 0, violTypes: {} };
+      continue;
+    }
+    if (ev.marker === "trial_end") {
+      if (current) trials.push(current);
+      current = null;
+      continue;
+    }
+    if (ev.marker) continue;
+    if (!current) current = { branch: "?", events: [], violations: 0, ok: 0,
+                              goalsPass: 0, goalsTotal: 0, violTypes: {} };
+    current.events.push(ev);
+    if (ev.violation) {
+      current.violations++;
+      const t = ev.violation.type || "unknown";
+      current.violTypes[t] = (current.violTypes[t] || 0) + 1;
+    } else {
+      current.ok++;
+    }
+    if (typeof ev.goals_pass === "number") {
+      current.goalsPass = Math.max(current.goalsPass, ev.goals_pass);
+      current.goalsTotal = ev.goals_total || 0;
+    }
+  }
+  if (current && current.events.length > 0) trials.push(current);
+  return trials;
+}
+
+function showReport() {
+  const bareTrials = computeTrialStats(bareQueue);
+  const specTrials = computeTrialStats(specQueue);
+  const Lt = (dualMeta && dualMeta.left  && (dualMeta.left.title  || dualMeta.left.key))  || "WITHOUT skills";
+  const Rt = (dualMeta && dualMeta.right && (dualMeta.right.title || dualMeta.right.key)) || "WITH skills";
+
+  function agg(trials) {
+    const n = trials.length;
+    if (n === 0) return { n: 0, totalEvt: 0, totalViol: 0, totalOK: 0,
+                          avgEvt: 0, avgViol: 0, correctPct: 0,
+                          avgGoals: 0, maxGoals: 0, violTypes: {},
+                          protoCoverage: {}, wrongLabels: {} };
+    const totalEvt = trials.reduce((s, t) => s + t.events.length, 0);
+    const totalViol = trials.reduce((s, t) => s + t.violations, 0);
+    const totalOK = trials.reduce((s, t) => s + t.ok, 0);
+    const avgGoals = trials.reduce((s, t) => s + t.goalsPass, 0) / n;
+    const maxGoals = trials.length > 0 ? trials[0].goalsTotal : 0;
+    const violTypes = {};
+    trials.forEach(t => {
+      for (const [k, v] of Object.entries(t.violTypes)) {
+        violTypes[k] = (violTypes[k] || 0) + v;
+      }
+    });
+    // Per-interaction coverage: count how many times each global protocol
+    // transition was correctly matched, and collect wrong labels per sender→receiver
+    const protoCoverage = {}; // key="sender|receiver|label" -> count of OK matches
+    const wrongLabels = {};   // key="sender|receiver" -> {label: count}
+    trials.forEach(t => {
+      t.events.forEach(ev => {
+        const normLabel = ev.label ? ev.label.replace(/\(.*$/, '') : '';
+        const key = `${ev.sender}|${ev.receiver}|${normLabel}`;
+        const pairKey = `${ev.sender}|${ev.receiver}`;
+        if (!ev.violation) {
+          protoCoverage[key] = (protoCoverage[key] || 0) + 1;
+        } else {
+          if (!wrongLabels[pairKey]) wrongLabels[pairKey] = {};
+          wrongLabels[pairKey][normLabel] = (wrongLabels[pairKey][normLabel] || 0) + 1;
+        }
+      });
+    });
+    return { n, totalEvt, totalViol, totalOK,
+             avgEvt: (totalEvt / n).toFixed(1),
+             avgViol: (totalViol / n).toFixed(1),
+             correctPct: totalEvt > 0 ? ((totalOK / totalEvt) * 100).toFixed(1) : "0",
+             avgGoals: avgGoals.toFixed(1), maxGoals, violTypes,
+             protoCoverage, wrongLabels };
+  }
+
+  const b = agg(bareTrials);
+  const s = agg(specTrials);
+
+  function violBreakdown(vt) {
+    const entries = Object.entries(vt);
+    if (entries.length === 0) return '<span style="color:var(--ok)">None</span>';
+    return entries.map(([k,v]) => `<span style="color:var(--err)">${esc(k)}: ${v}</span>`).join(", ");
+  }
+
+  function pctBar(value, max, color) {
+    const pct = max > 0 ? (value / max * 100).toFixed(0) : 0;
+    return `<div style="display:flex;align-items:center;gap:8px;">
+      <div style="flex:1;height:18px;background:var(--line);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:4px;
+          transition:width .3s;"></div>
+      </div>
+      <span style="font-weight:600;min-width:40px;text-align:right;">${pct}%</span>
+    </div>`;
+  }
+
+  const improvement = b.totalViol > 0
+    ? ((1 - s.totalViol / b.totalViol) * 100).toFixed(0)
+    : "N/A";
+
+  // Build per-interaction coverage table for a given experiment
+  function interactionTable(data, color) {
+    if (!protoTransitions.length) return '<em style="color:var(--muted)">Protocol graph not loaded</em>';
+    const branches = ['high', 'standard', 'shared'];
+    const branchLabels = { high: 'High Revenue Branch', standard: 'Standard Branch', shared: 'Shared (both branches)' };
+    let html = '';
+    branches.forEach(branch => {
+      const items = protoTransitions.filter(t => t.branch === branch);
+      if (!items.length) return;
+      html += `<tr><td colspan="5" style="padding:8px 0 4px;font-weight:700;font-size:11px;color:${
+        branch === 'high' ? 'var(--err)' : branch === 'standard' ? 'var(--warn)' : 'var(--accent)'
+      };">${branchLabels[branch]}</td></tr>`;
+      items.forEach(t => {
+        const key = `${t.sender}|${t.receiver}|${t.label}`;
+        const pairKey = `${t.sender}|${t.receiver}`;
+        const hits = data.protoCoverage[key] || 0;
+        const wrongs = data.wrongLabels[pairKey] || {};
+        const wrongList = Object.entries(wrongs)
+          .filter(([lb]) => lb !== t.label)
+          .sort((a,b) => b[1] - a[1])
+          .slice(0, 3);
+        const wrongHtml = wrongList.length > 0
+          ? wrongList.map(([lb, c]) => `<span style="color:var(--err);font-size:10px;">${esc(lb)}×${c}</span>`).join(', ')
+          : '';
+        const statusIcon = hits > 0 ? '✅' : '⬜';
+        html += `<tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:3px 4px;font-size:11px;">${statusIcon}</td>
+          <td style="padding:3px 4px;font-size:11px;">${t.sender} → ${t.receiver}</td>
+          <td style="padding:3px 4px;font-size:11px;font-weight:600;">${t.label}${t.payload_type ? '('+t.payload_type+')' : ''}</td>
+          <td style="padding:3px 4px;font-size:11px;color:var(--ok);text-align:center;font-weight:600;">${hits > 0 ? hits + '×' : '—'}</td>
+          <td style="padding:3px 4px;font-size:11px;">${wrongHtml}</td>
+        </tr>`;
+      });
+    });
+    return `<table style="width:100%;border-collapse:collapse;">
+      <tr style="color:var(--muted);border-bottom:1px solid var(--line);font-size:10px;">
+        <th style="width:24px;"></th><th style="text-align:left;">Interaction</th>
+        <th style="text-align:left;">Expected Label</th>
+        <th style="text-align:center;width:50px;">Matched</th>
+        <th style="text-align:left;">Wrong labels used instead</th>
+      </tr>${html}</table>`;
+  }
+
+  // Count how many of 13 protocol interactions were hit at least once
+  function coverageCount(data) {
+    let hit = 0;
+    protoTransitions.forEach(t => {
+      const key = `${t.sender}|${t.receiver}|${t.label}`;
+      if (data.protoCoverage[key]) hit++;
+    });
+    return { hit, total: protoTransitions.length };
+  }
+
+  const bCov = coverageCount(b), sCov = coverageCount(s);
+
+  reportBody.innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:20px;">
+      <div style="border:1px solid var(--bare-accent); border-radius:8px; padding:16px;">
+        <h3 style="color:var(--bare-accent);margin:0 0 10px;font-size:14px;">① ${Lt}</h3>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr><td style="padding:3px 0;color:var(--muted)">Trials</td><td style="text-align:right;font-weight:600">${b.n}</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Total events</td><td style="text-align:right;font-weight:600">${b.totalEvt}</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Protocol-correct steps</td><td style="text-align:right;font-weight:600;color:${parseFloat(b.correctPct) > 50 ? 'var(--ok)' : 'var(--err)'}">${b.correctPct}%  (${b.totalOK}/${b.totalEvt})</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Protocol coverage</td><td style="text-align:right;font-weight:600">${bCov.hit}/${bCov.total} interactions</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Avg violations/trial</td><td style="text-align:right;font-weight:600;color:var(--err)">${b.avgViol}</td></tr>
+        </table>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)">Violation types: ${violBreakdown(b.violTypes)}</div>
+      </div>
+      <div style="border:1px solid var(--spec-accent); border-radius:8px; padding:16px;">
+        <h3 style="color:var(--spec-accent);margin:0 0 10px;font-size:14px;">② ${Rt}</h3>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr><td style="padding:3px 0;color:var(--muted)">Trials</td><td style="text-align:right;font-weight:600">${s.n}</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Total events</td><td style="text-align:right;font-weight:600">${s.totalEvt}</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Protocol-correct steps</td><td style="text-align:right;font-weight:600;color:${parseFloat(s.correctPct) > 50 ? 'var(--ok)' : 'var(--err)'}">${s.correctPct}%  (${s.totalOK}/${s.totalEvt})</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Protocol coverage</td><td style="text-align:right;font-weight:600">${sCov.hit}/${sCov.total} interactions</td></tr>
+          <tr><td style="padding:3px 0;color:var(--muted)">Avg violations/trial</td><td style="text-align:right;font-weight:600;color:${s.totalViol === 0 ? 'var(--ok)' : 'var(--err)'}">${s.avgViol}</td></tr>
+        </table>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)">Violation types: ${violBreakdown(s.violTypes)}</div>
+      </div>
+    </div>
+
+    <h3 style="margin:0 0 10px;font-size:14px;">Comparison — Protocol-Correct Steps</h3>
+    <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;font-size:12px;align-items:center;">
+      <span style="color:var(--muted)">Correct step %</span>
+      <div>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:4px;">
+          <span style="color:var(--bare-accent);min-width:130px;">WITHOUT: ${b.correctPct}%</span>
+          <span style="color:var(--spec-accent);">WITH: ${s.correctPct}%</span>
+        </div>
+        ${pctBar(parseFloat(b.correctPct), 100, "var(--bare-accent)")}
+        ${pctBar(parseFloat(s.correctPct), 100, "var(--spec-accent)")}
+      </div>
+
+      <span style="color:var(--muted)">Protocol coverage</span>
+      <div>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:4px;">
+          <span style="color:var(--bare-accent);min-width:130px;">WITHOUT: ${bCov.hit}/${bCov.total}</span>
+          <span style="color:var(--spec-accent);">WITH: ${sCov.hit}/${sCov.total}</span>
+        </div>
+        ${pctBar(bCov.hit, bCov.total, "var(--bare-accent)")}
+        ${pctBar(sCov.hit, sCov.total, "var(--spec-accent)")}
+      </div>
+
+      <span style="color:var(--muted)">Violation reduction</span>
+      <div style="font-size:20px;font-weight:700;color:var(--ok);">
+        ${improvement === "N/A" ? "N/A" : "↓ " + improvement + "%"}
+      </div>
+    </div>
+
+    <h3 style="margin:18px 0 10px;font-size:14px;">Global Protocol Interaction Coverage</h3>
+    <p style="font-size:11px;color:var(--muted);margin:0 0 10px;">
+      Each row = one interaction defined in the global protocol. ✅ = agents used the correct label at least once.
+      "Wrong labels" shows what agents sent instead (off-protocol labels for that sender→receiver pair).
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <h4 style="color:var(--bare-accent);font-size:12px;margin:0 0 6px;">① ${Lt} — ${bCov.hit}/${bCov.total} covered</h4>
+        ${interactionTable(b, "var(--bare-accent)")}
+      </div>
+      <div>
+        <h4 style="color:var(--spec-accent);font-size:12px;margin:0 0 6px;">② ${Rt} — ${sCov.hit}/${sCov.total} covered</h4>
+        ${interactionTable(s, "var(--spec-accent)")}
+      </div>
+    </div>
+
+    <h3 style="margin:18px 0 10px;font-size:14px;">Per-Trial Breakdown</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <table style="width:100%;font-size:11px;border-collapse:collapse;">
+          <tr style="color:var(--muted);border-bottom:1px solid var(--line);">
+            <th style="text-align:left;padding:4px;">Trial</th>
+            <th>Branch</th><th>Events</th><th>OK</th><th>Viol</th><th>Correct%</th>
+          </tr>
+          ${bareTrials.map((t,i) => {
+            const pct = t.events.length > 0 ? ((t.ok / t.events.length) * 100).toFixed(0) : 0;
+            return `<tr style="border-bottom:1px solid var(--line);">
+            <td style="padding:4px;">${i+1}</td>
+            <td style="text-align:center;">${t.branch}</td>
+            <td style="text-align:center;">${t.events.length}</td>
+            <td style="text-align:center;color:var(--ok)">${t.ok}</td>
+            <td style="text-align:center;color:var(--err)">${t.violations}</td>
+            <td style="text-align:center;font-weight:600;color:${parseInt(pct) > 50 ? 'var(--ok)' : 'var(--err)'}">${pct}%</td>
+          </tr>`;}).join("")}
+        </table>
+      </div>
+      <div>
+        <table style="width:100%;font-size:11px;border-collapse:collapse;">
+          <tr style="color:var(--muted);border-bottom:1px solid var(--line);">
+            <th style="text-align:left;padding:4px;">Trial</th>
+            <th>Branch</th><th>Events</th><th>OK</th><th>Viol</th><th>Correct%</th>
+          </tr>
+          ${specTrials.map((t,i) => {
+            const pct = t.events.length > 0 ? ((t.ok / t.events.length) * 100).toFixed(0) : 0;
+            return `<tr style="border-bottom:1px solid var(--line);">
+            <td style="padding:4px;">${i+1}</td>
+            <td style="text-align:center;">${t.branch}</td>
+            <td style="text-align:center;">${t.events.length}</td>
+            <td style="text-align:center;color:var(--ok)">${t.ok}</td>
+            <td style="text-align:center;color:${t.violations === 0 ? 'var(--ok)' : 'var(--err)'}">${t.violations}</td>
+            <td style="text-align:center;font-weight:600;color:${parseInt(pct) > 50 ? 'var(--ok)' : 'var(--err)'}">${pct}%</td>
+          </tr>`;}).join("")}
+        </table>
+      </div>
+    </div>
+
+    <p style="margin:16px 0 0;font-size:11px;color:var(--muted);font-style:italic;">
+      Hypothesis: Agents equipped with STJP projected local-type skills should use the correct
+      message labels, follow the correct interaction patterns, and achieve higher protocol coverage
+      than bare agents with only natural-language intent.
+    </p>
+  `;
+  reportOverlay.style.display = "grid";
+}
+</script>
+</body>
+</html>

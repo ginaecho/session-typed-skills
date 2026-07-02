@@ -1,0 +1,21 @@
+# Multi-source RAG — refinement contracts (payload predicates)
+
+[Retriever1 -> Synthesizer : Documents]
+type: str
+require: len(x) > 0
+
+[Retriever2 -> Synthesizer : Documents]
+type: str
+require: len(x) > 0
+
+[Synthesizer -> FactChecker : Draft]
+type: str
+require: len(x) > 0
+
+[FactChecker -> Synthesizer : Verified]
+type: str
+require: len(x) > 0
+
+[Synthesizer -> User : FinalAnswer]
+type: str
+require: len(x) > 0

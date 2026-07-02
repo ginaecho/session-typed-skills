@@ -1,0 +1,43 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol TravelBooking(
+    role User,
+    role Coordinator,
+    role Flight,
+    role Hotel,
+    role Car,
+    role Payment
+) {
+    TripRequest(String) from User to Coordinator;
+
+    QuoteRequest(String) from Coordinator to Flight;
+    QuoteRequest(String) from Coordinator to Hotel;
+    QuoteRequest(String) from Coordinator to Car;
+
+    FlightQuote(Double) from Flight to Coordinator;
+    HotelQuote(Double) from Hotel to Coordinator;
+    CarQuote(Double) from Car to Coordinator;
+
+    choice at Coordinator {
+
+        // ===== AVAILABLE — all three legs quoted within budget: book + charge =====
+        ConfirmBooking() from Coordinator to Flight;
+        ConfirmBooking() from Coordinator to Hotel;
+        ConfirmBooking() from Coordinator to Car;
+        ChargePayment(Double) from Coordinator to Payment;
+        PaymentConfirmed(String) from Payment to Coordinator;
+        TripResult(String) from Coordinator to User;
+
+    } or {
+
+        // ===== UNAVAILABLE — a leg failed or over budget: roll back, no charge =====
+        CancelBooking() from Coordinator to Flight;
+        CancelBooking() from Coordinator to Hotel;
+        CancelBooking() from Coordinator to Car;
+        SkipPayment(String) from Coordinator to Payment;
+        TripResult(String) from Coordinator to User;
+    }
+}

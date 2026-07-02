@@ -1,0 +1,24 @@
+module v1;
+
+data <java> "java.lang.Double" from "rt.jar" as Double;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+global protocol QuarterlyFinanceReport(role Fetcher, role RevenueAnalyst, role ExpenseAnalyst, role TaxVerifier, role TaxSpecialist, role Writer) {
+    FetchRevenueData(Double) from Fetcher to RevenueAnalyst;
+    
+    AnalyzeExpenses() from ExpenseAnalyst to RevenueAnalyst;
+    
+    choice at RevenueAnalyst {
+        HighRevenue(Double) from RevenueAnalyst to TaxVerifier;
+        AuditRequired() from RevenueAnalyst to TaxSpecialist;
+        
+        Approval(String) from TaxVerifier to RevenueAnalyst;
+        Approval(String) from TaxSpecialist to RevenueAnalyst;
+    } or {
+        StandardRevenue() from RevenueAnalyst to TaxVerifier;
+        Approval(String) from TaxVerifier to RevenueAnalyst;
+    }
+    
+    WriteReport(String) from RevenueAnalyst to Writer;
+    GenerateReport() from Writer to Fetcher;
+}

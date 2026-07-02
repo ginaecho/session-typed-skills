@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STJP — A Compiler for AI-Agent Interactions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#070B16; --bg2:#0A1120; --panel:#0E1726;
+ --text:#C4D0E6; --dim:#8090AB; --head:#EFF4FF;
+ --blue:#4F8DFF; --cyan:#39E2C8; --amber:#FFB23E; --red:#FF5C72; --green:#46D984;
+ --line:rgba(150,178,225,.14); --line2:rgba(150,178,225,.28);
+ --paper:#F4F7FE;
+ --grad:linear-gradient(105deg,#4F8DFF 0%,#39E2C8 100%);
+ --grad-warm:linear-gradient(105deg,#FFB23E,#FF7A8A);
+ --disp:'Bricolage Grotesque',Georgia,serif;
+ --body:'Hanken Grotesk',system-ui,sans-serif;
+ --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;font-family:var(--body);color:var(--text);background:var(--bg);
+ line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+ background-image:
+  radial-gradient(1100px 620px at 82% -8%,rgba(79,141,255,.22),transparent 60%),
+  radial-gradient(900px 560px at -12% 16%,rgba(57,226,200,.12),transparent 55%),
+  radial-gradient(760px 520px at 50% 118%,rgba(79,141,255,.10),transparent 60%),
+  linear-gradient(rgba(150,178,225,.045) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(150,178,225,.045) 1px,transparent 1px);
+ background-size:auto,auto,auto,34px 34px,34px 34px;
+ background-attachment:fixed,fixed,fixed,scroll,scroll;
+}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9;opacity:.04;mix-blend-mode:overlay;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+.col{max-width:760px}
+a{color:var(--cyan)}
+/* scroll progress */
+#bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:50;background:var(--grad);box-shadow:0 0 16px rgba(79,141,255,.6)}
+/* topbar */
+.top{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
+ padding:16px 28px;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:var(--dim);
+ backdrop-filter:blur(8px);background:linear-gradient(180deg,rgba(7,11,22,.7),transparent)}
+.top .brand{color:var(--head);font-weight:700}
+.top .dot{color:var(--cyan)}
+/* eyebrow / mono labels */
+.ey{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:500}
+.ey .n{color:var(--dim)}
+/* hero */
+.hero{position:relative;padding:148px 0 56px}
+.hero .chip{display:inline-flex;gap:9px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+ text-transform:uppercase;color:#BFE9FF;background:rgba(79,141,255,.10);border:1px solid var(--line2);
+ padding:8px 14px;border-radius:999px}
+.hero .chip .pip{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(38px,7vw,82px);line-height:.98;letter-spacing:-.02em;
+ color:var(--head);margin:24px 0 0;max-width:14ch}
+h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text}
+.lede{font-size:clamp(17px,2.2vw,21px);color:var(--text);max-width:640px;margin:24px 0 0;font-weight:400}
+.lede b{color:var(--head);font-weight:600}
+.herowrap{display:grid;grid-template-columns:1.35fr .65fr;gap:36px;align-items:center}
+.loopwrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
+.loopcap{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);text-align:center}
+.dlrow{display:grid;grid-template-columns:1.45fr .55fr;gap:30px;align-items:center;margin:22px 0 8px}
+/* stat band */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:60px 0 0;border:1px solid var(--line);
+ border-radius:18px;overflow:hidden;background:var(--line)}
+.stat{background:linear-gradient(180deg,rgba(14,23,38,.92),rgba(10,17,32,.92));padding:22px 20px}
+.stat .v{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--head);line-height:1;
+ background:var(--grad);-webkit-background-clip:text;background-clip:text}
+.stat .l{font-size:13px;color:var(--dim);margin-top:8px;line-height:1.4}
+/* sections */
+section{position:relative;padding:74px 0;border-top:1px solid var(--line)}
+.ghost{position:absolute;right:18px;top:30px;font-family:var(--disp);font-weight:800;font-size:150px;line-height:1;
+ color:rgba(150,178,225,.05);pointer-events:none;z-index:0}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.05;letter-spacing:-.015em;
+ color:var(--head);margin:14px 0 18px;max-width:18ch;position:relative;z-index:1}
+p{font-size:17px;margin:0 0 16px;position:relative;z-index:1}
+p b,li b{color:var(--head);font-weight:600}
+.hl{color:var(--cyan);font-weight:600}
+.amberhl{color:var(--amber);font-weight:600}
+/* incident callout */
+.incident{margin:22px 0 8px;border:1px solid rgba(255,92,114,.4);border-radius:16px;overflow:hidden;
+ background:linear-gradient(180deg,rgba(255,92,114,.08),rgba(255,92,114,.02))}
+.incident .hd{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;
+ font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FFC2CB;
+ border-bottom:1px solid rgba(255,92,114,.25);background:rgba(255,92,114,.08)}
+.incident .bd{padding:16px 18px;font-size:16px}
+.incident .src{font-size:13.5px;color:#C99aa3;font-style:italic;margin-top:10px;font-family:var(--body)}
+/* figure spec-sheet */
+.fig{position:relative;margin:30px 0 10px;background:var(--paper);border-radius:18px;padding:20px 18px 14px;
+ box-shadow:0 30px 70px -30px rgba(0,0,0,.7),0 0 0 1px rgba(150,178,225,.18),inset 0 0 0 1px rgba(255,255,255,.6);}
+.fig::before{content:attr(data-fig);position:absolute;top:-11px;left:20px;font-family:var(--mono);font-size:11px;
+ letter-spacing:.14em;font-weight:700;color:#0A1120;background:var(--cyan);padding:4px 11px;border-radius:7px;
+ box-shadow:0 6px 18px -6px rgba(57,226,200,.8)}
+.fig svg{width:100%;height:auto;display:block;border-radius:8px}
+.fig svg text{font-family:'Hanken Grotesk',system-ui,sans-serif}
+.fig svg .ttl{font-family:'Bricolage Grotesque',sans-serif;font-weight:800}
+.fig svg .mono{font-family:'JetBrains Mono',monospace}
+.flow{stroke-dasharray:7 7;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-28}}
+.flow.slow{animation-duration:2.6s}
+.breathe{transform-box:fill-box;transform-origin:center;animation:breathe 2.8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulseo 1.6s ease-in-out infinite}
+@keyframes pulseo{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.abA{animation:abA 3.2s steps(1,end) infinite}
+.abB{animation:abB 3.2s steps(1,end) infinite}
+@keyframes abA{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes abB{0%,49%{opacity:0}50%,100%{opacity:1}}
+.pkt{filter:drop-shadow(0 1px 2px rgba(10,20,40,.25))}
+@media(prefers-reduced-motion:reduce){.flow,.flow.slow,.breathe,.pulse,.abA,.abB{animation:none}.abB{opacity:0}}
+.fig figcaption{font-family:var(--mono);font-size:12px;color:#5C6B86;text-align:center;margin-top:10px;letter-spacing:.02em}
+/* pull statement */
+.pull{font-family:var(--disp);font-weight:700;font-size:clamp(22px,3.4vw,34px);line-height:1.18;letter-spacing:-.01em;
+ color:var(--head);margin:42px 0;padding-left:22px;border-left:3px solid;border-image:var(--grad) 1;max-width:20ch}
+.pull .g{background:var(--grad);-webkit-background-clip:text;background-clip:text}
+/* lineage rail */
+.rail{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin:8px 0 26px}
+.node{border:1px solid var(--line2);border-radius:16px;padding:18px;background:linear-gradient(180deg,rgba(14,23,38,.9),rgba(10,17,32,.9));position:relative}
+.node .t{font-family:var(--disp);font-weight:800;font-size:21px;color:var(--head)}
+.node .s{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.node.stjp{border-color:transparent;background:var(--grad);box-shadow:0 22px 50px -22px rgba(79,141,255,.7)}
+.node.stjp .t,.node.stjp .s{color:#06101F}
+.node.scr{border-color:rgba(255,178,62,.4)}
+.node.scr .t{color:var(--amber)}
+.arrow{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:24px;font-weight:700}
+/* guarantee chips */
+.guars{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+.guar{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:#CFE6FF;border:1px solid var(--line2);
+ border-radius:999px;padding:8px 14px;background:rgba(79,141,255,.07)}
+.guar b{color:var(--cyan)}
+/* steps */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:18px 0 8px}
+ol.steps li{counter-increment:s;position:relative;padding:13px 0 13px 50px;border-bottom:1px solid var(--line);font-size:16.5px}
+ol.steps li:last-child{border-bottom:none}
+ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:11px;font-family:var(--mono);
+ font-size:12px;font-weight:700;color:#06101F;background:var(--cyan);width:28px;height:28px;border-radius:8px;
+ display:flex;align-items:center;justify-content:center}
+ol.steps li .lead{color:var(--head);font-weight:600}
+/* role cards */
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:8px 0 4px}
+.role{border:1px solid var(--line2);border-radius:16px;padding:20px;background:linear-gradient(180deg,rgba(14,23,38,.92),rgba(10,17,32,.86));transition:transform .35s,box-shadow .35s,border-color .35s}
+.role:hover{transform:translateY(-5px);box-shadow:0 26px 50px -28px rgba(0,0,0,.8);border-color:var(--line2)}
+.role .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.role .nm{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--head);margin:6px 0 8px}
+.role p{font-size:14.5px;color:var(--text);margin:0}
+.role.mon{border-color:rgba(255,178,62,.4);background:linear-gradient(180deg,rgba(38,28,12,.6),rgba(10,17,32,.86))}
+.role.mon .nm{color:var(--amber)}
+.role .det{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#06101F;background:var(--amber);padding:3px 8px;border-radius:6px;margin-top:10px}
+/* stack */
+.stack{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 14px}
+.layer{border:1px solid var(--line);border-radius:14px;padding:18px;background:rgba(14,23,38,.7)}
+.layer .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim)}
+.layer .t{font-family:var(--disp);font-weight:700;font-size:18px;color:var(--head);margin:6px 0 6px}
+.layer p{font-size:14px;color:var(--dim);margin:0}
+.miss{margin-top:4px;border:1px solid transparent;border-radius:16px;padding:20px;position:relative;overflow:hidden;
+ background:linear-gradient(180deg,rgba(79,141,255,.14),rgba(57,226,200,.06));box-shadow:inset 0 0 0 1px var(--line2)}
+.miss::before{content:"↔";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:64px;
+ background:var(--grad);-webkit-background-clip:text;background-clip:text;opacity:.5}
+.miss .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--cyan)}
+.miss .t{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--head);margin:5px 0 6px}
+.miss p{font-size:15px;margin:0;max-width:46ch}
+/* evidence */
+.evid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:6px 0 18px}
+.ev{border:1px solid var(--line2);border-radius:16px;padding:20px;background:linear-gradient(180deg,rgba(14,23,38,.9),rgba(10,17,32,.86))}
+.ev .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+.ev h4{font-family:var(--disp);font-weight:700;font-size:18px;color:var(--head);margin:8px 0 8px}
+.ev p{font-size:14.5px;color:var(--text);margin:0 0 12px}
+.cite{display:inline-block;font-family:var(--mono);font-size:11px;color:#BFD6FF;border:1px solid var(--line2);
+ border-radius:8px;padding:5px 9px;background:rgba(79,141,255,.07)}
+/* peers */
+.peers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+.peer{border:1px solid var(--line);border-radius:16px;padding:20px;background:rgba(14,23,38,.7);transition:transform .35s,border-color .35s}
+.peer:hover{transform:translateY(-5px)}
+.peer h4{font-family:var(--disp);font-weight:800;font-size:19px;color:var(--head);margin:0 0 8px}
+.peer p{font-size:14px;color:var(--dim);margin:0}
+.peer.stjp{border-color:transparent;background:linear-gradient(180deg,rgba(79,141,255,.16),rgba(57,226,200,.05));box-shadow:inset 0 0 0 1px var(--line2)}
+.peer.stjp h4{background:var(--grad);-webkit-background-clip:text;background-clip:text}
+/* closing */
+.cta{margin:30px 0 0;border-radius:24px;padding:48px 40px;text-align:center;position:relative;overflow:hidden;
+ background:linear-gradient(125deg,rgba(79,141,255,.16),rgba(57,226,200,.08));border:1px solid var(--line2)}
+.cta .big{font-family:var(--disp);font-weight:800;font-size:clamp(24px,3.6vw,38px);line-height:1.12;color:var(--head);max-width:24ch;margin:0 auto 8px}
+.cta .big .g{background:var(--grad);-webkit-background-clip:text;background-clip:text}
+.cta .sub{font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
+.cta .ctak{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.cta .ctactx{font-size:16px;color:var(--text);max-width:60ch;margin:14px auto 18px}
+.cta .ctactx b{color:var(--head)}
+footer{border-top:1px solid var(--line);padding:30px 0 70px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.8}
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+/* deadlock motif */
+.ring{animation:spin 14s linear infinite;transform-origin:110px 110px}
+.dash{stroke-dasharray:10 14;animation:flow 2.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes flow{to{stroke-dashoffset:-48}}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.pnode{animation:pulse 1.8s ease-in-out infinite}
+@media(max-width:860px){
+ .dlrow{grid-template-columns:1fr}.loopwrap{order:-1}
+ .stats{grid-template-columns:repeat(2,1fr)}.rail{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}
+ .roles,.stack,.evid,.peers{grid-template-columns:1fr}.ghost{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ *{animation:none!important}.reveal{opacity:1;transform:none;transition:none}
+ html{scroll-behavior:auto}
+}
+@media print{body{background:#fff;color:#111}.top,#bar,body::after{display:none}.fig{box-shadow:none}}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){h1 .g,.pull .g,.cta .big .g,.peer.stjp h4,.stat .v,.miss::before{color:transparent}}
+</style></head>
+<body>
+<div id="bar"></div>
+<div class="top"><span class="brand">STJP<span class="dot"> // </span><span style="font-weight:500">session-typed protocols for agents</span></span><span>PROVEN · BY · DESIGN</span></div>
+
+<header class="hero"><div class="wrap">
+ <span class="chip reveal"><span class="pip"></span> STJP &middot; an agent-interaction compiler</span>
+ <h1 class="reveal d1">A compiler for the <span class="g">interactions between AI&nbsp;agents</span>.</h1>
+ <p class="lede reveal d2">STJP (session-typed judge panel) ensures the interactions <i>among</i> your agents are correct <b>by construction</b>: it compiles your intent into a protocol that&rsquo;s mathematically <b>proven deadlock-free before any agent runs</b>, gives each agent its own contract, and enforces it live with deterministic code &mdash; twenty years of session-type theory, finally pointed at agents.</p>
+</div></header>
+
+<section><div class="wrap"><div class="ghost">01</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">01 /</span> The blind spot</div>
+  <h2 class="reveal">Everyone writes the spec. Nobody can prove its correctness.</h2>
+  <p class="reveal">The whole industry is racing to govern AI agents with <b>skills, specs, and markdown files</b> that say what each agent may do. But almost nobody asks the question underneath: <span class="hl">how do you know the interactions you wrote down are correct?</span> A human cannot tell by reading. Each sheet can look perfect alone, while the way they <i>combine</i> hides a fault no eye can catch &mdash; a freeze, a missed message, a step in the wrong order. Today&rsquo;s validators check a file is <b>well-formed</b>; none check that the conversation it describes <b>can actually happen</b>.</p>
+ </div>
+ <div class="dlrow reveal">
+  <div class="incident">
+   <div class="hd"><span>Incident &middot; silent hang</span><span>status: never returns</span></div>
+   <div class="bd">An orchestrator runs a &ldquo;ship the fix&rdquo; job with three subagents. The <b>Coder</b> won&rsquo;t push its patch until the <b>Reviewer</b> signs off. The Reviewer won&rsquo;t sign off until tests are green &mdash; so it waits for the <b>Tester</b>. The Tester can&rsquo;t run until the patch is on the test branch &mdash; so it waits for the Coder. Each sheet reads fine alone; together they form a circle where everyone waits to receive before anyone will send. The run just hangs &mdash; no crash, no log.
+    <div class="src">This isn&rsquo;t hypothetical &mdash; it is a documented multi-agent failure mode (MAST, Cemri et al., UC Berkeley, 2025).</div>
+   </div>
+  </div>
+  <div class="loopwrap">
+   <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="ring">
+  <circle cx="110" cy="110" r="74" fill="none" stroke="rgba(255,92,114,.25)" stroke-width="2"/>
+  <circle class="dash" cx="110" cy="110" r="74" fill="none" stroke="#FF5C72" stroke-width="2.5" stroke-linecap="round"/>
+ </g>
+ <g font-family="'JetBrains Mono',monospace" font-size="9" fill="#FFB7BF" text-anchor="middle">
+  <g class="pnode"><circle cx="110" cy="36" r="13" fill="#161B2B" stroke="#FF5C72" stroke-width="2"/><text x="110" y="39">CODE</text></g>
+  <g class="pnode" style="animation-delay:.6s"><circle cx="174" cy="146" r="13" fill="#161B2B" stroke="#FF5C72" stroke-width="2"/><text x="174" y="149">TEST</text></g>
+  <g class="pnode" style="animation-delay:1.2s"><circle cx="46" cy="146" r="13" fill="#161B2B" stroke="#FF5C72" stroke-width="2"/><text x="46" y="149">REV</text></g>
+ </g>
+ <text x="110" y="106" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="1.5" fill="#FF5C72">WAITING</text>
+ <text x="110" y="122" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="1.5" fill="#8090AB">FOREVER</text>
+</svg>
+   <span class="loopcap">the failure STJP rules out</span>
+  </div>
+ </div>
+ <figure class="fig reveal" data-fig="FIG · 01 — DEADLOCK"><svg viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated 3-subagent deadlock cycle">
+<defs>
+<marker id="d1r" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,3.5 L0,7 L2.4,3.5Z" fill="#EF4444"/></marker>
+<marker id="d1g" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#9AA7BD"/></marker>
+</defs>
+<path class="flow slow" d="M450,72 C 360,130 250,165 178,214" fill="none" stroke="#9AA7BD" stroke-width="1.6" opacity=".5" marker-end="url(#d1g)"/>
+<path class="flow slow" d="M450,72 C 540,130 650,165 722,214" fill="none" stroke="#9AA7BD" stroke-width="1.6" opacity=".5" marker-end="url(#d1g)"/>
+<path class="flow slow" d="M450,72 L450,414" fill="none" stroke="#9AA7BD" stroke-width="1.6" opacity=".5" marker-end="url(#d1g)"/>
+<path id="d1e1" class="flow" d="M270,255 C 385,165 520,165 630,255" fill="none" stroke="#EF4444" stroke-width="2.4" marker-end="url(#d1r)"/>
+<path id="d1e2" class="flow" d="M735,308 C 720,388 632,440 560,453" fill="none" stroke="#EF4444" stroke-width="2.4" marker-end="url(#d1r)"/>
+<path id="d1e3" class="flow" d="M340,453 C 268,440 180,388 165,308" fill="none" stroke="#EF4444" stroke-width="2.4" marker-end="url(#d1r)"/>
+<circle cx="450" cy="338" r="58" fill="none" stroke="#EF4444" stroke-width="2" stroke-dasharray="6 8" class="flow" opacity=".45"/>
+<ellipse class="breathe" cx="450" cy="338" rx="74" ry="38" fill="#FEECEC" stroke="#EF4444" stroke-width="1.6"/>
+<text x="450" y="334" text-anchor="middle" class="ttl" font-size="14" fill="#B91C1C">DEADLOCK</text>
+<text x="450" y="351" text-anchor="middle" class="mono" font-size="9.5" fill="#A06A6A">nothing moves</text>
+<rect x="330" y="22" width="240" height="50" rx="13" fill="#2563EB"/>
+<text x="450" y="43" text-anchor="middle" class="ttl" font-size="15" fill="#fff">Orchestrator</text>
+<text x="450" y="59" text-anchor="middle" class="mono" font-size="9.5" fill="#DBE7FF">ship the fix</text>
+<rect x="60" y="222" width="210" height="84" rx="14" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+<rect x="66" y="230" width="5" height="68" rx="2.5" fill="#2563EB"/>
+<circle class="pulse" cx="254" cy="236" r="4.5" fill="#F59E0B"/>
+<text x="90" y="256" class="ttl" font-size="16" fill="#0F2444">Coder</text>
+<text x="90" y="278" class="mono" font-size="10" fill="#5A6B85">won't push the patch</text>
+<text x="90" y="293" class="mono" font-size="10" fill="#5A6B85">until Reviewer signs off</text>
+<rect x="630" y="222" width="210" height="84" rx="14" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+<rect x="636" y="230" width="5" height="68" rx="2.5" fill="#2563EB"/>
+<circle class="pulse" cx="824" cy="236" r="4.5" fill="#F59E0B"/>
+<text x="660" y="256" class="ttl" font-size="16" fill="#0F2444">Reviewer</text>
+<text x="660" y="278" class="mono" font-size="10" fill="#5A6B85">won't sign off</text>
+<text x="660" y="293" class="mono" font-size="10" fill="#5A6B85">until tests are green</text>
+<rect x="345" y="418" width="210" height="84" rx="14" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+<rect x="351" y="426" width="5" height="68" rx="2.5" fill="#2563EB"/>
+<circle class="pulse" cx="539" cy="432" r="4.5" fill="#F59E0B"/>
+<text x="375" y="452" class="ttl" font-size="16" fill="#0F2444">Tester</text>
+<text x="375" y="474" class="mono" font-size="10" fill="#5A6B85">can't run until the patch</text>
+<text x="375" y="489" class="mono" font-size="10" fill="#5A6B85">is on the test branch</text>
+<g class="mono" font-size="11" fill="#EF4444" text-anchor="middle">
+<rect x="376" y="181" width="148" height="20" rx="9" fill="#fff" opacity=".93"/><text x="450" y="195">waits for: sign-off</text>
+<rect x="598" y="392" width="154" height="20" rx="9" fill="#fff" opacity=".93"/><text x="675" y="406">waits for: green tests</text>
+<rect x="148" y="392" width="162" height="20" rx="9" fill="#fff" opacity=".93"/><text x="229" y="406">waits for: pushed patch</text>
+</g>
+<circle class="pkt" r="5.5" fill="#EF4444"><animateMotion dur="2.7s" repeatCount="indefinite" begin="0s"><mpath xlink:href="#d1e1"/></animateMotion></circle>
+<circle class="pkt" r="5.5" fill="#EF4444"><animateMotion dur="2.7s" repeatCount="indefinite" begin="0.9s"><mpath xlink:href="#d1e2"/></animateMotion></circle>
+<circle class="pkt" r="5.5" fill="#EF4444"><animateMotion dur="2.7s" repeatCount="indefinite" begin="1.8s"><mpath xlink:href="#d1e3"/></animateMotion></circle>
+</svg><figcaption>Each subagent&rsquo;s sheet reads fine alone; together they form a circular wait that hangs.</figcaption></figure>
+ <div class="pull reveal">A human can&rsquo;t read three sheets and see a circular wait. <span class="g">Logical proving systems can.</span></div>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">02</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">02 /</span> The fix is proven</div>
+  <h2 class="reveal">Multiparty Interactions Governance: MPST &rarr; Scribble &rarr; STJP</h2>
+ </div>
+ <div class="rail reveal">
+  <div class="node"><div class="t">MPST</div><div class="s">the math &middot; the proof</div></div>
+  <div class="arrow">&rarr;</div>
+  <div class="node scr"><div class="t">Scribble</div><div class="s">the type checker</div></div>
+  <div class="arrow">&rarr;</div>
+  <div class="node stjp"><div class="t">STJP</div><div class="s">live governance</div></div>
+ </div>
+ <div class="col">
+  <p class="reveal">Computer science settled &ldquo;is this multi-party conversation safe?&rdquo; two decades ago, with <b>Multiparty Session Types (MPST)</b>. Given the rules of a conversation among several parties, MPST <span class="hl">proves &mdash; as a theorem, before anything runs &mdash;</span> that the protocol is deadlock-free, communication-safe, and protocol-faithful. With <b>session subtyping</b> it proves one thing more: you may swap one participant for another &mdash; a cheaper model, a different vendor&rsquo;s agent &mdash; as long as its behaviour <i>refines</i> the contract, and every guarantee still holds.</p>
+  <div class="guars reveal">
+   <span class="guar"><b>&check;</b> deadlock-free</span>
+   <span class="guar"><b>&check;</b> communication-safe</span>
+   <span class="guar"><b>&check;</b> protocol-faithful</span>
+   <span class="guar"><b>&check;</b> safe agent swaps</span>
+  </div>
+  <p class="reveal">MPST then <b>projects</b> the proven-correct <b>global</b> protocol onto each participant as a <b>local type</b> &mdash; a precise contract for that one role. Traditionally those guided hand-written <b>code</b>. STJP&rsquo;s move is to project them onto each <b>agent</b> instead: every agent gets a behaviour guide carved from a protocol <span class="hl">already proven safe</span>, with the safety locked in at compile time &mdash; not hoped for at runtime.</p>
+  <p class="reveal"><b>Scribble</b> is the MPST type checker: it validates a global protocol against MPST&rsquo;s typing rules, accepting it only if it is provably sound. STJP wires this into a loop anyone can drive:</p>
+  <ol class="steps reveal">
+   <li><span class="lead">You give STJP the intent</span> of a task, in plain language.</li>
+   <li><span class="lead">An LLM translator</span> turns that intent into a candidate <b>global type</b>.</li>
+   <li><span class="lead">Scribble validates it.</span> If it fails &mdash; a deadlock, an impossible step &mdash; the translator re-drafts, and Scribble checks again, until it passes.</li>
+   <li><span class="lead">The validated global type is projected</span> into a local contract per agent. Only then does any agent run.</li>
+  </ol>
+ </div>
+ <figure class="fig reveal" data-fig="FIG · 02 — COMPILE"><svg viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated intent to Scribble validation pipeline">
+<defs>
+<marker id="d2b" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#7C8BA6"/></marker>
+<marker id="d2g" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#16A34A"/></marker>
+<marker id="d2r" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#EF4444"/></marker>
+</defs>
+<path class="flow" d="M172,162 L212,162" fill="none" stroke="#7C8BA6" stroke-width="2.1" marker-end="url(#d2b)"/>
+<path class="flow" d="M368,162 L408,162" fill="none" stroke="#7C8BA6" stroke-width="2.1" marker-end="url(#d2b)"/>
+<path class="flow" d="M558,162 L574,162" fill="none" stroke="#7C8BA6" stroke-width="2.1" marker-end="url(#d2b)"/>
+<path class="flow" d="M724,162 L768,162" fill="none" stroke="#16A34A" stroke-width="2.3" marker-end="url(#d2g)"/>
+<path class="flow" d="M846,204 L846,238" fill="none" stroke="#16A34A" stroke-width="2.1" marker-end="url(#d2g)"/>
+<path id="d2fail" class="flow" d="M612,116 C 510,30 380,30 290,116" fill="none" stroke="#EF4444" stroke-width="2.2" marker-end="url(#d2r)"/>
+<g class="mono" text-anchor="middle"><rect x="392" y="28" width="118" height="20" rx="9" fill="#fff" opacity=".93"/><text x="451" y="42" font-size="11.5" fill="#EF4444">fail: re-draft</text></g>
+<g class="mono" text-anchor="middle"><rect x="708" y="138" width="58" height="18" rx="8" fill="#fff" opacity=".93"/><text x="737" y="151" font-size="11" fill="#16A34A">valid &#10003;</text></g>
+<rect x="24" y="120" width="148" height="84" rx="13" fill="#fff" stroke="#2563EB" stroke-width="1.8"/><rect x="30" y="128" width="5" height="68" rx="2.5" fill="#2563EB"/>
+<text x="54" y="156" class="ttl" font-size="15" fill="#0F2444">User Intent</text><text x="54" y="178" class="mono" font-size="10" fill="#5A6B85">plain language</text>
+<rect x="212" y="120" width="156" height="84" rx="13" fill="#EAF1FF" stroke="#2563EB" stroke-width="1.8"/>
+<text x="290" y="156" text-anchor="middle" class="ttl" font-size="15" fill="#1D4ED8">LLM Translator</text><text x="290" y="178" text-anchor="middle" class="mono" font-size="10" fill="#3A5680">intent &#8594; protocol</text>
+<rect x="408" y="120" width="150" height="84" rx="13" fill="#fff" stroke="#2563EB" stroke-width="1.8"/><rect x="414" y="128" width="5" height="68" rx="2.5" fill="#2563EB"/>
+<text x="438" y="156" class="ttl" font-size="15" fill="#0F2444">Global Type</text><text x="438" y="178" class="mono" font-size="10" fill="#5A6B85">candidate</text>
+<polygon class="breathe" points="648,96 724,162 648,228 572,162" fill="#FFF4E0" stroke="#F59E0B" stroke-width="2"/>
+<text x="648" y="158" text-anchor="middle" class="ttl" font-size="14" fill="#B4730A">Scribble</text><text x="648" y="176" text-anchor="middle" class="mono" font-size="10" fill="#9A6A12">valid?</text>
+<rect x="768" y="120" width="156" height="84" rx="13" fill="#EAF8EE" stroke="#16A34A" stroke-width="1.8"/><rect x="774" y="128" width="5" height="68" rx="2.5" fill="#16A34A"/>
+<text x="798" y="152" class="ttl" font-size="15" fill="#15803D">Project to</text><text x="798" y="172" class="mono" font-size="10" fill="#2C6B43">per-agent</text><text x="798" y="186" class="mono" font-size="10" fill="#2C6B43">local contracts</text>
+<rect x="768" y="238" width="156" height="40" rx="11" fill="#2563EB"/><text x="846" y="263" text-anchor="middle" class="ttl" font-size="13" fill="#fff">then agents run &#8594;</text>
+<rect x="372" y="252" width="372" height="48" rx="12" fill="#F1F5FB" stroke="#C7D3E6" stroke-width="1.2"/>
+<text x="558" y="271" text-anchor="middle" class="mono" font-size="11" fill="#41506A">PROVEN AT COMPILE TIME</text>
+<text x="558" y="288" text-anchor="middle" class="mono" font-size="10.5" fill="#5A6B85">deadlock-free &#183; type-safe &#183; protocol-faithful &#183; safe swaps</text>
+<path id="d2ok" d="M724,162 L846,162 L846,238" fill="none" stroke="none"/>
+<circle class="pkt" r="5" fill="#16A34A"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#d2ok"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#EF4444"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath xlink:href="#d2fail"/></animateMotion></circle>
+</svg><figcaption>Intent becomes a candidate global type; Scribble accepts it or bounces it back &mdash; only proven protocols reach the agents.</figcaption></figure>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">03</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">03 /</span> Enforced live</div>
+  <h2 class="reveal">Enforced at runtime &mdash; with code, not another AI</h2>
+  <p class="reveal">The compile-time validator is the <b>Checker</b> (Scribble). Three more roles run at runtime &mdash; and the one that says <i>no</i> is deterministic code, not a model that could flail.</p>
+ </div>
+ <div class="roles reveal">
+  <div class="role mon"><div class="tag">runtime &middot; gate</div><div class="nm">Monitor</div><p>Holds each agent&rsquo;s local contract and checks every message both ways &mdash; may this sender send this type with constraints met? would this receiver break its contract by accepting? On any violation it stops the message.</p><span class="det">deterministic code — not an agent</span></div>
+  <div class="role"><div class="tag">runtime &middot; oversight</div><div class="nm">Critic</div><p>Reads across all the Monitor&rsquo;s traces for the broader view: do they, as a whole, stay inside the global type? Is any security or policy line crossed that a single message wouldn&rsquo;t reveal?</p></div>
+  <div class="role"><div class="tag">runtime &middot; repair</div><div class="nm">Revisor</div><p>When the Critic flags something, it revises the protocol or contract. The rails get corrected by design &mdash; not by hoping the models improve.</p></div>
+ </div>
+ <figure class="fig reveal" data-fig="FIG · 03 — ECOSYSTEM"><svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated STJP ecosystem with runtime monitor">
+<defs>
+<marker id="d3b" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#7C8BA6"/></marker>
+<marker id="d3g" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#16A34A"/></marker>
+<marker id="d3r" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#EF4444"/></marker>
+<marker id="d3a" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.2 L0,6.4 L2.2,3.2Z" fill="#F59E0B"/></marker>
+</defs>
+<rect x="18" y="20" width="964" height="150" rx="16" fill="#EAF1FF" opacity=".5" stroke="#2563EB" stroke-width="1.3" stroke-dasharray="2 6"/>
+<rect x="34" y="8" width="150" height="26" rx="13" fill="#2563EB"/><text x="109" y="25" text-anchor="middle" class="mono" font-size="11" fill="#fff">COMPILE TIME</text>
+<rect x="18" y="200" width="964" height="384" rx="16" fill="#FFF6E8" opacity=".55" stroke="#F59E0B" stroke-width="1.3" stroke-dasharray="2 6"/>
+<rect x="34" y="188" width="110" height="26" rx="13" fill="#F59E0B"/><text x="89" y="205" text-anchor="middle" class="mono" font-size="11" fill="#fff">RUNTIME</text>
+<path class="flow" d="M158,88 L178,88" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path class="flow" d="M318,88 L338,88" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path class="flow" d="M478,88 L498,88" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path class="flow" d="M688,88 L708,88" fill="none" stroke="#16A34A" stroke-width="2.1" marker-end="url(#d3g)"/>
+<path id="d3fail" class="flow" d="M540,50 C 440,10 326,10 252,52" fill="none" stroke="#EF4444" stroke-width="2" marker-end="url(#d3r)"/>
+<g class="mono" text-anchor="middle"><rect x="356" y="6" width="96" height="18" rx="8" fill="#fff" opacity=".93"/><text x="404" y="19" font-size="10.5" fill="#EF4444">fail: re-draft</text></g>
+<rect x="38" y="56" width="120" height="64" rx="12" fill="#EAF1FF" stroke="#2563EB" stroke-width="1.6"/><text x="98" y="93" text-anchor="middle" class="ttl" font-size="14" fill="#1D4ED8">Intent</text>
+<rect x="178" y="56" width="140" height="64" rx="12" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="248" y="86" text-anchor="middle" class="ttl" font-size="13" fill="#0F2444">LLM</text><text x="248" y="103" text-anchor="middle" class="mono" font-size="10" fill="#5A6B85">Translator</text>
+<rect x="338" y="56" width="140" height="64" rx="12" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="408" y="93" text-anchor="middle" class="ttl" font-size="14" fill="#0F2444">Global Type</text>
+<rect x="498" y="48" width="190" height="80" rx="13" fill="#FFF4E0" stroke="#F59E0B" stroke-width="1.8"/><text x="593" y="82" text-anchor="middle" class="ttl" font-size="13.5" fill="#B4730A">CHECKER &#183; Scribble</text><text x="593" y="100" text-anchor="middle" class="mono" font-size="10" fill="#9A6A12">validates global type</text>
+<rect x="708" y="56" width="180" height="64" rx="12" fill="#EAF8EE" stroke="#16A34A" stroke-width="1.6"/><text x="798" y="84" text-anchor="middle" class="ttl" font-size="13" fill="#15803D">Local contracts</text><text x="798" y="102" text-anchor="middle" class="mono" font-size="10" fill="#2C6B43">projected per agent</text>
+<path id="d3ctr" class="flow" d="M798,120 C 700,205 520,255 466,332" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-dasharray="6 6" marker-end="url(#d3b)"/>
+<g class="mono" text-anchor="middle"><rect x="560" y="246" width="120" height="18" rx="8" fill="#fff" opacity=".93"/><text x="620" y="259" font-size="10.5" fill="#2563EB">local contracts</text></g>
+<rect x="40" y="300" width="150" height="52" rx="12" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="115" y="331" text-anchor="middle" class="ttl" font-size="14" fill="#0F2444">Agent A</text>
+<rect x="40" y="384" width="150" height="52" rx="12" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="115" y="415" text-anchor="middle" class="ttl" font-size="14" fill="#0F2444">Agent B</text>
+<rect x="40" y="468" width="150" height="52" rx="12" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="115" y="492" text-anchor="middle" class="ttl" font-size="13.5" fill="#0F2444">Agent C</text><text x="115" y="508" text-anchor="middle" class="mono" font-size="9.5" fill="#5A6B85">+ subagents</text>
+<path id="d3m1" class="flow" d="M190,322 L250,338" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path id="d3m2" class="flow" d="M190,410 L250,412" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path id="d3m3" class="flow" d="M190,494 L250,490" fill="none" stroke="#7C8BA6" stroke-width="2" marker-end="url(#d3b)"/>
+<path id="d3ok" class="flow" d="M250,452 C 218,476 214,420 192,414" fill="none" stroke="#16A34A" stroke-width="2" marker-end="url(#d3g)"/>
+<g class="mono" text-anchor="middle"><rect x="198" y="462" width="62" height="18" rx="8" fill="#fff" opacity=".93"/><text x="229" y="475" font-size="10" fill="#16A34A">allowed</text></g>
+<rect x="250" y="300" width="214" height="252" rx="14" fill="#FFF4E0" stroke="#F59E0B" stroke-width="1.8"/>
+<text x="357" y="332" text-anchor="middle" class="ttl" font-size="17" fill="#B4730A">MONITOR</text>
+<text x="357" y="356" text-anchor="middle" class="mono" font-size="10.5" fill="#6B4E1E">deterministic code</text>
+<text x="357" y="371" text-anchor="middle" class="mono" font-size="10.5" fill="#6B4E1E">not an agent</text>
+<text x="357" y="398" text-anchor="middle" class="mono" font-size="10" fill="#8A6A2E">checks every message</text>
+<text x="357" y="413" text-anchor="middle" class="mono" font-size="10" fill="#8A6A2E">sender ok? receiver ok?</text>
+<g class="abA"><rect x="300" y="452" width="114" height="32" rx="16" fill="#16A34A"/><text x="357" y="473" text-anchor="middle" class="ttl" font-size="14" fill="#fff">ALLOW</text></g>
+<g class="abB"><rect x="300" y="452" width="114" height="32" rx="16" fill="#EF4444"/><text x="357" y="473" text-anchor="middle" class="ttl" font-size="14" fill="#fff">BLOCK</text></g>
+<text x="357" y="510" text-anchor="middle" class="mono" font-size="9.5" fill="#8A6A2E">allow or block &#183; per message</text>
+<rect x="560" y="320" width="210" height="92" rx="13" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="665" y="349" text-anchor="middle" class="ttl" font-size="15" fill="#1D4ED8">CRITIC</text><text x="665" y="370" text-anchor="middle" class="mono" font-size="9.5" fill="#5A6B85">all traces within global type?</text><text x="665" y="385" text-anchor="middle" class="mono" font-size="9.5" fill="#5A6B85">any security / policy breach?</text>
+<rect x="560" y="452" width="210" height="92" rx="13" fill="#fff" stroke="#2563EB" stroke-width="1.6"/><text x="665" y="481" text-anchor="middle" class="ttl" font-size="15" fill="#1D4ED8">REVISOR</text><text x="665" y="502" text-anchor="middle" class="mono" font-size="9.5" fill="#5A6B85">revises the protocol / contract</text><text x="665" y="517" text-anchor="middle" class="mono" font-size="9.5" fill="#5A6B85">fix the rails by design</text>
+<path id="d3tr" class="flow" d="M464,400 L560,372" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#d3b)"/>
+<g class="mono" text-anchor="middle"><rect x="486" y="370" width="56" height="18" rx="8" fill="#fff" opacity=".93"/><text x="514" y="383" font-size="10.5" fill="#2563EB">traces</text></g>
+<path id="d3cr" class="flow" d="M665,412 L665,452" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#d3b)"/>
+<path id="d3revI" class="flow" d="M768,488 C 930,440 950,168 832,122" fill="none" stroke="#F59E0B" stroke-width="2" marker-end="url(#d3a)"/>
+<path id="d3revL" class="flow" d="M600,452 C 506,360 500,202 560,130" fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#d3a)"/>
+<g class="mono" text-anchor="middle">
+<rect x="858" y="296" width="124" height="18" rx="8" fill="#fff" opacity=".93"/><text x="920" y="309" font-size="10" fill="#D97706">patch &#183; immediate</text>
+<rect x="430" y="250" width="126" height="18" rx="8" fill="#fff" opacity=".93"/><text x="493" y="263" font-size="10" fill="#D97706">revise &#183; long-term</text>
+</g>
+<circle class="pkt" r="5" fill="#F59E0B"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath xlink:href="#d3revI"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#F59E0B"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.7s"><mpath xlink:href="#d3revL"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#2563EB"><animateMotion dur="2s" repeatCount="indefinite" begin="0s"><mpath xlink:href="#d3m1"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#2563EB"><animateMotion dur="2s" repeatCount="indefinite" begin="0.7s"><mpath xlink:href="#d3m2"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#2563EB"><animateMotion dur="2s" repeatCount="indefinite" begin="1.4s"><mpath xlink:href="#d3m3"/></animateMotion></circle>
+<circle class="pkt" r="5" fill="#36D7C4"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath xlink:href="#d3ctr"/></animateMotion></circle>
+<circle class="pkt" r="4.5" fill="#2563EB"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath xlink:href="#d3tr"/></animateMotion></circle>
+<circle class="pkt" r="4.5" fill="#2563EB"><animateMotion dur="1.4s" repeatCount="indefinite"><mpath xlink:href="#d3cr"/></animateMotion></circle>
+</svg><figcaption>One Checker proves the protocol at compile time; the deterministic Monitor gates every message, with Critic and Revisor closing the loop.</figcaption></figure>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">04</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">04 /</span> Where it fits</div>
+  <h2 class="reveal">Where STJP fits in the governance stack</h2>
+  <p class="reveal">Agent governance stacks three layers over <b>a single agent</b> &mdash; format, semantics, behavior. Each is checked alone, and <i>nothing proves the three agree</i>.</p>
+ </div>
+ <div class="stack reveal">
+  <div class="layer"><div class="n">LAYER 1</div><div class="t">Format conformance</div><p>Does its spec file parse? <i>Solved &mdash; skill validators, schema checks.</i></p></div>
+  <div class="layer"><div class="n">LAYER 2</div><div class="t">Semantic soundness</div><p>Does the spec match the tool&rsquo;s real capabilities and boundaries? <i>Not solved.</i></p></div>
+  <div class="layer"><div class="n">LAYER 3</div><div class="t">Behavioral verification</div><p>Does spec + runtime + agent behave as claimed? <i>Emerging &mdash; BeSafe-Bench, ST-WebAgentBench.</i></p></div>
+ </div>
+ <div class="miss reveal"><div class="n">THE MISSING PROOF &mdash; STJP</div><div class="t">Making all three layers agree</div><p>A contract <b>proven correct by theory</b> (Layer 2) and enforced by <b>deterministic runtime code</b> (Layer 3), plus the vertical proof that connects all three layers into one guarantee.</p></div>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">05</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">05 /</span> Why now</div>
+  <h2 class="reveal">Interaction-level coherence, assured by design</h2>
+  <p class="reveal">Can&rsquo;t we just trust the agents to sort themselves out? No &mdash; and the evidence says so twice.</p>
+ </div>
+ <div class="evid reveal">
+  <div class="ev"><div class="k">Empirically</div><h4>Most failures are coordination, not capability.</h4><p><i>Why Do Multi-Agent LLM Systems Fail?</i> annotated 1,600+ traces across seven frameworks: the bulk of failures come from specification and coordination <i>between</i> agents &mdash; and fixing them needs structural redesign, not better prompts.</p><span class="cite">MAST · Cemri et al. · arXiv:2503.13657</span></div>
+  <div class="ev"><div class="k">Theoretically</div><h4>Incoherence is inherent, and scale won&rsquo;t save you.</h4><p><i>The Hot Mess of AI</i> shows that the longer agents reason and the more steps they take, the more their failures become inconsistent flailing &mdash; and bigger models don&rsquo;t reliably fix it.</p><span class="cite">ICLR 2026 · arXiv:2601.23045</span></div>
+ </div>
+ <div class="pull reveal">Adaptive learning is a <span style="color:var(--amber)">wish</span>. <span class="g">Structural design is a guarantee.</span></div>
+ <div class="col"><p class="reveal">So &ldquo;the agents will get better on their own&rdquo; is not a lever you can pull. The dependable one is governance by structural design, applied where agents actually meet: their interactions. STJP delivers exactly that &mdash; coherence assured at the interaction level <b>by design</b>: proven at compile time, enforced live.</p></div>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">03</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">03 /</span> Why it&rsquo;s different</div>
+  <h2 class="reveal">What ASSERT and ACS don&rsquo;t do</h2>
+  <p class="reveal">Microsoft just shipped two strong pieces for agent safety. Both are useful. Neither looks at the thing STJP looks at &mdash; <b>the conversation between agents</b>.</p>
+ </div>
+ <div class="roles reveal">
+  <div class="role plain"><div class="tag">tests &middot; after the fact</div><div class="nm">ASSERT</div><p>A <b>tester</b>. You give it the rules you care about; it invents tricky situations, runs your agents through them, and scores how they did. Good for finding problems by trial &mdash; but it only catches what its tests happen to hit, and only <i>after</i> a run. It can&rsquo;t promise a freeze won&rsquo;t happen.</p></div>
+  <div class="role plain"><div class="tag">guards &middot; one agent</div><div class="nm">ACS</div><p>A <b>guard on a single agent</b> &mdash; watching what goes in, what the model says, what tools it calls, what comes out, and allowing, blocking, or editing each step. Excellent for &ldquo;should this one action be allowed?&rdquo; But it only ever sees one agent, one moment at a time. It has no picture of the whole conversation, so it can&rsquo;t tell whether the group will freeze.</p></div>
+  <div class="role stjp"><div class="tag">proves &middot; the whole conversation</div><div class="nm">STJP</div><p>Checks the <b>conversation itself</b> &mdash; all the agents together, before anything runs &mdash; and proves the back-and-forth can finish. It answers the question underneath the other two: <i>can this group actually get through the conversation?</i> Then it enforces that answer, live.</p></div>
+ </div>
+ <div class="pull reveal">ASSERT crash-tests the car. ACS is the seatbelt in each seat. <span class="g">STJP makes sure the roads connect so the cars don&rsquo;t all gridlock</span> &mdash; the problem neither of the others was looking at.</div>
+ <div class="col"><p class="reveal">They don&rsquo;t compete &mdash; you&rsquo;d want all three: ASSERT to test, ACS to guard each agent, STJP to make the conversation sound. STJP can even hand its per-agent checklists straight to ACS to enforce. The freeze is exactly the failure ASSERT can miss and ACS can&rsquo;t see &mdash; and it&rsquo;s the most expensive one, because nothing breaks; the job just hangs. <b>STJP is the only piece that prevents it before it can start.</b></p></div>
+</div></section>
+
+<section><div class="wrap"><div class="ghost">06</div>
+ <div class="col">
+  <div class="ey reveal"><span class="n">06 /</span> The ecosystem</div>
+  <h2 class="reveal">Where STJP sits next to Aleph and Arcade</h2>
+ </div>
+ <div class="peers reveal">
+  <div class="peer"><h4>Arcade</h4><p>Keeps an agent&rsquo;s reach into the outside world safe &mdash; Gmail, Stripe, GitHub. Not how agents talk to each other.</p></div>
+  <div class="peer"><h4>Aleph</h4><p>Gets one hard answer right and proves it. Not the back-and-forth among several agents.</p></div>
+  <div class="peer stjp"><h4>STJP</h4><p>Proves the conversation that ties the agents together is sound &mdash; and keeps it that way, live.</p></div>
+ </div>
+ <div class="cta reveal">
+  <div class="ctak">The takeaway</div>
+  <div class="big"><span class="g">STJP proves the conversation between your agents</span> &mdash; and keeps it sound, live.</div>
+  <div class="ctactx">Arcade guards each agent&rsquo;s connections to the outside world; Aleph proves a single hard calculation. <b>STJP is the missing layer</b> &mdash; the one that proves the interactions <i>between</i> agents can&rsquo;t break.</div>
+  <div class="sub">MPST &nbsp;&rarr;&nbsp; Scribble &nbsp;&rarr;&nbsp; STJP &nbsp;&middot;&nbsp; the proof is the product</div>
+ </div>
+</div></section>
+
+<footer><div class="wrap">
+ References &mdash; MAST: Cemri et&nbsp;al., <i>Why Do Multi-Agent LLM Systems Fail?</i> (2025), arXiv:2503.13657 &nbsp;·&nbsp; <i>The Hot Mess of AI</i>, H&auml;gele et&nbsp;al. (ICLR 2026), arXiv:2601.23045.<br>
+ Diagrams editable as .drawio &middot; STJP one-pager companion document available as .docx.
+</div></footer>
+
+<script>
+const bar=document.getElementById('bar');
+const onScroll=()=>{const h=document.documentElement;const sc=h.scrollTop/(h.scrollHeight-h.clientHeight);bar.style.width=(sc*100)+'%';};
+document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// kick off hero reveals immediately
+requestAnimationFrame(()=>document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in')));
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('.fig svg, .loopwrap svg').forEach(s=>{try{s.pauseAnimations()}catch(e){}});}
+</script>
+</body></html>

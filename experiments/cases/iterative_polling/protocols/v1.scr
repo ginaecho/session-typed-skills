@@ -1,0 +1,25 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol IterativePolling(role Client, role Server, role Logger) {
+    StartSession(String) from Client to Server;
+    StartSession(String) from Client to Logger;
+
+    rec Loop {
+        Query(String) from Client to Server;
+        Result(Double) from Server to Client;
+        Result(Double) from Server to Logger;
+
+        choice at Client {
+            Continue() from Client to Server;
+            Continue() from Client to Logger;
+            continue Loop;
+        } or {
+            Stop() from Client to Server;
+            Stop() from Client to Logger;
+            FinalReport(String) from Logger to Client;
+        }
+    }
+}

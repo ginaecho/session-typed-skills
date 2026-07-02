@@ -1,0 +1,40 @@
+module v1;
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol TradeSettlement(role Buyer, role Seller, role Escrow, role Shipper, role Inspector) {
+    // Buyer deposits payment into escrow
+    Deposit(Double) from Buyer to Escrow;
+
+    // Notification to Seller to confirm payment in escrow
+    PaymentConfirmed() from Escrow to Seller;
+
+    // Seller instructs shipment of goods
+    ShipGoods(String) from Seller to Shipper;
+
+    // Choice: Escrow decides domestic or international shipment
+    choice at Escrow {
+        Domestic() from Escrow to Buyer;   // Fan-out notifications
+        Domestic() from Escrow to Seller;
+        Domestic() from Escrow to Shipper;
+        Domestic() from Escrow to Inspector;
+        GoodsDelivered(String) from Shipper to Inspector;
+    } or {
+        International() from Escrow to Buyer;   // Fan-out notifications
+        International() from Escrow to Seller;
+        International() from Escrow to Shipper;
+        International() from Escrow to Inspector;
+        CustomsClearance(String) from Shipper to Inspector;
+        GoodsDelivered(String) from Shipper to Inspector;
+    }
+
+    // Inspection step
+    InspectionResult(String) from Inspector to Buyer;
+
+    // Buyer releases payment to Seller
+    ReleasePayment(Double) from Buyer to Escrow;
+    PaymentReleased(Double) from Escrow to Seller;
+
+    // Final settlement confirmation
+    SettlementComplete() from Buyer to all;
+}

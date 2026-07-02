@@ -1,0 +1,23 @@
+module FinancePipeline_composed;
+
+data <java> "java.lang.Integer" from "rt.jar" as int;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+aux global protocol BankingSession(role C, role B) {
+    open(String) from C to B;
+    deposit(int) from C to B;
+    confirm(int) from B to C;
+    close() from C to B;
+}
+
+aux global protocol AuditSession(role Requester, role Auditor) {
+    submit(String) from Requester to Auditor;
+    review(String) from Auditor to Requester;
+    approve(String) from Auditor to Requester;
+}
+
+global protocol FinancePipeline(role Client, role Bank, role Auditor) {
+    do BankingSession(Client, Bank);
+    do AuditSession(Client, Auditor);
+    report(String) from Auditor to Client;
+}

@@ -1,0 +1,56 @@
+case_id: auction
+description: |
+  Sealed-bid auction with three bidders. Auctioneer opens to each
+  bidder sequentially; each replies with a numeric bid; Auctioneer
+  computes winner and announces 'winner' or 'outbid' to each.
+  Refinements: bids positive; winner announcement uses one of the
+  reserved keywords. v1 is single-round (no recursion); v2 will add
+  the bidding-loop pattern.
+version: v1
+protocol_name: Auction
+roles:
+  - Auctioneer
+  - BidderA
+  - BidderB
+  - BidderC
+terminal_label: WinnerC
+max_steps: 14
+branch_hints: [low_reserve, high_reserve]
+intent: |
+  Run a single-round sealed-bid auction with three bidders. The
+  Auctioneer opens the bidding to BidderA, BidderB and BidderC in
+  turn; each bidder responds with a positive numeric bid. The
+  Auctioneer announces 'winner' to the highest bidder and 'outbid' to
+  the others. Bids must be positive numbers; announcements must use
+  the reserved 'winner' or 'outbid' vocabulary.
+goals:
+  - id: G1
+    description: BidA must be positive
+    metric: bid_a
+    predicate: float(x) > 0.0
+    anchor: {sender: BidderA, receiver: Auctioneer, label: BidA}
+    threshold: "> 0"
+  - id: G2
+    description: BidB must be positive
+    metric: bid_b
+    predicate: float(x) > 0.0
+    anchor: {sender: BidderB, receiver: Auctioneer, label: BidB}
+    threshold: "> 0"
+  - id: G3
+    description: BidC must be positive
+    metric: bid_c
+    predicate: float(x) > 0.0
+    anchor: {sender: BidderC, receiver: Auctioneer, label: BidC}
+    threshold: "> 0"
+  - id: G4
+    description: WinnerA announcement uses reserved vocabulary
+    metric: announce_a
+    predicate: '"winner" in x.lower() or "outbid" in x.lower()'
+    anchor: {sender: Auctioneer, receiver: BidderA, label: WinnerA}
+    threshold: winner/outbid
+  - id: G5
+    description: WinnerB announcement uses reserved vocabulary
+    metric: announce_b
+    predicate: '"winner" in x.lower() or "outbid" in x.lower()'
+    anchor: {sender: Auctioneer, receiver: BidderB, label: WinnerB}
+    threshold: winner/outbid

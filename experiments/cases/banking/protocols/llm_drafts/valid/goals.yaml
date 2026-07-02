@@ -1,0 +1,45 @@
+source_protocol: experiments\cases\banking\protocols\llm_drafts\valid\v1.scr
+re_anchored_from: experiments\cases\banking\case.yaml
+n_canonical_goals: 4
+n_kept: 4
+n_dropped: 0
+dropped: []
+goals:
+- id: G1
+  description: The transfer request carries a positive amount
+  metric: request_amount
+  predicate: float(x) > 0
+  anchor:
+    sender: Initiator
+    receiver: SourceBank
+    label: TransferRequest
+  threshold: '> 0'
+- id: G2
+  description: A large transfer is routed to the Approver for authorization
+  metric: approval_routing
+  predicate: 'True'
+  anchor:
+    sender: SourceBank
+    receiver: Approver
+    label: HighAmountApprovalRequired
+  threshold: routing event present
+  branch: large
+- id: G3
+  description: Every transfer ends with an audit settlement record to the initiator
+  metric: settlement_recorded
+  predicate: len(x) > 0
+  anchor:
+    sender: AuditLog
+    receiver: Initiator
+    label: FinalOutcome
+  threshold: non-empty
+- id: G4
+  description: A small (no-approval) transfer credits the destination bank
+  metric: destination_credited
+  predicate: float(x) > 0
+  anchor:
+    sender: SourceBank
+    receiver: AuditLog
+    label: NotifyDebitSuccess
+  threshold: '> 0'
+  branch: small

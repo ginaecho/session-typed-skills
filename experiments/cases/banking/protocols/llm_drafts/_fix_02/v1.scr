@@ -1,0 +1,44 @@
+module v1;
+
+data <java> "java.lang.Double" from "rt.jar" as Double;
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Boolean" from "rt.jar" as Bool;
+
+global protocol BankingTransfer(role Initiator, role SourceBank, role DestBank, role Approver, role AuditLog) {
+    TransferRequest(Double) from Initiator to SourceBank;
+
+    choice at SourceBank {
+        HighAmountApprovalRequired() from SourceBank to Approver; 
+        HighAmountApprovalRequired() from SourceBank to DestBank;
+        HighAmountApprovalRequired() from SourceBank to AuditLog;
+
+        Approval(Bool) from Approver to SourceBank;
+
+        choice at SourceBank {
+            Approved() from SourceBank to DestBank;
+            Approved() from SourceBank to AuditLog;
+            Approved() from SourceBank to Initiator;
+
+            SuccessDebit(Double) from SourceBank to DestBank;
+            SuccessDebit(Double) from SourceBank to AuditLog;
+            SuccessDebit(Double) from SourceBank to Initiator;
+        } or {
+            Rejected() from SourceBank to AuditLog;
+            Rejected() from SourceBank to Initiator;
+
+            FailureDebit(String) from SourceBank to AuditLog;
+            FailureDebit(String) from SourceBank to Initiator;
+        }
+    } or {
+        StandardAmountProceed() from SourceBank to DestBank;
+        StandardAmountProceed() from SourceBank to AuditLog;
+        StandardAmountProceed() from SourceBank to Initiator;
+
+        SuccessDebit(Double) from SourceBank to DestBank;
+        SuccessDebit(Double) from SourceBank to AuditLog;
+        SuccessDebit(Double) from SourceBank to Initiator;
+    }
+
+    FinalOutcome(String) from AuditLog to Initiator;
+    Settled() from AuditLog to Initiator;
+}

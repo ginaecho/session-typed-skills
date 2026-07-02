@@ -1,0 +1,20 @@
+# Criticality annotations for trade_settlement (criticality_gate.py).
+# C1 provenance: the amount released to the Seller must trace to the amount the
+# Buyer funded (no inventing a different payout).
+provenance:
+  - source:  {label: FundEscrow}
+    derived: {label: ReleasePayment}
+    check: numeric
+
+# C2 context completeness: Escrow must have received the inspection result before
+# releasing payment, and the released payment should reflect the funded amount.
+context:
+  - actor: Escrow
+    requires: [FundEscrow, InspectionResult]
+    output: ReleasePayment
+    cover: numeric
+
+# C3 authorization before irreversible action: reuse severity (dispatch needs
+# funds_secured; release needs inspection).
+authorization:
+  use_severity: true

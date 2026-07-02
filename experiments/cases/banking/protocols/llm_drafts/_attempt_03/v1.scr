@@ -1,0 +1,26 @@
+module v1;
+
+data <java> "java.lang.Double" from "rt.jar" as Double;
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Boolean" from "rt.jar" as Bool;
+
+global protocol BankingTransfer(role Initiator, role SourceBank, role DestBank, role Approver, role AuditLog) {
+    RequestTransfer(Double) from Initiator to SourceBank;
+    
+    choice at SourceBank {
+        HighAmountApproval() from SourceBank to Approver;
+        HighAmountApproval() from SourceBank to DestBank;
+        ApproveTransfer(Bool) from Approver to SourceBank;
+        
+        choice at SourceBank {
+            ApprovalGranted() from SourceBank to DestBank;
+            ApprovalGranted() from SourceBank to AuditLog;
+
+            DebitCompleted(Bool) from SourceBank to DestBank;
+            CreditCompleted(Bool) from DestBank to AuditLog;
+        } or {
+            ApprovalDenied() from SourceBank to AuditLog;
+        }
+    } or {
+        LowAmountTransfer() from SourceBank to DestBank;
+        AuditRecordTransfer(String) from AuditLog to Adminrole Tracker; }

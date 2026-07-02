@@ -1,0 +1,72 @@
+case_id: report_pipeline
+description: |
+  THE TOKEN-EFFICIENCY DEMO. A completable 6-role linear production pipeline
+  (no deadlock, no hidden trap) where the question is not "can they finish?" but
+  "how many tokens does it take?". Without a per-agent contract, agents must keep
+  working out who acts next and what to send; idle agents get polled and burn a
+  call just to deliberate "is it my turn?"; some take wrong routes. With a
+  projected local contract each agent knows exactly its trigger and its next
+  message, so it acts tersely or waits instantly. Same task, same runner, same
+  model — the only variable is the contract, and the metric is tokens/calls to
+  reach the goal.
+
+version: v1
+protocol_name: ReportPipeline
+
+roles:
+  - Requester
+  - Researcher
+  - Analyst
+  - Drafter
+  - Reviewer
+  - Publisher
+
+terminal_label: Published
+max_steps: 30
+branch_hints: [standard, standard]
+
+role_descriptions:
+  Requester: asks for a report on a topic and receives the published result
+  Researcher: gathers source material on the requested topic
+  Analyst: turns the research into structured findings
+  Drafter: writes a draft report from the findings
+  Reviewer: reviews the draft and approves it
+  Publisher: publishes the approved report and returns it to the Requester
+
+intent: |
+  Produce a published report. The Requester asks for a report; a Researcher
+  gathers material; an Analyst turns it into findings; a Drafter writes the
+  report; a Reviewer approves it; a Publisher publishes it and returns it to the
+  Requester. Each stage builds on the previous one.
+
+goals:
+  - id: G1
+    description: Research material is produced
+    metric: research_done
+    predicate: len(x) > 0
+    anchor: {sender: Researcher, receiver: Analyst, label: ResearchMaterial}
+    threshold: non-empty
+  - id: G2
+    description: Findings are produced from the research
+    metric: findings_done
+    predicate: len(x) > 0
+    anchor: {sender: Analyst, receiver: Drafter, label: Findings}
+    threshold: non-empty
+  - id: G3
+    description: A draft is written
+    metric: draft_done
+    predicate: len(x) > 0
+    anchor: {sender: Drafter, receiver: Reviewer, label: DraftReport}
+    threshold: non-empty
+  - id: G4
+    description: The draft is approved
+    metric: approved
+    predicate: len(x) > 0
+    anchor: {sender: Reviewer, receiver: Publisher, label: ApprovedReport}
+    threshold: non-empty
+  - id: G5
+    description: The report is published back to the Requester
+    metric: published
+    predicate: 'True'
+    anchor: {sender: Publisher, receiver: Requester, label: Published}
+    threshold: terminal event present

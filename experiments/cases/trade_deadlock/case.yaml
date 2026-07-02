@@ -1,0 +1,66 @@
+case_id: trade_deadlock
+description: |
+  THE DEADLOCK DEMO. A goods-for-payment trade whose plausible, human-written
+  per-agent skills contain a CIRCULAR WAIT: the Buyer's skill says "don't pay
+  until the goods arrive", the Seller's skill says "don't ship until paid". Each
+  waits for the other -> runtime deadlock -> agents burn tokens replying WAIT
+  across every retry -> 0% completion. No human or LLM reading those two skills
+  in isolation flags the problem; Scribble's deadlock check catches it instantly
+  and forces the Escrow-first fix that breaks the cycle. This case exists to
+  prove: (1) unchecked specs/skills can deadlock; (2) the deadlock is costly;
+  (3) a formal checker prevents it for free (at design time).
+
+version: v1
+protocol_name: TradeDeadlock
+
+roles:
+  - Buyer
+  - Seller
+  - Escrow
+  - Carrier
+
+terminal_label: SettlementComplete
+max_steps: 24
+branch_hints: [standard, standard]
+
+role_descriptions:
+  Buyer: funds the purchase and confirms receipt of the goods
+  Seller: provides the goods and is paid on delivery
+  Escrow: holds the Buyer's funds and releases them to the Seller after the Buyer confirms receipt (this is what breaks the pay-vs-ship deadlock)
+  Carrier: transports the goods from Seller to Buyer
+
+intent: |
+  Settle a purchase between a Buyer and a Seller, using an Escrow to hold funds
+  and a Carrier to move the goods. The Buyer releases payment only after the
+  goods are received; the Seller releases the goods only after payment is made.
+  The trade is complete once the goods are delivered and the payment is released
+  to the Seller.
+
+goals:
+  - id: G1
+    description: The Buyer funds the escrow with a positive amount
+    metric: escrow_funded
+    predicate: float(x) > 0
+    anchor: {sender: Buyer, receiver: Escrow, label: FundEscrow}
+    threshold: "> 0"
+
+  - id: G2
+    description: The goods are dispatched by the Seller
+    metric: dispatched
+    predicate: len(x) >= 0
+    anchor: {sender: Seller, receiver: Carrier, label: ShipGoods}
+    threshold: present
+
+  - id: G3
+    description: Escrow releases a positive payment to the Seller
+    metric: payment_released
+    predicate: float(x) > 0
+    anchor: {sender: Escrow, receiver: Seller, label: ReleasePayment}
+    threshold: "> 0"
+
+  - id: G4
+    description: The settlement terminates (completion delivered to the Buyer)
+    metric: settled
+    predicate: 'True'
+    anchor: {sender: Escrow, receiver: Buyer, label: SettlementComplete}
+    threshold: terminal event present

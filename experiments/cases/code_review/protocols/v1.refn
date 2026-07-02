@@ -1,0 +1,19 @@
+# Refinement contracts for CodeReview (v1)
+# Approvals must explicitly say "approved"; coverage must be >= 70.0%.
+
+[Reviewer1 -> Merger : Approval1]
+type: str
+require: "approved" in x.lower() or "lgtm" in x.lower()
+
+[Reviewer2 -> Merger : Approval2]
+type: str
+require: "approved" in x.lower() or "lgtm" in x.lower()
+
+[CI -> Merger : CoverageReport]
+type: float
+require: x >= 0.0
+require: x <= 100.0
+
+[Merger -> Author : MergeDecision]
+type: str
+require: "merged" in x.lower() or "rejected" in x.lower()

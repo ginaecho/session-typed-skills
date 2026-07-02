@@ -1,0 +1,29 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Boolean" from "rt.jar" as Bool;
+
+global protocol MultiSourceRAG(role User, role QueryPlanner, role Retriever1, role Retriever2, role Synthesizer, role FactChecker) {
+    Question(String) from User to QueryPlanner;
+    DecomposedQuery(String) from QueryPlanner to Retriever1;
+    DecomposedQuery(String) from QueryPlanner to Retriever2;
+    RetrievedDocs(String) from Retriever1 to Synthesizer;
+    RetrievedDocs(String) from Retriever2 to Synthesizer;
+    DraftedAnswer(String) from Synthesizer to FactChecker;
+
+    choice at FactChecker {
+        Verified(Bool) from FactChecker to Synthesizer;
+        FinalAnswer(String) from Synthesizer to User;
+    } or {
+        FailedVerification() from FactChecker to Synthesizer;
+        RevisedAnswer(String) from Synthesizer to FactChecker;
+
+        choice at FactChecker {
+            Verified(Bool) from FactChecker to Synthesizer;
+            FinalAnswer(String) from Synthesizer to User;
+        } or {
+            CannotVerify(String) from FactChecker to Synthesizer;
+            FinalAnswer(String) from Synthesizer to User;
+        }
+    }
+}

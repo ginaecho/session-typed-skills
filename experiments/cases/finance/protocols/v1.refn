@@ -1,0 +1,30 @@
+# Refinement contracts for QuarterlyFinanceReport (v1.scr)
+# Payload predicates anchored to protocol messages.
+
+[Fetcher -> TaxSpecialist : HighRevenue]
+type: float
+require: x > 50000.0
+
+[Fetcher -> RevenueAnalyst : StandardRevenue]
+type: str
+require: len(x) > 0
+
+[TaxSpecialist -> RevenueAnalyst : AuditedRevenue]
+type: str
+require: len(x) > 0
+
+[RevenueAnalyst -> TaxVerifier : RevenueAuditRequest]
+type: str
+require: len(x) > 0
+
+[TaxVerifier -> RevenueAnalyst : RevenueAuditApproval]
+type: str
+require: len(x) > 0
+
+[RevenueAnalyst -> Writer : RevenueAnalysis]
+type: str
+require: len(x) > 0
+
+[ExpenseAnalyst -> Writer : ExpenseAnalysis]
+type: str
+require: len(x) > 0

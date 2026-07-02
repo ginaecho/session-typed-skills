@@ -1,0 +1,19 @@
+# Refinement contracts for ClinicalEnrollment (v1)
+# Verdict must be approve/reject; baseline must be in physiological range; consent non-empty.
+
+[PI -> Coordinator : EligibilityVerdict]
+type: str
+require: "eligible" in x.lower() or "ineligible" in x.lower()
+
+[Patient -> Coordinator : ConsentSigned]
+type: str
+require: len(x) > 0
+
+[Lab -> Coordinator : BaselineResult]
+type: float
+require: x > 0.0
+require: x < 1000.0
+
+[EthicsBoard -> Coordinator : EnrollmentApproved]
+type: str
+require: "approved" in x.lower()

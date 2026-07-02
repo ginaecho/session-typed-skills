@@ -1,0 +1,73 @@
+case_id: report_pipeline_large
+description: 'Scale task: 10-role linear pipeline. Same shape as report_pipeline but
+  larger, to show global-text token cost grows with protocol size while the projected
+  local contract stays flat.'
+version: v1
+protocol_name: ReportPipelineLarge
+roles:
+- Requester
+- Researcher
+- Analyst
+- Drafter
+- Editor
+- FactChecker
+- LegalReviewer
+- ComplianceReviewer
+- Approver
+- Publisher
+terminal_label: Published
+max_steps: 40
+branch_hints:
+- standard
+- standard
+role_descriptions:
+  Requester: Requester stage of the report pipeline
+  Researcher: Researcher stage of the report pipeline
+  Analyst: Analyst stage of the report pipeline
+  Drafter: Drafter stage of the report pipeline
+  Editor: Editor stage of the report pipeline
+  FactChecker: FactChecker stage of the report pipeline
+  LegalReviewer: LegalReviewer stage of the report pipeline
+  ComplianceReviewer: ComplianceReviewer stage of the report pipeline
+  Approver: Approver stage of the report pipeline
+  Publisher: Publisher stage of the report pipeline
+intent: 'Produce a published report through a 10-stage review pipeline: research,
+  analysis, drafting, editing, fact-checking, legal review, compliance review, approval,
+  and publication back to the requester. Each stage builds on the previous one.'
+goals:
+- id: G1
+  description: Research material produced
+  metric: m1
+  predicate: len(x) > 0
+  anchor:
+    sender: Researcher
+    receiver: Analyst
+    label: ResearchMaterial
+  threshold: non-empty
+- id: G2
+  description: Draft produced
+  metric: m2
+  predicate: len(x) > 0
+  anchor:
+    sender: Drafter
+    receiver: Editor
+    label: DraftReport
+  threshold: non-empty
+- id: G3
+  description: Approved
+  metric: m3
+  predicate: len(x) > 0
+  anchor:
+    sender: Approver
+    receiver: Publisher
+    label: ApprovedReport
+  threshold: non-empty
+- id: G4
+  description: Published to requester (terminal)
+  metric: m4
+  predicate: 'True'
+  anchor:
+    sender: Publisher
+    receiver: Requester
+    label: Published
+  threshold: terminal present

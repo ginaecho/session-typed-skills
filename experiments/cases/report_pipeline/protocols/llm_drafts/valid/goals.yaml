@@ -1,0 +1,52 @@
+source_protocol: canonical v1.scr (strict linear)
+re_anchored_from: case.yaml
+n_canonical_goals: 5
+n_kept: 5
+n_dropped: 0
+dropped: []
+goals:
+- id: G1
+  description: Research material is produced
+  metric: research_done
+  predicate: len(x) > 0
+  anchor:
+    sender: Researcher
+    receiver: Analyst
+    label: ResearchMaterial
+  threshold: non-empty
+- id: G2
+  description: Findings are produced from the research
+  metric: findings_done
+  predicate: len(x) > 0
+  anchor:
+    sender: Analyst
+    receiver: Drafter
+    label: Findings
+  threshold: non-empty
+- id: G3
+  description: A draft is written
+  metric: draft_done
+  predicate: len(x) > 0
+  anchor:
+    sender: Drafter
+    receiver: Reviewer
+    label: DraftReport
+  threshold: non-empty
+- id: G4
+  description: The draft is approved
+  metric: approved
+  predicate: len(x) > 0
+  anchor:
+    sender: Reviewer
+    receiver: Publisher
+    label: ApprovedReport
+  threshold: non-empty
+- id: G5
+  description: The report is published back to the Requester
+  metric: published
+  predicate: 'True'
+  anchor:
+    sender: Publisher
+    receiver: Requester
+    label: Published
+  threshold: terminal event present

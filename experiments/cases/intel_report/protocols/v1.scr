@@ -1,0 +1,26 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+
+global protocol IntelReport(
+    role Editor,
+    role Satellite,
+    role Signals,
+    role HumanIntel,
+    role Analyst,
+    role Reviewer
+) {
+    RequestSatFeed(String) from Editor to Satellite;
+    SatReport(String) from Satellite to Editor;
+
+    RequestSignalsFeed(String) from Editor to Signals;
+    SignalsReport(String) from Signals to Editor;
+
+    RequestHumanFeed(String) from Editor to HumanIntel;
+    HumanReport(String) from HumanIntel to Editor;
+
+    Synthesize(String) from Editor to Analyst;
+    DraftReport(String) from Analyst to Reviewer;
+    ApproveDraft(String) from Reviewer to Editor;
+    Publish(String) from Editor to Analyst;
+}

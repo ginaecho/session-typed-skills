@@ -1,0 +1,48 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol NestedRetry(role Author, role Reviewer, role Editor, role Publisher) {
+    SubmitDraft(String) from Author to Reviewer;
+    SubmitDraft(String) from Author to Editor;
+    SubmitDraft(String) from Author to Publisher;
+
+    rec Round {
+        Review(Double) from Reviewer to Author;
+        Review(Double) from Reviewer to Editor;
+        Review(Double) from Reviewer to Publisher;
+
+        choice at Editor {
+            Revise(String) from Editor to Author;
+            Revise(String) from Editor to Reviewer;
+            Revise(String) from Editor to Publisher;
+
+            choice at Author {
+                MajorEdit(String) from Author to Reviewer;
+                MajorEdit(String) from Author to Editor;
+                MajorEdit(String) from Author to Publisher;
+                continue Round;
+            } or {
+                MinorEdit(String) from Author to Reviewer;
+                MinorEdit(String) from Author to Editor;
+                MinorEdit(String) from Author to Publisher;
+                continue Round;
+            }
+        } or {
+            Accept(String) from Editor to Author;
+            Accept(String) from Editor to Reviewer;
+            Accept(String) from Editor to Publisher;
+
+            choice at Publisher {
+                Publish(String) from Publisher to Author;
+                Publish(String) from Publisher to Reviewer;
+                Publish(String) from Publisher to Editor;
+            } or {
+                Schedule(String) from Publisher to Author;
+                Schedule(String) from Publisher to Reviewer;
+                Schedule(String) from Publisher to Editor;
+            }
+        }
+    }
+}

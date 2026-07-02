@@ -1,0 +1,26 @@
+# Goals extracted from intent: We need a Quarterly Finance Report pipeline that takes raw revenue data and
+prod
+
+[Fetcher -> TaxSpecialist : HighRevenue]
+# Goal G1: High-path revenue must exceed $50,000
+type: float
+require: float(x) > 50000
+
+[TaxSpecialist -> RevenueAnalyst : AuditedRevenue]
+# Goal G2: Audit result must be non-empty
+type: str
+require: len(x) > 0
+
+[TaxVerifier -> RevenueAnalyst : RevenueAuditApproval]
+# Goal G3: Tax verifier must approve the audit explicitly
+require: "approved" in x.lower() or "ok" in x.lower()
+
+[RevenueAnalyst -> Writer : RevenueAnalysis]
+# Goal G4: Revenue analysis must be substantive (>10 chars)
+type: str
+require: len(x) > 10
+
+[ExpenseAnalyst -> Writer : ExpenseAnalysis]
+# Goal G5: Expense analysis must be substantive (>10 chars)
+type: str
+require: len(x) > 10

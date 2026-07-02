@@ -1,0 +1,17 @@
+# Refinement contracts for TradeSettlement (v1.scr).
+
+[Buyer -> Escrow : FundEscrow]
+type: float
+require: x > 0
+
+[Inspector -> Escrow : InspectionResult]
+type: str
+require: len(x) > 0
+
+[Escrow -> Seller : ReleasePayment]
+type: float
+require: x > 0
+
+# Value-dependent ordering is implicit in the structure (Escrow funded first),
+# so no choice guard is needed here; the domestic/international choice is not
+# value-gated in the same way as finance/banking.

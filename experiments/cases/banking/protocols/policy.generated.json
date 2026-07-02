@@ -1,0 +1,1851 @@
+{
+  "apiVersion": "agent-os.policy/v1",
+  "kind": "PolicyDocument",
+  "metadata": {
+    "name": "stjp-banking-BankingTransfer",
+    "description": "Auto-generated from the Scribble-verified STJP protocol BankingTransfer (valid draft). Deadlock-free by construction; ordering + stateful-value + refinement conditions encoded.",
+    "version": "1.0.0",
+    "source": "stjp.governance.policy_export",
+    "scope": {
+      "protocol": "BankingTransfer",
+      "roles": [
+        "Initiator",
+        "SourceBank",
+        "DestBank",
+        "Approver",
+        "AuditLog"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "name": "Initiator.s5.send.TransferRequest.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Initiator"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "5"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "TransferRequest"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 995,
+      "message": "Initiator may send TransferRequest to SourceBank at state 5 -> 7  [payload must satisfy: x > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "7",
+        "payload_type": "Double",
+        "refinement": {
+          "type": "float",
+          "require": [
+            "x > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Initiator.s7.receive.FinalOutcome.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Initiator"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "7"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FinalOutcome"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 993,
+      "message": "Initiator may receive FinalOutcome from AuditLog at state 7 -> 8",
+      "override": false,
+      "stjp": {
+        "next_state": "8",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "Initiator.s8.receive.Settled.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Initiator"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "8"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Settled"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 992,
+      "message": "Initiator may receive Settled from AuditLog at state 8 -> 6",
+      "override": false,
+      "stjp": {
+        "next_state": "6",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s30.receive.TransferRequest.to.Initiator",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "30"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "TransferRequest"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "Initiator"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 970,
+      "message": "SourceBank may receive TransferRequest from Initiator at state 30 -> 32",
+      "override": false,
+      "stjp": {
+        "next_state": "32",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "SourceBank.s35.receive.Approval.to.Approver",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "35"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approval"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "Approver"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 965,
+      "message": "SourceBank may receive Approval from Approver at state 35 -> 36",
+      "override": false,
+      "stjp": {
+        "next_state": "36",
+        "payload_type": "Bool"
+      }
+    },
+    {
+      "name": "SourceBank.s36.send.Approved.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "36"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approved"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 964,
+      "message": "SourceBank may send Approved to DestBank at state 36 -> 37",
+      "override": false,
+      "stjp": {
+        "next_state": "37",
+        "payload_type": null,
+        "choice_guard": {
+          "when": "contains(Approval.lower(), 'true')",
+          "require": "Approved",
+          "over": [
+            "Rejected"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s36.send.Rejected.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "36"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Rejected"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 964,
+      "message": "SourceBank may send Rejected to DestBank at state 36 -> 41",
+      "override": false,
+      "stjp": {
+        "next_state": "41",
+        "payload_type": null,
+        "choice_guard": {
+          "when": "contains(Approval.lower(), 'true')",
+          "require": "Approved",
+          "over": [
+            "Rejected"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s37.send.NotifyApproval.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "37"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyApproval"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 963,
+      "message": "SourceBank may send NotifyApproval to AuditLog at state 37 -> 38",
+      "override": false,
+      "stjp": {
+        "next_state": "38",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s38.send.NotifyApproval.to.Approver",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "38"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyApproval"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Approver"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 962,
+      "message": "SourceBank may send NotifyApproval to Approver at state 38 -> 39",
+      "override": false,
+      "stjp": {
+        "next_state": "39",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s39.send.ApprovedDebit.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "39"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "ApprovedDebit"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 961,
+      "message": "SourceBank may send ApprovedDebit to DestBank at state 39 -> 40  [payload must satisfy: x > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "40",
+        "payload_type": "Double",
+        "refinement": {
+          "type": "float",
+          "require": [
+            "x > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s40.send.NotifyDebitSuccess.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "40"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitSuccess"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 960,
+      "message": "SourceBank may send NotifyDebitSuccess to AuditLog at state 40 -> 31",
+      "override": false,
+      "stjp": {
+        "next_state": "31",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "SourceBank.s41.send.NotifyRejection.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "41"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyRejection"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 959,
+      "message": "SourceBank may send NotifyRejection to AuditLog at state 41 -> 42",
+      "override": false,
+      "stjp": {
+        "next_state": "42",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s42.send.NotifyRejection.to.Approver",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "42"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyRejection"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Approver"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 958,
+      "message": "SourceBank may send NotifyRejection to Approver at state 42 -> 43",
+      "override": false,
+      "stjp": {
+        "next_state": "43",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s43.send.FailureDebit.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "43"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FailureDebit"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 957,
+      "message": "SourceBank may send FailureDebit to DestBank at state 43 -> 44",
+      "override": false,
+      "stjp": {
+        "next_state": "44",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "SourceBank.s44.send.NotifyDebitFailure.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "44"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitFailure"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 956,
+      "message": "SourceBank may send NotifyDebitFailure to AuditLog at state 44 -> 31",
+      "override": false,
+      "stjp": {
+        "next_state": "31",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "SourceBank.s45.send.NotifyStandardAmountProceed.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "45"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardAmountProceed"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 955,
+      "message": "SourceBank may send NotifyStandardAmountProceed to AuditLog at state 45 -> 46",
+      "override": false,
+      "stjp": {
+        "next_state": "46",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s46.send.NotifyStandardAmountProceed.to.Approver",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "46"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardAmountProceed"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Approver"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 954,
+      "message": "SourceBank may send NotifyStandardAmountProceed to Approver at state 46 -> 47",
+      "override": false,
+      "stjp": {
+        "next_state": "47",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s47.send.SuccessDebit.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "47"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "SuccessDebit"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 953,
+      "message": "SourceBank may send SuccessDebit to DestBank at state 47 -> 48  [payload must satisfy: x > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "48",
+        "payload_type": "Double",
+        "refinement": {
+          "type": "float",
+          "require": [
+            "x > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s48.send.NotifyDebitSuccess.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "48"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitSuccess"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 952,
+      "message": "SourceBank may send NotifyDebitSuccess to AuditLog at state 48 -> 31",
+      "override": false,
+      "stjp": {
+        "next_state": "31",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "SourceBank.s32.send.HighAmountApprovalRequired.to.Approver",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "32"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighAmountApprovalRequired"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Approver"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 968,
+      "message": "SourceBank may send HighAmountApprovalRequired to Approver at state 32 -> 33",
+      "override": false,
+      "stjp": {
+        "next_state": "33",
+        "payload_type": null,
+        "choice_guard": {
+          "when": "float(TransferRequest) > 10000",
+          "require": "HighAmountApprovalRequired",
+          "over": [
+            "StandardAmountProceed"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s32.send.StandardAmountProceed.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "32"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardAmountProceed"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 968,
+      "message": "SourceBank may send StandardAmountProceed to DestBank at state 32 -> 45",
+      "override": false,
+      "stjp": {
+        "next_state": "45",
+        "payload_type": null,
+        "choice_guard": {
+          "when": "float(TransferRequest) > 10000",
+          "require": "HighAmountApprovalRequired",
+          "over": [
+            "StandardAmountProceed"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "SourceBank.s33.send.NotifyHighAmountApprovalRequired.to.DestBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "33"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyHighAmountApprovalRequired"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "DestBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 967,
+      "message": "SourceBank may send NotifyHighAmountApprovalRequired to DestBank at state 33 -> 34",
+      "override": false,
+      "stjp": {
+        "next_state": "34",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "SourceBank.s34.send.NotifyHighAmountApprovalRequired.to.AuditLog",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "SourceBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "34"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyHighAmountApprovalRequired"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "AuditLog"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 966,
+      "message": "SourceBank may send NotifyHighAmountApprovalRequired to AuditLog at state 34 -> 35",
+      "override": false,
+      "stjp": {
+        "next_state": "35",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "DestBank.s57.receive.NotifyHighAmountApprovalRequired.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "57"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyHighAmountApprovalRequired"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 943,
+      "message": "DestBank may receive NotifyHighAmountApprovalRequired from SourceBank at state 57 -> 59",
+      "override": false,
+      "stjp": {
+        "next_state": "59",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "DestBank.s57.receive.StandardAmountProceed.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "57"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardAmountProceed"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 943,
+      "message": "DestBank may receive StandardAmountProceed from SourceBank at state 57 -> 62",
+      "override": false,
+      "stjp": {
+        "next_state": "62",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "DestBank.s59.receive.Approved.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "59"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approved"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 941,
+      "message": "DestBank may receive Approved from SourceBank at state 59 -> 60",
+      "override": false,
+      "stjp": {
+        "next_state": "60",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "DestBank.s59.receive.Rejected.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "59"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Rejected"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 941,
+      "message": "DestBank may receive Rejected from SourceBank at state 59 -> 61",
+      "override": false,
+      "stjp": {
+        "next_state": "61",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "DestBank.s60.receive.ApprovedDebit.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "60"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "ApprovedDebit"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 940,
+      "message": "DestBank may receive ApprovedDebit from SourceBank at state 60 -> 58",
+      "override": false,
+      "stjp": {
+        "next_state": "58",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "DestBank.s61.receive.FailureDebit.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "61"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FailureDebit"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 939,
+      "message": "DestBank may receive FailureDebit from SourceBank at state 61 -> 58",
+      "override": false,
+      "stjp": {
+        "next_state": "58",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "DestBank.s62.receive.SuccessDebit.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "DestBank"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "62"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "SuccessDebit"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 938,
+      "message": "DestBank may receive SuccessDebit from SourceBank at state 62 -> 58",
+      "override": false,
+      "stjp": {
+        "next_state": "58",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "Approver.s69.receive.HighAmountApprovalRequired.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Approver"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "69"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighAmountApprovalRequired"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 931,
+      "message": "Approver may receive HighAmountApprovalRequired from SourceBank at state 69 -> 71",
+      "override": false,
+      "stjp": {
+        "next_state": "71",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "Approver.s69.receive.NotifyStandardAmountProceed.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Approver"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "69"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardAmountProceed"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 931,
+      "message": "Approver may receive NotifyStandardAmountProceed from SourceBank at state 69 -> 70",
+      "override": false,
+      "stjp": {
+        "next_state": "70",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "Approver.s71.send.Approval.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Approver"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "71"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approval"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 929,
+      "message": "Approver may send Approval to SourceBank at state 71 -> 72",
+      "override": false,
+      "stjp": {
+        "next_state": "72",
+        "payload_type": "Bool"
+      }
+    },
+    {
+      "name": "Approver.s72.receive.NotifyApproval.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Approver"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "72"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyApproval"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 928,
+      "message": "Approver may receive NotifyApproval from SourceBank at state 72 -> 70",
+      "override": false,
+      "stjp": {
+        "next_state": "70",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "Approver.s72.receive.NotifyRejection.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Approver"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "72"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyRejection"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 928,
+      "message": "Approver may receive NotifyRejection from SourceBank at state 72 -> 70",
+      "override": false,
+      "stjp": {
+        "next_state": "70",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s83.receive.NotifyHighAmountApprovalRequired.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "83"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyHighAmountApprovalRequired"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 917,
+      "message": "AuditLog may receive NotifyHighAmountApprovalRequired from SourceBank at state 83 -> 85",
+      "override": false,
+      "stjp": {
+        "next_state": "85",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s83.receive.NotifyStandardAmountProceed.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "83"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardAmountProceed"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 917,
+      "message": "AuditLog may receive NotifyStandardAmountProceed from SourceBank at state 83 -> 90",
+      "override": false,
+      "stjp": {
+        "next_state": "90",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s85.receive.NotifyApproval.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "85"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyApproval"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 915,
+      "message": "AuditLog may receive NotifyApproval from SourceBank at state 85 -> 86",
+      "override": false,
+      "stjp": {
+        "next_state": "86",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s85.receive.NotifyRejection.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "85"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyRejection"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 915,
+      "message": "AuditLog may receive NotifyRejection from SourceBank at state 85 -> 89",
+      "override": false,
+      "stjp": {
+        "next_state": "89",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s86.receive.NotifyDebitSuccess.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "86"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitSuccess"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 914,
+      "message": "AuditLog may receive NotifyDebitSuccess from SourceBank at state 86 -> 87",
+      "override": false,
+      "stjp": {
+        "next_state": "87",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "AuditLog.s87.send.FinalOutcome.to.Initiator",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "87"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FinalOutcome"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Initiator"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 913,
+      "message": "AuditLog may send FinalOutcome to Initiator at state 87 -> 88  [payload must satisfy: len(x) > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "88",
+        "payload_type": "String",
+        "refinement": {
+          "type": "str",
+          "require": [
+            "len(x) > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "AuditLog.s88.send.Settled.to.Initiator",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "88"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Settled"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Initiator"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 912,
+      "message": "AuditLog may send Settled to Initiator at state 88 -> 84",
+      "override": false,
+      "stjp": {
+        "next_state": "84",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "AuditLog.s89.receive.NotifyDebitFailure.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "89"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitFailure"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 911,
+      "message": "AuditLog may receive NotifyDebitFailure from SourceBank at state 89 -> 87",
+      "override": false,
+      "stjp": {
+        "next_state": "87",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "AuditLog.s90.receive.NotifyDebitSuccess.to.SourceBank",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "AuditLog"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "90"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyDebitSuccess"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "SourceBank"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 910,
+      "message": "AuditLog may receive NotifyDebitSuccess from SourceBank at state 90 -> 87",
+      "override": false,
+      "stjp": {
+        "next_state": "87",
+        "payload_type": "Double"
+      }
+    }
+  ],
+  "defaults": {
+    "action": "deny",
+    "message": "No STJP protocol rule permits this message at this session state (off-protocol)."
+  },
+  "conflictResolution": "DENY_OVERRIDES",
+  "stjpExtensions": {
+    "conditionTypes": [
+      "sequence",
+      "stateful-value",
+      "refinement"
+    ],
+    "note": "These condition types extend the toolkit's stateless field-op-value model; STJP is the reference backend."
+  }
+}

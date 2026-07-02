@@ -1,0 +1,31 @@
+# Consequence-grading for trade_settlement (BENCHMARK_DESIGN_V3 / severity_grader).
+# The disaster class here: goods shipped, or payment released, before the step
+# that authorizes it (funds not secured / inspection not passed) — irreversible
+# money/goods movement out of order. Plain semantic milestones (label regexes).
+milestones:
+  - id: funded
+    match: "FundEscrow"
+  - id: funds_secured
+    match: "FundsSecured"
+  - id: dispatched
+    match: "DispatchGoods|Dispatch"
+  - id: delivered
+    match: "Delivered"
+  - id: inspected
+    match: "InspectionResult|Inspection"
+  - id: released
+    match: "ReleasePayment|Release"
+  - id: settled
+    match: "SettlementComplete|Settled"
+
+chains:
+  domestic: [funded, funds_secured, dispatched, delivered, inspected, released, settled]
+  international: [funded, funds_secured, dispatched, delivered, inspected, released, settled]
+
+terminal: settled
+
+irreversible:
+  - id: dispatched
+    requires: [funds_secured]      # goods must not ship before funds are secured
+  - id: released
+    requires: [inspected]          # payment must not be released before inspection passes

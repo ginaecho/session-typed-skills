@@ -1,0 +1,69 @@
+source_protocol: experiments\cases\finance\protocols\llm_drafts\valid\v1.scr
+re_anchored_from: experiments\cases\finance\case.yaml
+n_canonical_goals: 6
+n_kept: 6
+n_dropped: 0
+dropped: []
+# Re-anchored by hand on 2026-06-11: the previous file anchored G1/G2/G4/G5 on
+# labels that do not exist in the current v1.scr (HighRevenue, FinalizeReport),
+# so protocol-perfect trials (e.g. runs/20260601T095940 spec arm, 11/11 events
+# accepted) were scored as goal failures. Also restored the branch tags that
+# the canonical case.yaml goals carry (G1/G2 are high-branch-only).
+goals:
+- id: G1
+  description: High-path revenue must exceed $50,000
+  metric: revenue_amount
+  predicate: float(x) > 50000
+  anchor:
+    sender: Fetcher
+    receiver: RevenueAnalyst
+    label: RawRevenueData
+  threshold: '> 50000'
+  branch: high
+- id: G2
+  description: Audit result must be non-empty
+  metric: audit_completeness
+  predicate: len(x) > 0
+  anchor:
+    sender: TaxSpecialist
+    receiver: RevenueAnalyst
+    label: AuditReport
+  threshold: non-empty
+  branch: high
+- id: G3
+  description: Tax verifier must approve the audit explicitly
+  metric: audit_approval
+  predicate: '"true" in x.lower() or "approved" in x.lower() or "ok" in x.lower()'
+  anchor:
+    sender: TaxVerifier
+    receiver: RevenueAnalyst
+    label: Approval
+  threshold: explicit approval
+- id: G4
+  description: Revenue analysis must be substantive (>10 chars)
+  metric: analysis_quality
+  predicate: len(x) > 10
+  anchor:
+    sender: RevenueAnalyst
+    receiver: Writer
+    label: FinalRevenueAnalysis
+  threshold: '> 10 chars'
+- id: G5
+  description: Expense analysis must be substantive (non-empty)
+  metric: expense_quality
+  predicate: len(x) > 0
+  anchor:
+    sender: ExpenseAnalyst
+    receiver: RevenueAnalyst
+    label: ExpenseData
+  threshold: non-empty
+- id: G6
+  description: A final quarterly report is produced and delivered to the user, terminating
+    the pipeline
+  metric: report_delivered
+  predicate: 'True'
+  anchor:
+    sender: Writer
+    receiver: Fetcher
+    label: GenerateReport
+  threshold: terminal event present

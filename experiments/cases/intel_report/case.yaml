@@ -1,0 +1,57 @@
+case_id: intel_report
+description: |
+  Multi-source intelligence report — the Editor coordinates 3 feeder
+  sources (Satellite, Signals, HumanIntel), then forwards the synthesised
+  brief to the Analyst, who drafts a report; the Reviewer approves and
+  the Editor publishes. Exercises a fan-in pattern with a strict ordering
+  on three parallel-looking feeds (the LLM is tempted to skip or reorder).
+version: v1
+protocol_name: IntelReport
+roles:
+  - Editor
+  - Satellite
+  - Signals
+  - HumanIntel
+  - Analyst
+  - Reviewer
+terminal_label: Publish
+max_steps: 14
+branch_hints: [routine, urgent]
+intent: |
+  Build a daily intelligence brief. The Editor must collect inputs from
+  three sources — Satellite imagery, Signals intercepts, and HumanIntel
+  reports — before forwarding a synthesised summary to the Analyst.
+  The Analyst drafts the report; the Reviewer either approves or rejects;
+  on approval the Editor publishes. Every source feed must arrive before
+  synthesis.
+goals:
+  - id: G1
+    description: Satellite feed must be non-empty
+    metric: sat_feed
+    predicate: len(x) > 0
+    anchor: {sender: Satellite, receiver: Editor, label: SatReport}
+    threshold: non-empty
+  - id: G2
+    description: Signals feed must be non-empty
+    metric: signals_feed
+    predicate: len(x) > 0
+    anchor: {sender: Signals, receiver: Editor, label: SignalsReport}
+    threshold: non-empty
+  - id: G3
+    description: HumanIntel feed must be non-empty
+    metric: human_feed
+    predicate: len(x) > 0
+    anchor: {sender: HumanIntel, receiver: Editor, label: HumanReport}
+    threshold: non-empty
+  - id: G4
+    description: Draft report must reference substantial synthesis
+    metric: draft_length
+    predicate: len(x) > 60
+    anchor: {sender: Analyst, receiver: Reviewer, label: DraftReport}
+    threshold: "> 60 chars"
+  - id: G5
+    description: Reviewer approval must be explicit
+    metric: approval
+    predicate: '"approved" in x.lower() or "ok" in x.lower()'
+    anchor: {sender: Reviewer, receiver: Editor, label: ApproveDraft}
+    threshold: contains approved/ok

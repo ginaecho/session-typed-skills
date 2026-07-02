@@ -1,0 +1,39 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+
+global protocol MultiSourceRAG(
+    role User,
+    role QueryPlanner,
+    role Retriever1,
+    role Retriever2,
+    role Synthesizer,
+    role FactChecker
+) {
+    Question(String) from User to QueryPlanner;
+
+    SubQuery(String) from QueryPlanner to Retriever1;
+    SubQuery(String) from QueryPlanner to Retriever2;
+    PlanNotice(String) from QueryPlanner to Synthesizer;
+
+    Documents(String) from Retriever1 to Synthesizer;
+    Documents(String) from Retriever2 to Synthesizer;
+
+    rec Verify {
+        Draft(String) from Synthesizer to FactChecker;
+        choice at FactChecker {
+            // verified — emit the answer
+            Verified(String) from FactChecker to Synthesizer;
+            FinalAnswer(String) from Synthesizer to User;
+        } or {
+            // failed verification — revise and re-check (bounded loop)
+            Revise(String) from FactChecker to Synthesizer;
+            ReviseNotice() from Synthesizer to User;
+            continue Verify;
+        } or {
+            // unverifiable after revision — emit a documented "cannot answer"
+            CannotAnswer(String) from FactChecker to Synthesizer;
+            FinalAnswer(String) from Synthesizer to User;
+        }
+    }
+}

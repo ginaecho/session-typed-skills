@@ -1,0 +1,22 @@
+# Refinement contracts for TravelSaga (v1)
+# Each booking confirmation carries a positive price; total charge bounded.
+
+[Hotel -> Agent : HotelConfirmed]
+type: float
+require: x > 0.0
+require: x < 10000.0
+
+[Flight -> Agent : FlightConfirmed]
+type: float
+require: x > 0.0
+require: x < 10000.0
+
+[Car -> Agent : CarConfirmed]
+type: float
+require: x > 0.0
+require: x < 5000.0
+
+[Agent -> Customer : Charge]
+type: float
+require: x > 0.0
+require: x < 25000.0

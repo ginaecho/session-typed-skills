@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STJP — Session-Typed Agent Pipelines · Live Benchmark Demo</title>
+<style>
+:root{
+  --bg:#0b0d12; --panel:#12151d; --panel2:#171b25; --border:#222837; --border2:#2e3650;
+  --text:#e6ebf2; --muted:#8b93a7; --dim:#5c6478;
+  --cyan:#5dd6ff; --mint:#92ffd5; --violet:#c4a8ff; --orange:#ff9f6b;
+  --red:#ff6b81; --amber:#ffd166; --green:#7ee29a;
+  --mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,'Segoe UI',Roboto,sans-serif;}
+a{color:var(--cyan);text-decoration:none}
+h1,h2,h3{font-weight:650;letter-spacing:-.02em}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{position:sticky;top:0;z-index:50;background:rgba(11,13,18,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:54px}
+nav .logo{font-family:var(--mono);font-weight:700;letter-spacing:.18em;font-size:15px}
+nav .logo b{color:var(--mint)}
+nav a.nl{color:var(--muted);font-size:13.5px;padding:6px 2px}
+nav a.nl:hover{color:var(--text)}
+nav .live{margin-left:auto;font-size:12px;color:var(--mint);border:1px solid #2c4a3f;background:#12241d;border-radius:99px;padding:3px 10px;font-family:var(--mono)}
+header.hero{padding:64px 0 36px;background:
+  radial-gradient(700px 320px at 18% 0%,rgba(93,214,255,.08),transparent),
+  radial-gradient(700px 320px at 82% 10%,rgba(146,255,213,.07),transparent)}
+.hero h1{font-size:34px;line-height:1.2;max-width:840px}
+.hero h1 em{font-style:normal;color:var(--mint)}
+.hero p.sub{margin-top:14px;color:var(--muted);max-width:780px;font-size:16px}
+.hero .pill{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--cyan);border:1px solid #1f3b4d;background:#0f1b24;padding:4px 12px;border-radius:99px;margin-bottom:18px;letter-spacing:.08em}
+section{padding:44px 0;border-top:1px solid var(--border)}
+section h2{font-size:23px;margin-bottom:6px}
+section p.lead{color:var(--muted);margin-bottom:24px;max-width:860px}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+
+/* ---- pipeline ---- */
+.pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:10px 2px 18px}
+.stage{position:relative;flex:1;min-width:150px;background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:14px 14px 12px;cursor:pointer;transition:.18s;display:flex;flex-direction:column;gap:6px}
+.stage:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stage.sel{border-color:var(--accent,#5dd6ff);box-shadow:0 0 0 1px var(--accent,#5dd6ff),0 8px 28px -12px var(--accent,#5dd6ff)}
+.stage .num{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.15em}
+.stage .t{font-size:13.5px;font-weight:650;line-height:1.3}
+.stage .d{font-size:11.5px;color:var(--muted);line-height:1.45}
+.stage .tag{margin-top:auto;font-family:var(--mono);font-size:10px;border-radius:6px;padding:2px 7px;width:max-content;border:1px solid}
+.connector{flex:0 0 26px;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:15px}
+.flowdot{position:absolute;top:-4px;left:14px;width:7px;height:7px;border-radius:50%;background:var(--mint);opacity:0;animation:fd 5s linear infinite}
+@keyframes fd{0%{opacity:0}4%{opacity:1}12%{opacity:0}100%{opacity:0}}
+.artifact{background:#0d1017;border:1px solid var(--border);border-radius:14px;margin-top:6px;overflow:hidden}
+.artifact .ahead{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--panel)}
+.artifact .ahead .dotr{width:9px;height:9px;border-radius:50%}
+.artifact .ahead h3{font-size:13.5px;font-weight:600}
+.artifact .ahead .src{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.artifact pre{padding:16px 18px;font:12.5px/1.6 var(--mono);overflow:auto;max-height:380px;color:#c9d4e3;white-space:pre}
+.artifact pre .hl-k{color:var(--cyan)} .artifact pre .hl-l{color:var(--mint)} .artifact pre .hl-r{color:var(--violet)}
+.artifact pre .hl-bad{color:var(--red)} .artifact pre .hl-c{color:var(--dim)} .artifact pre .hl-ok{color:var(--green)}
+.vtoggle{display:flex;gap:8px;padding:10px 16px 0}
+.vtoggle button{font:12px var(--mono);background:var(--panel2);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer}
+.vtoggle button.on{color:var(--text);border-color:var(--border2);background:#1c2230}
+
+/* ---- settings cards ---- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--accent)}
+.card .ck{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);margin-bottom:8px}
+.card h3{font-size:16.5px;margin-bottom:8px}
+.card p{font-size:13px;color:var(--muted)}
+.card ul{margin:10px 0 0 0;list-style:none;font-size:12.5px}
+.card li{padding:3px 0;color:var(--muted)}
+.card li b{color:var(--text);font-weight:600}
+.card li::before{content:"·";color:var(--accent);margin-right:8px}
+
+/* ---- replay lab ---- */
+.lab{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.lab-top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--panel2)}
+.armtabs{display:flex;gap:6px}
+.armtabs button{font:13px/1 inherit;font-weight:600;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s}
+.armtabs button.on{color:#0b0d12;background:var(--ac);border-color:var(--ac)}
+.runsel{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+select{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font:12.5px var(--mono)}
+.trialrow{display:flex;flex-wrap:wrap;gap:6px;padding:12px 18px;border-bottom:1px solid var(--border)}
+.tchip{font:11.5px var(--mono);background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 9px;cursor:pointer;transition:.12s}
+.tchip:hover{border-color:var(--border2);color:var(--text)}
+.tchip.on{border-color:var(--ac);color:var(--text);box-shadow:0 0 0 1px var(--ac)}
+.tchip .ok{color:var(--green)} .tchip .bad{color:var(--red)}
+.controls{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border)}
+.controls button{width:38px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font-size:14px;cursor:pointer}
+.controls button:hover{border-color:var(--border2)}
+.controls button.play{width:52px;background:var(--ac);border-color:var(--ac);color:#0b0d12;font-weight:700}
+.scrub{flex:1;display:flex;align-items:center;gap:10px}
+input[type=range]{flex:1;accent-color:var(--cyan)}
+.counters{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px}
+.cnt{background:#0d1017;border:1px solid var(--border);border-radius:9px;padding:6px 11px;color:var(--muted)}
+.cnt b{color:var(--text);font-weight:600;font-size:13px}
+.cnt.viol b{color:var(--red)} .cnt.goal b{color:var(--mint)} .cnt.tok b{color:var(--amber)}
+.lab-grid{display:grid;grid-template-columns:330px minmax(0,1fr) 300px;min-height:560px}
+@media(max-width:1080px){.lab-grid{grid-template-columns:1fr}}
+.panelh{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;padding:12px 16px 8px;display:flex;align-items:center;gap:8px}
+.panelh .sub{margin-left:auto;letter-spacing:0;text-transform:none;color:var(--dim)}
+.gpane{border-right:1px solid var(--border);display:flex;flex-direction:column}
+.gpane svg{flex:1;width:100%;min-height:480px}
+.mpane{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.mscbox{flex:1;overflow:auto;max-height:620px;position:relative}
+.spane{display:flex;flex-direction:column;gap:0;overflow-y:auto;max-height:680px}
+.goalbox{padding:6px 16px 14px}
+.goal{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;background:#0d1017;transition:.25s}
+.goal .gid{font:11px var(--mono);color:var(--dim);padding-top:2px;min-width:22px}
+.goal .gd{font-size:11.8px;color:var(--muted);line-height:1.4}
+.goal .tick{margin-left:auto;font-size:13px;color:var(--dim)}
+.goal.lit{border-color:#2c4a3f;background:#0f2019}
+.goal.lit .gd{color:#cdeede} .goal.lit .tick{color:var(--green)}
+.goal.final{border-style:dashed}
+.goal.final.lit{border-color:var(--mint);box-shadow:0 0 14px -6px var(--mint)}
+.feed{padding:0 16px 16px;display:flex;flex-direction:column;gap:6px}
+.fitem{font:11.5px var(--mono);word-break:break-word;overflow-wrap:anywhere;border-radius:9px;padding:7px 10px;border:1px solid var(--border);background:#0d1017;color:var(--muted);animation:fin .25s}
+.fitem.v{border-color:#4a2330;background:#1c1016;color:#f3b7c2}
+.fitem.a{color:#a9d8bd}
+.fitem .exp{display:block;color:var(--dim);margin-top:3px;font-size:10.5px}
+@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.attempt-sep{font:10.5px var(--mono);color:var(--amber);padding:5px 10px;border:1px dashed #4d4128;border-radius:8px;background:#1a160d}
+/* graph svg */
+.gnode rect{fill:#171b25;stroke:#2a3145;stroke-width:1;rx:8}
+.gnode text.l1{fill:#d7dfeb;font:600 10.5px var(--mono)}
+.gnode text.l2{fill:#67708a;font:9.5px var(--mono)}
+.gnode.path rect{stroke:#3b465f;stroke-dasharray:3 3}
+.gnode.hit rect{fill:#10271d;stroke:var(--mint);stroke-width:1.4}
+.gnode.hit text.l1{fill:#bdf3da}
+.gnode.term rect{stroke:#3f3a5f}
+.gnode.term.hit rect{stroke:var(--mint);filter:drop-shadow(0 0 6px rgba(146,255,213,.6))}
+.gedge{stroke:#2a3145;stroke-width:1.3;fill:none}
+.gedge.path{stroke:#3d4a68}
+.gedge.hit{stroke:var(--mint);stroke-width:1.8}
+.gbadge{fill:#67708a;font:9px var(--mono)}
+.offtray{padding:8px 16px 16px}
+.offchip{display:inline-block;font:10.5px var(--mono);color:#f3b7c2;border:1px solid #4a2330;background:#1c1016;border-radius:7px;padding:3px 8px;margin:2px 3px 0 0}
+/* msc svg */
+.msc-l{stroke:#222837;stroke-width:1}
+.msc-rolehead{fill:#171b25;stroke:#2a3145}
+.msc-rolename{fill:#aeb8cc;font:600 10px var(--mono)}
+.msc-arrow{stroke-width:1.5;fill:none}
+.msc-arrow.ok{stroke:#5dd6ff}
+.msc-arrow.bad{stroke:var(--red);stroke-dasharray:5 4}
+.msc-lbl{font:9.8px var(--mono);fill:#c9d4e3}
+.msc-lbl.bad{fill:#f3a3b1}
+.msc-x{fill:var(--red);font:bold 11px var(--mono)}
+.msc-att{fill:var(--amber);font:9.5px var(--mono)}
+.msc-attline{stroke:#4d4128;stroke-dasharray:6 5}
+
+/* scoreboard */
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+.chart{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px}
+.chart h3{font-size:14px;margin-bottom:3px}
+.chart .note{font-size:11.5px;color:var(--dim);margin-bottom:14px}
+.brow{display:grid;grid-template-columns:110px 1fr 86px;align-items:center;gap:10px;margin:9px 0}
+.brow .bl{font-size:12px;color:var(--muted)}
+.btrack{height:14px;background:#0d1017;border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.bfill{height:100%;border-radius:7px;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.bval{font:12px var(--mono);color:var(--text);text-align:right}
+.heat{width:100%;border-collapse:collapse;font-size:12px}
+.heat th{font:10.5px var(--mono);color:var(--dim);font-weight:500;padding:7px;text-align:center;letter-spacing:.06em}
+.heat td{padding:7px;text-align:center;border:1px solid var(--border);font-family:var(--mono);font-size:11.5px}
+.heat td.gl{text-align:left;color:var(--muted);font-family:inherit;font-size:11.5px;max-width:230px}
+.heat td.gl b{color:var(--text);font-family:var(--mono)}
+.pareto{width:100%;height:280px}
+.pareto .axis{stroke:#2a3145;stroke-width:1}
+.pareto text{fill:#67708a;font:10px var(--mono)}
+.pareto .pt{filter:drop-shadow(0 0 6px currentColor)}
+.pareto .ptl{font:600 10.5px var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:6px 0 18px}
+.legend .li{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.legend .sw{width:11px;height:11px;border-radius:3px}
+
+/* benchmark design */
+.layers{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:8px}
+.layer{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+.layer .ln{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--cyan);margin-bottom:7px}
+.layer h3{font-size:14.5px;margin-bottom:7px}
+.layer p{font-size:12.5px;color:var(--muted)}
+.layer ul{list-style:none;margin-top:8px;font-size:12px;color:var(--muted)}
+.layer li{padding:2.5px 0}
+.layer li b{color:var(--text)}
+.layer li::before{content:"—";color:var(--dim);margin-right:7px}
+.gate{ text-align:center;color:var(--dim);font-family:var(--mono);font-size:11px;padding:4px 0}
+footer{padding:36px 0 60px;color:var(--dim);font-size:12.5px;border-top:1px solid var(--border)}
+.loadrow{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:12px;color:var(--dim)}
+.loadrow input{font-size:12px;color:var(--muted)}
+kbd{font:11px var(--mono);background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <span class="logo">ST<b>J</b>P</span>
+  <a class="nl" href="#pipeline">Pipeline</a>
+  <a class="nl" href="#settings">Settings</a>
+  <a class="nl" href="#lab">Live replay</a>
+  <a class="nl" href="#scoreboard">Scoreboard</a>
+  <a class="nl" href="#design">Benchmark design</a>
+  <span class="live" id="livebadge">real traces · Azure AI Foundry</span>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="pill">MULTIPARTY SESSION TYPES × LLM AGENTS</span>
+  <h1>From one user intent to a <em>deadlock-free</em> multi-agent contract —
+  and the receipts to prove agents follow it.</h1>
+  <p class="sub">STJP turns a natural-language intent into a Scribble global type, validates it
+  (no deadlocks, no infinite loops), projects it into per-role <b>local contracts</b>, and drops a
+  <b>static Python monitor</b> — not an agent — next to every agent. Below: the same task, the same
+  model, three levels of protocol information. Every trace shown is a real run.</p>
+</div></header>
+
+<!-- ════════ 1 · PIPELINE ════════ -->
+<section id="pipeline"><div class="wrap">
+  <div class="kicker">01 · How an intent becomes a verified contract</div>
+  <h2>The STJP pipeline</h2>
+  <p class="lead">Click a stage to inspect the real artifact behind it (finance case, <span style="font-family:var(--mono)">QuarterlyFinanceReport</span>).</p>
+  <div class="pipe" id="pipe"></div>
+  <div class="artifact" id="artifact">
+    <div class="ahead"><span class="dotr" id="adot"></span><h3 id="atitle"></h3><span class="src" id="asrc"></span></div>
+    <div class="vtoggle" id="vtoggle" style="display:none">
+      <button id="vt-valid" class="on">✓ valid draft</button>
+      <button id="vt-unsafe">✗ unsafe draft (rejected)</button>
+    </div>
+    <pre id="abody"></pre>
+  </div>
+</div></section>
+
+<!-- ════════ 2 · SETTINGS ════════ -->
+<section id="settings"><div class="wrap">
+  <div class="kicker">02 · The experiment</div>
+  <h2>One task · three levels of protocol information</h2>
+  <p class="lead">Identical intent, identical role descriptions, identical model and step budget.
+  The <i>only</i> variable: what protocol information each agent receives. A per-role runtime monitor
+  (plain Python, projected from the same global type) observes every send/receive and verifies the goals.</p>
+  <div class="cards" id="armcards"></div>
+</div></section>
+
+<!-- ════════ 3 · REPLAY LAB ════════ -->
+<section id="lab"><div class="wrap">
+  <div class="kicker">03 · Watch them work</div>
+  <h2>Live trace replay — protocol graph · message chart · goals</h2>
+  <p class="lead">Replay real recorded trials event-by-event. Green = the monitor accepted the message
+  (it sits on the protocol graph). Red = off-protocol. The goal ladder fills as the monitor verifies
+  each goal predicate; the crowned goal is the <b>final</b> goal that marks completion.</p>
+  <div class="lab">
+    <div class="lab-top">
+      <div class="armtabs" id="armtabs"></div>
+      <div class="runsel">
+        run <select id="runsel" title="select run"></select>
+        <label class="loadrow" title="Load a data.json produced by build_data.py">📂<input type="file" id="loadfile" title="load run data.json" accept=".json" style="width:160px"></label>
+      </div>
+    </div>
+    <div class="trialrow" id="trialrow"></div>
+    <div class="controls">
+      <button class="play" id="btn-play">▶</button>
+      <button id="btn-step" title="step one event">⏭</button>
+      <button id="btn-reset" title="reset">↺</button>
+      <select id="speed" title="replay speed"><option value="900">0.5×</option><option value="550" selected>1×</option><option value="280">2×</option><option value="120">4×</option></select>
+      <div class="scrub"><input type="range" id="scrub" min="0" max="0" value="0"></div>
+      <div class="counters">
+        <span class="cnt">events <b id="c-ev">0</b></span>
+        <span class="cnt viol">violations <b id="c-viol">0</b></span>
+        <span class="cnt goal">goals <b id="c-goal">0/6</b></span>
+        <span class="cnt tok">tokens <b id="c-tok">0</b></span>
+        <span class="cnt">time <b id="c-time">0s</b></span>
+        <span class="cnt">attempt <b id="c-att">–</b></span>
+      </div>
+    </div>
+    <div class="lab-grid">
+      <div class="gpane">
+        <div class="panelh">protocol graph <span class="sub" id="gname"></span></div>
+        <svg id="gsvg" viewBox="0 0 360 740" preserveAspectRatio="xMidYMin meet"></svg>
+        <div class="offtray" id="offtray"></div>
+      </div>
+      <div class="mpane">
+        <div class="panelh">message sequence chart <span class="sub">monitor verdict per arrow</span></div>
+        <div class="mscbox" id="mscbox"><svg id="msvg" width="100%"></svg></div>
+      </div>
+      <div class="spane">
+        <div class="panelh">goals <span class="sub">verified by runtime monitor</span></div>
+        <div class="goalbox" id="goalbox"></div>
+        <div class="panelh">monitor feed</div>
+        <div class="feed" id="feed"></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ════════ 4 · SCOREBOARD ════════ -->
+<section id="scoreboard"><div class="wrap">
+  <div class="kicker">04 · The numbers</div>
+  <h2>Scoreboard — <span id="sb-runlabel" style="color:var(--muted);font-weight:500"></span></h2>
+  <p class="lead" id="sb-lead"></p>
+  <div class="legend" id="sb-legend"></div>
+  <div class="score-grid" id="charts"></div>
+</div></section>
+
+<!-- ════════ 5 · BENCHMARK DESIGN ════════ -->
+<section id="design"><div class="wrap">
+  <div class="kicker">05 · How we score "the ultimate goal"</div>
+  <h2>Benchmark design — four gated layers</h2>
+  <p class="lead">Each layer gates the next: a run that never terminates cannot score on goals;
+  goals scored out of order earn no ordered credit. Headline = three dials — <b>did they deliver</b>
+  (GCR), <b>did they follow the contract</b> (path adherence), <b>at what price</b> (cost of success).
+  Full spec: <span style="font-family:var(--mono)">docs/BENCHMARK_DESIGN.md</span>.</p>
+  <div class="layers">
+    <div class="layer"><div class="ln">LAYER 0 · GATE</div><h3>Liveness</h3>
+      <p>The MPST guarantee, measured directly.</p>
+      <ul><li><b>Termination rate</b> — terminal label within budget</li>
+      <li><b>Stall profile</b> — deadlock vs livelock vs budget-exhausted</li>
+      <li><b>First-stall depth</b></li></ul></div>
+    <div class="layer"><div class="ln">LAYER 1 · OUTCOME</div><h3>Goal achievement</h3>
+      <p>Intermediate goals + one <b>final</b> goal, anchored to protocol messages with payload predicates.</p>
+      <ul><li><b>GCR</b> — all applicable goals + final goal, same attempt</li>
+      <li><b>Strict / role-pair / semantic</b> rungs</li>
+      <li><b>Ordered-goal credit</b> — audit ≺ approval ≺ report</li>
+      <li>Branch-aware vacuity</li></ul></div>
+    <div class="layer"><div class="ln">LAYER 2 · PROCESS</div><h3>Path adherence</h3>
+      <p>"Some paths must be followed."</p>
+      <ul><li><b>Monitor acceptance rate</b> per event</li>
+      <li><b>Mandatory-milestone coverage</b> — per-branch must-happen chain</li>
+      <li><b>First-violation depth</b></li>
+      <li><b>Redundancy ratio</b> — events ÷ minimal accepting path</li></ul></div>
+    <div class="layer"><div class="ln">LAYER 3 · COST</div><h3>Efficiency</h3>
+      <p>Correctness should pay for itself.</p>
+      <ul><li><b>Tokens / wall-time per trial</b></li>
+      <li><b>Cost of success</b> — tokens ÷ GCR</li>
+      <li><b>Contract overhead vs retry savings</b></li>
+      <li><b>Wasted-work fraction</b></li></ul></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  STJP benchmark demo · every trace is a recorded run of real agents (Azure AI Foundry / Microsoft Agent Framework) ·
+  monitors are static Python scripts projected from the Scribble global type — they observe, they are not agents.
+  <span id="foot-run"></span>
+</div></footer>
+
+<script>
+/* ════════════════════════ DATA ════════════════════════ */
+const DATA = __STJP_DATA__;
+
+const ARM_META = {
+  intent:    {title:"A · Intent only",        color:"var(--orange)", raw:"#ff9f6b",
+              sub:"MAF GroupChat",
+              desc:"Agents get the user intent + role descriptions. No protocol. An LLM orchestrator picks who speaks.",
+              bullets:["<b>No shared vocabulary</b> — agents invent message labels","Monitor projects the canonical global type they never saw","This is today's default multi-agent stack"]},
+  global:    {title:"B · + Global type",      color:"var(--cyan)", raw:"#5dd6ff",
+              sub:"MAF GroupChat",
+              desc:"Setting A plus the full Scribble-validated global type pasted into every agent's prompt as text.",
+              bullets:["Shared vocabulary, <b>whole-protocol reading burden</b>","Each agent must find its own lines in the script","Monitor projects the same global type"]},
+  local:     {title:"C · Projected local types", color:"var(--mint)", raw:"#92ffd5",
+              sub:"Foundry agents + monitors",
+              desc:"Each agent gets only its own projected local contract: an EFSM SEND/RECV table + payload refinement guards.",
+              bullets:["<b>Each role sees only its own obligations</b>","Deadlock-freedom proven before any agent runs","Per-role static Python monitor verifies every event + goal"]},
+  local_min: {title:"C-min · Minimal local",  color:"var(--violet)", raw:"#c4a8ff",
+              sub:"Foundry agents + monitors",
+              desc:"Same projected contract, compressed to one line per EFSM transition — the token-budget variant.",
+              bullets:["~54% of the verbose contract's prompt cost","Same monitor, same guarantees","Tests how small the contract can get"]},
+  gate:      {title:"C+ · Enforcement gate",  color:"var(--amber)", raw:"#ffd166",
+              sub:"Foundry agents + gate",
+              desc:"Setting C plus an in-line monitor that REJECTS off-contract sends before delivery and re-prompts the role.",
+              bullets:["<b>Wrong messages are never delivered</b> — not unlikely, non-completable","Liveness nudge: enabled senders are told to act","Choice guards enforced at the gate too"]},
+};
+const ARM_ORDER = ["intent","global","local","local_min","gate"];
+
+/* protocol graphs (message-flow view of the global type) */
+const GRAPHS = {
+  valid: {
+    name:"LLM-drafted global type (Scribble-validated)",
+    minPath:{high:8, standard:6},
+    nodes:[
+      {id:"e1", lbl:"FetchRevenueData", from:"Fetcher", to:"RevenueAnalyst", x:180, y:64},
+      {id:"e2", lbl:"AnalyzeExpenses",  from:"ExpenseAnalyst", to:"RevenueAnalyst", x:180, y:128},
+      {id:"ch", choice:true, lbl:"choice at RevenueAnalyst", x:180, y:188},
+      {id:"h1", lbl:"HighRevenue",       from:"RevenueAnalyst", to:"TaxSpecialist", branch:"high", x:92, y:268},
+      {id:"h2", lbl:"AuditCompleted",    from:"TaxSpecialist", to:"RevenueAnalyst", branch:"high", x:92, y:332},
+      {id:"h3", lbl:"NotificationBranch",from:"RevenueAnalyst", to:"TaxVerifier",  branch:"high", x:92, y:396},
+      {id:"s1", lbl:"StandardRevenue",   from:"RevenueAnalyst", to:"TaxVerifier",  branch:"standard", x:268, y:268},
+      {id:"s2", lbl:"NotificationBranch",from:"RevenueAnalyst", to:"TaxSpecialist", branch:"standard", x:268, y:332},
+      {id:"mg", merge:true, x:180, y:456},
+      {id:"m1", lbl:"Approval",          from:"TaxVerifier", to:"RevenueAnalyst", x:180, y:512},
+      {id:"m2", lbl:"FinalizeReport",    from:"RevenueAnalyst", to:"Writer", x:180, y:576},
+      {id:"m3", lbl:"GenerateReport",    from:"Writer", to:"Fetcher", term:true, x:180, y:640},
+    ],
+    edges:[["e1","e2"],["e2","ch"],["ch","h1"],["h1","h2"],["h2","h3"],["h3","mg"],
+           ["ch","s1"],["s1","s2"],["s2","mg"],["mg","m1"],["m1","m2"],["m2","m3"]],
+    branchEdges:{high:[["ch","h1"],["h1","h2"],["h2","h3"],["h3","mg"]],
+                 standard:[["ch","s1"],["s1","s2"],["s2","mg"]]},
+  },
+  valid2: {
+    name:"LLM-drafted global type (Scribble-validated, current draft)",
+    minPath:{high:11, standard:9},
+    nodes:[
+      {id:"e1", lbl:"RawRevenueData", from:"Fetcher", to:"RevenueAnalyst", x:180, y:56},
+      {id:"e2", lbl:"ExpenseData",    from:"ExpenseAnalyst", to:"RevenueAnalyst", x:180, y:116},
+      {id:"ch", choice:true, lbl:"choice at RevenueAnalyst", x:180, y:172},
+      {id:"h1", lbl:"HighRevenueNotification", from:"RevenueAnalyst", to:"TaxVerifier",   branch:"high", x:92, y:240},
+      {id:"h2", lbl:"HighRevenueNotification", from:"RevenueAnalyst", to:"TaxSpecialist", branch:"high", x:92, y:298},
+      {id:"h3", lbl:"HighBranchNotification",  from:"RevenueAnalyst", to:"Writer",        branch:"high", x:92, y:356},
+      {id:"h4", lbl:"NotifyTaxSpecialist",     from:"RevenueAnalyst", to:"TaxSpecialist", branch:"high", x:92, y:414},
+      {id:"h5", lbl:"AuditReport",             from:"TaxSpecialist", to:"RevenueAnalyst", branch:"high", x:92, y:472},
+      {id:"h6", lbl:"HighBranchAck",           from:"RevenueAnalyst", to:"TaxVerifier",   branch:"high", x:92, y:530},
+      {id:"s1", lbl:"StandardRevenueNotification", from:"RevenueAnalyst", to:"TaxVerifier",   branch:"standard", x:268, y:240},
+      {id:"s2", lbl:"StandardBranchNotification",  from:"RevenueAnalyst", to:"Writer",        branch:"standard", x:268, y:298},
+      {id:"s3", lbl:"StandardBranchAck",           from:"RevenueAnalyst", to:"TaxVerifier",   branch:"standard", x:268, y:356},
+      {id:"s4", lbl:"NotifyStandardRole",          from:"RevenueAnalyst", to:"TaxSpecialist", branch:"standard", x:268, y:414},
+      {id:"mg", merge:true, x:180, y:580},
+      {id:"m1", lbl:"Approval",             from:"TaxVerifier", to:"RevenueAnalyst", x:180, y:622},
+      {id:"m2", lbl:"FinalRevenueAnalysis", from:"RevenueAnalyst", to:"Writer", x:180, y:678},
+      {id:"m3", lbl:"GenerateReport",       from:"Writer", to:"Fetcher", term:true, x:180, y:734},
+    ],
+    edges:[["e1","e2"],["e2","ch"],
+           ["ch","h1"],["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","h6"],["h6","mg"],
+           ["ch","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","mg"],
+           ["mg","m1"],["m1","m2"],["m2","m3"]],
+    branchEdges:{high:[["ch","h1"],["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","h6"],["h6","mg"]],
+                 standard:[["ch","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","mg"]]},
+  },
+  canon: {
+    name:"Canonical global type (agents never saw this vocabulary)",
+    minPath:{high:10, standard:9},
+    nodes:[
+      {id:"ch", choice:true, lbl:"choice at Fetcher", x:180, y:56},
+      {id:"h1", lbl:"HighRevenue",   from:"Fetcher", to:"TaxSpecialist", branch:"high", x:92, y:128},
+      {id:"h2", lbl:"HighNotice",    from:"Fetcher", to:"RevenueAnalyst", branch:"high", x:92, y:188},
+      {id:"h3", lbl:"HighNotice",    from:"Fetcher", to:"ExpenseAnalyst", branch:"high", x:92, y:248},
+      {id:"h4", lbl:"AuditedRevenue",from:"TaxSpecialist", to:"RevenueAnalyst", branch:"high", x:92, y:308},
+      {id:"h5", lbl:"RetrieveData",  from:"Fetcher", to:"ExpenseAnalyst", branch:"high", x:92, y:368},
+      {id:"s1", lbl:"StandardRevenue", from:"Fetcher", to:"RevenueAnalyst", branch:"standard", x:268, y:128},
+      {id:"s2", lbl:"StandardNotice",  from:"Fetcher", to:"TaxSpecialist", branch:"standard", x:268, y:188},
+      {id:"s3", lbl:"StandardNotice",  from:"Fetcher", to:"ExpenseAnalyst", branch:"standard", x:268, y:248},
+      {id:"s4", lbl:"RetrieveData",    from:"Fetcher", to:"ExpenseAnalyst", branch:"standard", x:268, y:308},
+      {id:"mg", merge:true, x:180, y:420},
+      {id:"m1", lbl:"RevenueAuditRequest",  from:"RevenueAnalyst", to:"TaxVerifier", x:180, y:472},
+      {id:"m2", lbl:"RevenueAuditApproval", from:"TaxVerifier", to:"RevenueAnalyst", x:180, y:530},
+      {id:"m3", lbl:"RevenueAnalysis",      from:"RevenueAnalyst", to:"Writer", x:180, y:588},
+      {id:"m4", lbl:"ExpenseAnalysis",      from:"ExpenseAnalyst", to:"Writer", x:180, y:646},
+      {id:"m5", lbl:"GenerateReport",       from:"Writer", to:"Fetcher", term:true, x:180, y:704},
+    ],
+    edges:[["ch","h1"],["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","mg"],
+           ["ch","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","mg"],
+           ["mg","m1"],["m1","m2"],["m2","m3"],["m3","m4"],["m4","m5"]],
+    branchEdges:{high:[["ch","h1"],["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","mg"]],
+                 standard:[["ch","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","mg"]]},
+  },
+};
+/* which protocol graph applies: Setting A is monitored against the canonical
+   type; B/C against the LLM-drafted valid type — whose vocabulary differs
+   between benchmark snapshots, so it's resolved per run (run.vocab). */
+function graphFor(armKey){
+  if(armKey==="intent") return "canon";
+  // gate arm projects from the same valid draft as C
+  return curRun().vocab==="v2" ? "valid2" : "valid";
+}
+
+const ROLES = ["Fetcher","RevenueAnalyst","ExpenseAnalyst","TaxSpecialist","TaxVerifier","Writer"];
+const ROLE_ABBR = {Fetcher:"Fetch",RevenueAnalyst:"RevAn",ExpenseAnalyst:"ExpAn",TaxSpecialist:"TaxSp",TaxVerifier:"TaxVf",Writer:"Write"};
+
+const GOAL_DEFS = [
+  {id:"G1", d:"High-path revenue exceeds $50,000"},
+  {id:"G2", d:"Audit result is non-empty"},
+  {id:"G3", d:"Tax verifier approves explicitly"},
+  {id:"G4", d:"Revenue analysis is substantive"},
+  {id:"G5", d:"Expense analysis is substantive"},
+  {id:"G6", d:"Final report delivered to the user — pipeline complete", final:true},
+];
+/* role-pair anchors per graph vocabulary, used to pick WHICH goal lights when
+   the monitor's goals_pass counter increments on an event */
+const ANCHORS = {
+  canon:{G1:["Fetcher","TaxSpecialist"],G2:["TaxSpecialist","RevenueAnalyst"],G3:["TaxVerifier","RevenueAnalyst"],
+         G4:["RevenueAnalyst","Writer"],G5:["ExpenseAnalyst","Writer"],G6:["Writer","Fetcher"]},
+  valid:{G1:["RevenueAnalyst","TaxSpecialist"],G2:["TaxSpecialist","RevenueAnalyst"],G3:["TaxVerifier","RevenueAnalyst"],
+         G4:["RevenueAnalyst","Writer"],G5:["ExpenseAnalyst","RevenueAnalyst"],G6:["Writer","Fetcher"]},
+  valid2:{G1:["RevenueAnalyst","TaxSpecialist"],G2:["TaxSpecialist","RevenueAnalyst"],G3:["TaxVerifier","RevenueAnalyst"],
+         G4:["RevenueAnalyst","Writer"],G5:["ExpenseAnalyst","RevenueAnalyst"],G6:["Writer","Fetcher"]},
+};
+
+/* ════════════════════════ PIPELINE ARTIFACTS ════════════════════════ */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+const ART = {
+  intent:{t:"User intent (verbatim)",src:"cases/finance/case.yaml",c:"#ffd166",body:
+`<span class="hl-c"># the only task description any agent ever receives</span>
+We need a Quarterly Finance Report pipeline that takes raw revenue data
+and produces a written report. The pipeline distinguishes <span class="hl-l">'high'</span> revenue
+(above $50k, requires a tax-specialist audit) from <span class="hl-l">'standard'</span> revenue.
+Every revenue analysis must be approved by a tax verifier before it lands
+in the report.`},
+  draft:{t:"LLM drafts a global type",src:"protocols/llm_drafts/…/v1.scr",c:"#5dd6ff",toggle:true},
+  scribble:{t:"Scribble validates — deadlock-freedom is checked, not hoped for",src:"scribble-java · projection + safety",c:"#92ffd5",body:
+`<span class="hl-ok">✓ VALID DRAFT</span>   projection succeeded for all 6 roles
+  well-formedness ........ <span class="hl-ok">OK</span>
+  deadlock-freedom ....... <span class="hl-ok">OK</span>   (no wait-for cycles)
+  liveness / progress .... <span class="hl-ok">OK</span>   (every branch reaches GenerateReport)
+
+<span class="hl-bad">✗ UNSAFE DRAFT — REJECTED before any agent ran</span>
+  on the <span class="hl-l">high</span> branch TaxVerifier is never notified of the branch
+  decision, yet both branches require its Approval:
+    wait-for cycle: <span class="hl-bad">[Writer → RevenueAnalyst → TaxVerifier]</span>
+    wait-for cycle: <span class="hl-bad">[Fetcher → Writer → RevenueAnalyst → TaxVerifier]</span>
+  → projection refused · monitor unprojectable · this protocol can deadlock
+  <span class="hl-c">(in the live benchmark this arm's goal completion drops to 20%)</span>`},
+  project:{t:"Projection → per-role local contract (this is ALL the RevenueAnalyst sees)",src:"runs/…/prompts/spec_llmvalid/RevenueAnalyst.system.md",c:"#c4a8ff",body:
+`<span class="hl-r">RevenueAnalyst</span>@QuarterlyFinanceReport local type
+<span class="hl-c">(SEND = you emit; RECV = peer emits, WAIT until you reach a SEND state)</span>
+
+  state 23 <span class="hl-c">(start)</span>: <span class="hl-k">RECV</span> <span class="hl-l">FetchRevenueData</span>()        from Fetcher        → 25
+  state 25:         <span class="hl-k">RECV</span> <span class="hl-l">AnalyzeExpenses</span>(String)   from ExpenseAnalyst → 26
+  state 26: <span class="hl-c">choice — yours to make:</span>
+            <span class="hl-k">SEND</span> <span class="hl-l">HighRevenue</span>(Double)       to TaxSpecialist    → 27
+            <span class="hl-k">SEND</span> <span class="hl-l">StandardRevenue</span>(String)   to TaxVerifier      → 34
+  state 27:         <span class="hl-k">RECV</span> <span class="hl-l">AuditCompleted</span>(String)    from TaxSpecialist  → 28
+  state 28:         <span class="hl-k">SEND</span> <span class="hl-l">NotificationBranch</span>(String) to TaxVerifier     → 32
+  state 34:         <span class="hl-k">SEND</span> <span class="hl-l">NotificationBranch</span>(String) to TaxSpecialist   → 32
+  state 32:         <span class="hl-k">RECV</span> <span class="hl-l">Approval</span>(String)          from TaxVerifier    → 33
+  state 33:         <span class="hl-k">SEND</span> <span class="hl-l">FinalizeReport</span>(String)    to Writer           → end
+
+Payload guards <span class="hl-bad">(HARD)</span>:
+  HighRevenue.amount : float, <span class="hl-bad">require x &gt; 50000.0</span>
+  FinalizeReport.text: str,   require len(x) &gt; 10`},
+  goals:{t:"Goals derived from the intent — predicates, not vibes",src:"cases/finance/case.yaml · goals",c:"#ffd166",body:
+`G1 <span class="hl-c">[high branch]</span> revenue_amount      <span class="hl-k">float(x) &gt; 50000</span>      @ HighRevenue
+G2 <span class="hl-c">[high branch]</span> audit_completeness  <span class="hl-k">len(x) &gt; 0</span>            @ AuditCompleted
+G3              audit_approval      <span class="hl-k">"approved"|"ok" in x</span>  @ Approval
+G4              analysis_quality    <span class="hl-k">len(x) &gt; 10</span>           @ FinalizeReport
+G5              expense_quality     <span class="hl-k">len(x) &gt; 10</span>           @ AnalyzeExpenses
+G6 <span class="hl-l">FINAL</span>        report_delivered    <span class="hl-k">terminal event seen</span>   @ GenerateReport → user
+
+<span class="hl-c">Intermediate goals G1–G5 measure the work; G6 is the ultimate-goal
+indicator: no terminal delivery ⇒ the trial fails, whatever else passed.</span>`},
+  monitor:{t:"Static runtime monitor — a Python script at every agent, not an agent",src:"stjp_core/monitor/monitor.py",c:"#ff6b81",body:
+`<span class="hl-c"># per-role EFSM walker. No LLM. No prompt. Deterministic. ~O(1) per event.</span>
+on_event(sender, receiver, label, payload):
+    efsm[sender].step(<span class="hl-k">SEND</span> receiver!label)   <span class="hl-c"># off_protocol? unexpected_peer?</span>
+    efsm[receiver].step(<span class="hl-k">RECV</span> sender?label)
+    refinement[label].check(payload)         <span class="hl-c"># e.g. HighRevenue ⇒ x &gt; 50000</span>
+    goals.update(sender, receiver, label, payload)
+
+<span class="hl-c"># a real verdict from the replayed traces (Setting A, event 1):</span>
+{<span class="hl-l">"type"</span>: <span class="hl-bad">"off_protocol"</span>, <span class="hl-l">"role"</span>: "Fetcher", <span class="hl-l">"state"</span>: "10",
+ <span class="hl-l">"got"</span>:  "send RevenueAnalyst!FetchRevenueData",
+ <span class="hl-l">"expected"</span>: [<span class="hl-ok">"TaxSpecialist!HighRevenue"</span>, <span class="hl-ok">"RevenueAnalyst!StandardRevenue"</span>]}`},
+};
+const SCR_VALID =
+`<span class="hl-c">// vocabulary as enforced by the monitor in the replayed run</span>
+<span class="hl-k">global protocol</span> QuarterlyFinanceReport(<span class="hl-r">role</span> Fetcher, <span class="hl-r">role</span> RevenueAnalyst,
+    <span class="hl-r">role</span> ExpenseAnalyst, <span class="hl-r">role</span> Writer, <span class="hl-r">role</span> TaxVerifier, <span class="hl-r">role</span> TaxSpecialist) {
+
+    <span class="hl-l">FetchRevenueData</span>()        from Fetcher        to RevenueAnalyst;
+    <span class="hl-l">AnalyzeExpenses</span>(String)   from ExpenseAnalyst to RevenueAnalyst;
+
+    <span class="hl-k">choice at</span> RevenueAnalyst {            <span class="hl-c">// high revenue (&gt; $50k)</span>
+        <span class="hl-l">HighRevenue</span>(Double)       from RevenueAnalyst to TaxSpecialist;
+        <span class="hl-l">AuditCompleted</span>(String)    from TaxSpecialist  to RevenueAnalyst;
+        <span class="hl-l">NotificationBranch</span>(String) from RevenueAnalyst to TaxVerifier;
+    } <span class="hl-k">or</span> {                                 <span class="hl-c">// standard revenue</span>
+        <span class="hl-l">StandardRevenue</span>(String)   from RevenueAnalyst to TaxVerifier;
+        <span class="hl-l">NotificationBranch</span>(String) from RevenueAnalyst to TaxSpecialist;
+    }
+
+    <span class="hl-l">Approval</span>(String)          from TaxVerifier    to RevenueAnalyst;
+    <span class="hl-l">FinalizeReport</span>(String)    from RevenueAnalyst to Writer;
+    <span class="hl-l">GenerateReport</span>()          from Writer         to Fetcher;   <span class="hl-c">// terminal</span>
+}`;
+const SCR_UNSAFE =
+`<span class="hl-c">// the LLM's first draft — looks plausible, deadlocks at runtime</span>
+<span class="hl-k">choice at</span> RevenueAnalyst {
+    <span class="hl-l">HighRevenue</span>(Double)    from RevenueAnalyst to TaxSpecialist;
+    <span class="hl-l">AuditCompleted</span>(String) from TaxSpecialist  to RevenueAnalyst;
+    <span class="hl-bad">// ✗ TaxVerifier never told the branch was taken…</span>
+} <span class="hl-k">or</span> {
+    <span class="hl-l">StandardRevenue</span>(String) from RevenueAnalyst to TaxVerifier;
+}
+<span class="hl-bad">Approval(String) from TaxVerifier to RevenueAnalyst;  // …yet must act in BOTH branches</span>
+<span class="hl-c">// Scribble: wait-for cycle [Writer, RevenueAnalyst, TaxVerifier] → REJECTED</span>`;
+
+const PIPE_STAGES = [
+  {k:"intent", n:"STEP 1", t:"User intent", d:"One paragraph of natural language.", tag:"human", tc:"#ffd166"},
+  {k:"draft", n:"STEP 2", t:"LLM → global type", d:"Intent translated into a Scribble global protocol.", tag:"LLM", tc:"#5dd6ff"},
+  {k:"scribble", n:"STEP 3", t:"Scribble validates", d:"Deadlock-freedom, liveness, well-formedness. Unsafe drafts rejected.", tag:"proof", tc:"#92ffd5"},
+  {k:"project", n:"STEP 4", t:"Project → local contracts", d:"Each role gets only its own SEND/RECV obligations + guards.", tag:"projection", tc:"#c4a8ff"},
+  {k:"goals", n:"STEP 5", t:"Goals from intent", d:"Predicates anchored to protocol messages. One marked FINAL.", tag:"verifiable", tc:"#ffd166"},
+  {k:"monitor", n:"STEP 6", t:"Static monitors", d:"A Python EFSM-walker beside every agent. Observes sends/receives, checks goals.", tag:"not an agent", tc:"#ff6b81"},
+];
+
+/* ════════════════════════ STATE ════════════════════════ */
+let S = {runIdx:0, arm:"local", trial:0, ev:0, playing:false, timer:null};
+const $ = id=>document.getElementById(id);
+function runs(){return DATA.runs}
+function curRun(){return DATA.runs[S.runIdx]}
+function curArmData(){return curRun().arms[S.arm]}
+function curTrial(){return curArmData().trials[S.trial]}
+function armColor(k){return ARM_META[k].raw}
+function fmt(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1)+"k":String(Math.round(n))}
+
+/* ════════════════════════ PIPELINE RENDER ════════════════════════ */
+function renderPipe(){
+  const p=$("pipe"); p.innerHTML="";
+  PIPE_STAGES.forEach((st,i)=>{
+    const d=document.createElement("div");
+    d.className="stage"; d.style.setProperty("--accent",st.tc);
+    d.innerHTML=`<div class="flowdot" style="animation-delay:${i*0.8}s"></div>
+      <span class="num">${st.n}</span><span class="t">${st.t}</span><span class="d">${st.d}</span>
+      <span class="tag" style="color:${st.tc};border-color:${st.tc}44">${st.tag}</span>`;
+    d.onclick=()=>selArtifact(st.k);
+    d.dataset.k=st.k;
+    p.appendChild(d);
+    if(i<PIPE_STAGES.length-1){const c=document.createElement("div");c.className="connector";c.textContent="→";p.appendChild(c);}
+  });
+  selArtifact("project");
+}
+let unsafeMode=false;
+function selArtifact(k){
+  document.querySelectorAll(".stage").forEach(s=>s.classList.toggle("sel",s.dataset.k===k));
+  const a=ART[k], st=PIPE_STAGES.find(s=>s.k===k);
+  $("adot").style.background=a.c; $("atitle").textContent=a.t; $("asrc").textContent=a.src;
+  $("vtoggle").style.display = a.toggle?"flex":"none";
+  $("abody").innerHTML = a.toggle ? (unsafeMode?SCR_UNSAFE:SCR_VALID) : a.body;
+}
+$("vt-valid").onclick=()=>{unsafeMode=false;$("vt-valid").classList.add("on");$("vt-unsafe").classList.remove("on");selArtifact("draft")};
+$("vt-unsafe").onclick=()=>{unsafeMode=true;$("vt-unsafe").classList.add("on");$("vt-valid").classList.remove("on");selArtifact("draft")};
+
+/* ════════════════════════ SETTINGS CARDS ════════════════════════ */
+function renderCards(){
+  const c=$("armcards"); c.innerHTML="";
+  for(const k of ARM_ORDER){
+    if(!curRun().arms[k]) continue;
+    const m=ARM_META[k];
+    const d=document.createElement("div"); d.className="card"; d.style.setProperty("--accent",m.raw);
+    d.innerHTML=`<div class="ck">SETTING ${m.title.split(" ")[0]} · ${m.sub}</div>
+      <h3>${m.title.slice(m.title.indexOf("·")+2)}</h3><p>${m.desc}</p>
+      <ul>${m.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>`;
+    c.appendChild(d);
+  }
+}
+
+/* ════════════════════════ REPLAY LAB ════════════════════════ */
+function renderArmTabs(){
+  const t=$("armtabs"); t.innerHTML="";
+  for(const k of ARM_ORDER){
+    if(!curRun().arms[k]) continue;
+    const m=ARM_META[k];
+    const b=document.createElement("button");
+    b.textContent=m.title; b.style.setProperty("--ac",m.raw);
+    b.classList.toggle("on",k===S.arm);
+    b.onclick=()=>{S.arm=k;S.trial=defaultTrial();renderArmTabs();renderTrials();resetReplay();};
+    t.appendChild(b);
+  }
+  document.querySelector(".lab").style.setProperty("--ac",armColor(S.arm));
+}
+function renderRunSel(){
+  const s=$("runsel"); s.innerHTML="";
+  runs().forEach((r,i)=>{const o=document.createElement("option");o.value=i;o.textContent=r.label;s.appendChild(o)});
+  s.value=S.runIdx;
+  s.onchange=()=>{S.runIdx=+s.value; if(!curRun().arms[S.arm]) S.arm=Object.keys(curRun().arms)[0]; S.trial=defaultTrial();
+    renderArmTabs();renderTrials();resetReplay();renderScoreboard();renderCards();
+    $("foot-run").textContent=" · showing run "+curRun().label;};
+}
+function defaultTrial(){const ts=curArmData().trials;const i=ts.findIndex(t=>t.succeeded);return i<0?0:i;}
+function renderTrials(){
+  const r=$("trialrow"); r.innerHTML="";
+  curArmData().trials.forEach((tr,i)=>{
+    const b=document.createElement("button"); b.className="tchip"+(i===S.trial?" on":"");
+    b.style.setProperty("--ac",armColor(S.arm));
+    const nev=tr.events.filter(e=>!e.mark).length;
+    b.innerHTML=`T${i} ${tr.branch==="high"?"▲":"▽"}${tr.branch} · ${nev}ev · ${fmt(tr.tokens)}tok ${tr.succeeded?'<span class="ok">✓</span>':'<span class="bad">✗</span>'}`;
+    b.onclick=()=>{S.trial=i;renderTrials();resetReplay();};
+    r.appendChild(b);
+  });
+}
+
+/* ---- protocol graph ---- */
+let gNodes={}, gHit=new Set();
+function drawGraph(){
+  const gk=graphFor(S.arm), G=GRAPHS[gk], svg=$("gsvg");
+  $("gname").textContent=G.name;
+  svg.innerHTML=""; gNodes={}; gHit=new Set();
+  const ns="http://www.w3.org/2000/svg";
+  const pos=Object.fromEntries(G.nodes.map(n=>[n.id,n]));
+  const branch=curTrial().branch;
+  const bset=new Set((G.branchEdges[branch]||[]).map(e=>e.join(">")));
+  // edges
+  for(const [a,b] of G.edges){
+    const A=pos[a],B=pos[b];
+    const p=document.createElementNS(ns,"path");
+    const y1=A.y+(A.choice||A.merge?12:19), y2=B.y-(B.choice||B.merge?12:19);
+    const mid=(y1+y2)/2;
+    p.setAttribute("d",`M${A.x},${y1} C${A.x},${mid} ${B.x},${mid} ${B.x},${y2}`);
+    p.setAttribute("class","gedge"+(bset.has(a+">"+b)||(!pos[a].branch&&!pos[b].branch&&!bset.size)?" path":"")+((!pos[a].branch&&!pos[b].branch)?" path":""));
+    p.dataset.e=a+">"+b;
+    svg.appendChild(p);
+  }
+  // nodes
+  for(const n of G.nodes){
+    const g=document.createElementNS(ns,"g");
+    if(n.choice||n.merge){
+      const r=document.createElementNS(ns,"rect");
+      r.setAttribute("x",n.x-9);r.setAttribute("y",n.y-9);r.setAttribute("width",18);r.setAttribute("height",18);
+      r.setAttribute("transform",`rotate(45 ${n.x} ${n.y})`);
+      r.setAttribute("fill","#171b25");r.setAttribute("stroke","#3d4a68");
+      g.appendChild(r);
+      if(n.lbl){const t=document.createElementNS(ns,"text");t.setAttribute("x",n.x+16);t.setAttribute("y",n.y+4);
+        t.setAttribute("class","gbadge");t.textContent=n.lbl;g.appendChild(t);}
+    } else {
+      const onPath = !n.branch || n.branch===branch;
+      g.setAttribute("class","gnode"+(onPath?" path":"")+(n.term?" term":""));
+      const w=148,h=38;
+      const r=document.createElementNS(ns,"rect");
+      r.setAttribute("x",n.x-w/2);r.setAttribute("y",n.y-h/2);r.setAttribute("width",w);r.setAttribute("height",h);r.setAttribute("rx",9);
+      g.appendChild(r);
+      const t1=document.createElementNS(ns,"text");t1.setAttribute("x",n.x);t1.setAttribute("y",n.y-3);
+      t1.setAttribute("text-anchor","middle");t1.setAttribute("class","l1");t1.textContent=n.lbl;g.appendChild(t1);
+      const t2=document.createElementNS(ns,"text");t2.setAttribute("x",n.x);t2.setAttribute("y",n.y+11);
+      t2.setAttribute("text-anchor","middle");t2.setAttribute("class","l2");
+      t2.textContent=(ROLE_ABBR[n.from]||n.from)+" → "+(ROLE_ABBR[n.to]||n.to);g.appendChild(t2);
+      if(n.term){const t3=document.createElementNS(ns,"text");t3.setAttribute("x",n.x);t3.setAttribute("y",n.y+30);
+        t3.setAttribute("text-anchor","middle");t3.setAttribute("class","gbadge");t3.textContent="◉ terminal — ultimate goal";g.appendChild(t3);}
+      gNodes[n.id]=g;
+    }
+    svg.appendChild(g);
+  }
+  $("offtray").innerHTML="";
+}
+function matchNode(ev){
+  const G=GRAPHS[graphFor(S.arm)];
+  for(const n of G.nodes){
+    if(!n.lbl||n.choice||n.merge) continue;
+    if(n.from===ev.from&&n.to===ev.to&&(n.lbl===ev.lbl||ev.lbl.startsWith(n.lbl)||n.lbl.startsWith(ev.lbl)))
+      return n.id;
+  }
+  return null;
+}
+function lightNode(id){
+  if(gNodes[id]){gNodes[id].classList.add("hit");gHit.add(id);
+    document.querySelectorAll(`#gsvg .gedge`).forEach(p=>{
+      const [a,b]=p.dataset.e.split(">");
+      if(gHit.has(a)&&gHit.has(b))p.classList.add("hit");
+    });}
+}
+
+/* ---- MSC ---- */
+let mscRow=0;
+const LANE_W=92, MSC_TOP=36;
+function laneX(r){return 42+ROLES.indexOf(r)*LANE_W}
+function mscInit(){
+  const svg=$("msvg"); svg.innerHTML=""; mscRow=0;
+  svg.setAttribute("height",MSC_TOP+30);
+  const ns="http://www.w3.org/2000/svg";
+  ROLES.forEach(r=>{
+    const x=laneX(r);
+    const g=document.createElementNS(ns,"g");
+    const rc=document.createElementNS(ns,"rect");
+    rc.setAttribute("x",x-36);rc.setAttribute("y",6);rc.setAttribute("width",72);rc.setAttribute("height",20);rc.setAttribute("rx",6);
+    rc.setAttribute("class","msc-rolehead");g.appendChild(rc);
+    const t=document.createElementNS(ns,"text");t.setAttribute("x",x);t.setAttribute("y",20);
+    t.setAttribute("text-anchor","middle");t.setAttribute("class","msc-rolename");t.textContent=ROLE_ABBR[r];g.appendChild(t);
+    const l=document.createElementNS(ns,"line");
+    l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("y1",MSC_TOP);l.setAttribute("y2",MSC_TOP);
+    l.setAttribute("class","msc-l");l.dataset.role=r;
+    g.appendChild(l);svg.appendChild(g);
+  });
+  svg.setAttribute("width",40+ROLES.length*LANE_W-30);
+}
+function mscExtend(toY){
+  document.querySelectorAll("#msvg line.msc-l").forEach(l=>l.setAttribute("y2",toY));
+  $("msvg").setAttribute("height",toY+24);
+}
+function mscEvent(ev){
+  const ns="http://www.w3.org/2000/svg", svg=$("msvg");
+  mscRow++;
+  const y=MSC_TOP+mscRow*34;
+  mscExtend(y+10);
+  const bad=!!ev.viol;
+  const x1=laneX(ev.from),x2=laneX(ev.to);
+  const g=document.createElementNS(ns,"g");
+  if(ev.from===ev.to){
+    const p=document.createElementNS(ns,"path");
+    p.setAttribute("d",`M${x1},${y-8} C${x1+34},${y-8} ${x1+34},${y+8} ${x1+7},${y+8}`);
+    p.setAttribute("class","msc-arrow "+(bad?"bad":"ok"));g.appendChild(p);
+    arrowHead(g,x1+7,y+8,-1,bad);
+  } else {
+    const l=document.createElementNS(ns,"line");
+    l.setAttribute("x1",x1);l.setAttribute("y1",y);l.setAttribute("x2",x2);l.setAttribute("y2",y);
+    l.setAttribute("class","msc-arrow "+(bad?"bad":"ok"));g.appendChild(l);
+    arrowHead(g,x2,y,x2>x1?1:-1,bad);
+  }
+  const t=document.createElementNS(ns,"text");
+  t.setAttribute("x",(x1+x2)/2);t.setAttribute("y",y-5);t.setAttribute("text-anchor","middle");
+  t.setAttribute("class","msc-lbl"+(bad?" bad":""));t.textContent=ev.lbl+(bad?" ✗":"");
+  g.appendChild(t);
+  svg.appendChild(g);
+  $("mscbox").scrollTop=$("mscbox").scrollHeight;
+}
+function arrowHead(g,x,y,dir,bad){
+  const ns="http://www.w3.org/2000/svg";
+  const p=document.createElementNS(ns,"path");
+  p.setAttribute("d",`M${x},${y} l${-7*dir},-4 l0,8 z`);
+  p.setAttribute("fill",bad?"#ff6b81":"#5dd6ff");
+  g.appendChild(p);
+}
+function mscAttempt(n){
+  const ns="http://www.w3.org/2000/svg", svg=$("msvg");
+  mscRow++;
+  const y=MSC_TOP+mscRow*34; mscExtend(y+10);
+  const w=+$("msvg").getAttribute("width");
+  const l=document.createElementNS(ns,"line");
+  l.setAttribute("x1",4);l.setAttribute("x2",w-4);l.setAttribute("y1",y);l.setAttribute("y2",y);
+  l.setAttribute("class","msc-attline");svg.appendChild(l);
+  const t=document.createElementNS(ns,"text");
+  t.setAttribute("x",8);t.setAttribute("y",y-4);t.setAttribute("class","msc-att");
+  t.textContent="attempt "+n+" (fresh threads — previous attempt failed)";svg.appendChild(t);
+}
+
+/* ---- goals ---- */
+let goalsLit;
+function goalsInit(){
+  goalsLit=GOAL_DEFS.map(()=>false);
+  const b=$("goalbox");b.innerHTML="";
+  GOAL_DEFS.forEach((g,i)=>{
+    const d=document.createElement("div");d.className="goal"+(g.final?" final":"");d.id="goal-"+i;
+    d.innerHTML=`<span class="gid">${g.id}${g.final?" 👑":""}</span><span class="gd">${g.d}</span><span class="tick">○</span>`;
+    b.appendChild(d);
+  });
+}
+function goalsApply(ev){
+  const want=ev.gp;
+  let lit=goalsLit.filter(Boolean).length;
+  if(want<=lit) return;
+  const anch=ANCHORS[graphFor(S.arm)];
+  const isTerm = ev.lbl==="GenerateReport";
+  // prefer the goal anchored on this event's role pair
+  let prefer=-1;
+  GOAL_DEFS.forEach((g,i)=>{
+    if(!goalsLit[i]&&anch[g.id]&&anch[g.id][0]===ev.from&&anch[g.id][1]===ev.to) if(prefer<0)prefer=i;
+  });
+  while(lit<want){
+    let idx=-1;
+    if(prefer>=0&&!goalsLit[prefer]){idx=prefer;prefer=-1;}
+    else{idx=GOAL_DEFS.findIndex((g,i)=>!goalsLit[i]&&(!g.final||isTerm));
+         if(idx<0)idx=GOAL_DEFS.findIndex((g,i)=>!goalsLit[i]);}
+    if(idx<0)break;
+    goalsLit[idx]=true;lit++;
+    const el=$("goal-"+idx);el.classList.add("lit");el.querySelector(".tick").textContent="✓";
+  }
+}
+function goalsReset(){
+  goalsLit=GOAL_DEFS.map(()=>false);
+  GOAL_DEFS.forEach((g,i)=>{const el=$("goal-"+i);el.classList.remove("lit");el.querySelector(".tick").textContent="○";});
+}
+
+/* ---- feed + counters ---- */
+function feedAdd(html,cls){
+  const d=document.createElement("div");d.className="fitem "+(cls||"");d.innerHTML=html;
+  const f=$("feed");f.appendChild(d);
+  while(f.children.length>40)f.removeChild(f.firstChild);
+  f.parentElement.scrollTop=f.parentElement.scrollHeight;
+}
+let C={ev:0,viol:0,tok:0,att:0,time:0};
+function countersDraw(){
+  $("c-ev").textContent=C.ev;
+  $("c-viol").textContent=C.viol;
+  $("c-goal").textContent=goalsLit.filter(Boolean).length+"/6";
+  $("c-tok").textContent=fmt(C.tok);
+  $("c-time").textContent=C.time.toFixed(0)+"s";
+  $("c-att").textContent=C.att?(C.att+"/"+curTrial().attempts):"–";
+}
+
+/* ---- engine ---- */
+function resetReplay(){
+  stop();
+  S.ev=0;C={ev:0,viol:0,tok:0,att:0,time:0};
+  drawGraph();mscInit();goalsInit();
+  $("feed").innerHTML="";$("offtray").innerHTML="";
+  const items=curTrial().events;
+  $("scrub").max=items.length;$("scrub").value=0;
+  countersDraw();
+  const tr=curTrial();
+  feedAdd(`trial T${S.trial} · branch=${tr.branch} · ${tr.succeeded?'<span style="color:var(--green)">completed ✓</span>':'<span style="color:var(--red)">did not complete ✗</span>'} · ${fmt(tr.tokens)} tokens · ${tr.seconds.toFixed(0)}s wall`);
+}
+function stepOnce(){
+  const items=curTrial().events;
+  if(S.ev>=items.length){stop();return false;}
+  const it=items[S.ev++];
+  $("scrub").value=S.ev;
+  if(it.mark==="attempt"){
+    C.att=it.n;
+    if(it.n>1){mscAttempt(it.n);goalsReset();
+      feedAdd("↺ attempt "+it.n+" — goals reset, threads recreated","");}
+    countersDraw();return true;
+  }
+  C.ev++;C.time=it.t||C.time;C.tok+=(it.tok||0);
+  if(it.viol){
+    C.viol++;
+    feedAdd(`✗ <b>${it.viol.type}</b> ${it.from}→${it.to} ${it.lbl}`+
+      (it.viol.exp&&it.viol.exp.length?`<span class="exp">expected: ${it.viol.exp.join(" · ")}</span>`:""),"v");
+    const tray=$("offtray");
+    const c=document.createElement("span");c.className="offchip";c.textContent=it.lbl;
+    if(tray.children.length<14)tray.appendChild(c);
+    else if(tray.children.length===14){const m=document.createElement("span");m.className="offchip";m.textContent="+more";tray.appendChild(m);}
+  } else {
+    const nid=matchNode(it);
+    if(nid)lightNode(nid);
+    feedAdd(`✓ accepted · ${it.from}→${it.to} <b>${it.lbl}</b>${it.pay?` (${esc(it.pay.slice(0,28))})`:""}`,"a");
+  }
+  mscEvent(it);
+  goalsApply(it);
+  countersDraw();
+  return true;
+}
+function play(){
+  if(S.playing)return;
+  const items=curTrial().events;
+  if(S.ev>=items.length)resetReplay();
+  S.playing=true;$("btn-play").textContent="⏸";
+  S.timer=setInterval(()=>{if(!stepOnce())stop();},+$("speed").value);
+}
+function stop(){S.playing=false;$("btn-play").textContent="▶";if(S.timer){clearInterval(S.timer);S.timer=null;}}
+$("btn-play").onclick=()=>S.playing?stop():play();
+$("btn-step").onclick=()=>{stop();stepOnce();};
+$("btn-reset").onclick=resetReplay;
+$("speed").onchange=()=>{if(S.playing){stop();play();}};
+$("scrub").oninput=e=>{
+  stop();const target=+e.target.value;
+  if(target<S.ev)resetReplay();
+  while(S.ev<target)stepOnce();
+};
+
+/* ════════════════════════ SCOREBOARD ════════════════════════ */
+function gcr(a){const s=a.stats;return s.strict_pct!=null?s.strict_pct:(s.role_pair_pct||0)}
+function armKeys(){return ARM_ORDER.filter(k=>curRun().arms[k])}
+function bar(parent,label,val,maxv,color,text){
+  const r=document.createElement("div");r.className="brow";
+  r.innerHTML=`<span class="bl">${label}</span><div class="btrack"><div class="bfill" style="background:${color}"></div></div><span class="bval">${text}</span>`;
+  parent.appendChild(r);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    r.querySelector(".bfill").style.width=Math.max(1.5,(maxv?val/maxv*100:0))+"%";}));
+}
+function chart(title,note){
+  const c=document.createElement("div");c.className="chart";
+  c.innerHTML=`<h3>${title}</h3><div class="note">${note}</div>`;
+  $("charts").appendChild(c);return c;
+}
+function renderScoreboard(){
+  $("charts").innerHTML="";
+  const r=curRun(); $("sb-runlabel").textContent=r.label;
+  $("sb-lead").textContent=`${r.n} trial${r.n>1?"s":""} per setting · branch-balanced high/standard · same intent, model, and ${"24"}-step budget everywhere. Recorded ${r.date||""}.`;
+  const L=$("sb-legend");L.innerHTML="";
+  armKeys().forEach(k=>{const li=document.createElement("span");li.className="li";
+    li.innerHTML=`<span class="sw" style="background:${armColor(k)}"></span>${ARM_META[k].title}`;L.appendChild(li);});
+
+  const A=armKeys().map(k=>[k,r.arms[k]]);
+
+  let c=chart("Ultimate-goal completion (GCR)","all goals + final report, same attempt — strict anchor match");
+  A.forEach(([k,a])=>{const v=gcr(a);
+    bar(c,ARM_META[k].title.split("·")[0],v,100,armColor(k),
+      a.stats.strict_pct==null?v.toFixed(0)+"%*":v.toFixed(0)+"%")});
+  if(A.some(([k,a])=>a.stats.strict_pct==null)){
+    const n=document.createElement("div");n.className="note";n.style.marginTop="8px";
+    n.textContent="* no shared vocabulary — scored at the relaxed role-pair rung and still 0–30%.";c.appendChild(n);}
+
+  c=chart("Path adherence","share of events the runtime monitor accepted as on-protocol");
+  A.forEach(([k,a])=>{const s=a.stats;const v=s.events?100*(1-s.violations/s.events):0;
+    bar(c,ARM_META[k].title.split("·")[0],v,100,armColor(k),v.toFixed(0)+"%")});
+
+  if(A.some(([k,a])=>a.stats.severity)){
+    c=chart("Consequence-graded deviations (design v2.1)","S0 benign dialect (not counted) · S1 waste · S2 skipped obligation · S3 never terminated · S4 unauthorized irreversible act");
+    const SEVC={S0:"#3a4258",S1:"#8a7a3a",S2:"#c97a3d",S3:"#a04458",S4:"#ff4d68"};
+    A.forEach(([k,a])=>{
+      const sv=a.stats.severity; if(!sv){return;}
+      const total=Math.max(1,sv.S0+sv.S1+sv.S2+sv.S3+sv.S4);
+      const r=document.createElement("div");r.className="brow";
+      let segs="";
+      for(const cls of ["S0","S1","S2","S3","S4"]){
+        const w=100*sv[cls]/total;
+        if(w>0)segs+=`<div title="${cls}: ${sv[cls]}" style="display:inline-block;height:100%;width:${w}%;background:${SEVC[cls]}"></div>`;
+      }
+      r.innerHTML=`<span class="bl">${ARM_META[k].title.split("·")[0]}</span>
+        <div class="btrack" style="font-size:0">${segs}</div>
+        <span class="bval">${a.stats.harmful_attempt_pct!=null?a.stats.harmful_attempt_pct.toFixed(0)+"% harm":""}${a.stats.disasters?" · "+a.stats.disasters+"💥":""}</span>`;
+      c.appendChild(r);
+    });
+    const lg=document.createElement("div");lg.className="note";lg.style.marginTop="10px";
+    lg.innerHTML=Object.entries(SEVC).map(([k,v])=>`<span style="color:${v}">■</span> ${k}`).join("&nbsp; ");
+    c.appendChild(lg);
+  }
+
+  c=chart("Tokens per trial","average across trials — lower is better");
+  {const mx=Math.max(...A.map(([k,a])=>a.stats.avg_tokens));
+   A.forEach(([k,a])=>bar(c,ARM_META[k].title.split("·")[0],a.stats.avg_tokens,mx,armColor(k),fmt(a.stats.avg_tokens)));}
+
+  c=chart("Cost of success","tokens ÷ completion rate = price of one delivered report");
+  {const vals=A.map(([k,a])=>{const g=gcr(a);return g>0?a.stats.avg_tokens/(g/100):null});
+   const mx=Math.max(...vals.filter(v=>v!=null),1);
+   A.forEach(([k,a],i)=>{const v=vals[i];
+     bar(c,ARM_META[k].title.split("·")[0],v==null?mx:v,mx,v==null?"#3a2530":armColor(k),v==null?"∞":fmt(v))});}
+
+  c=chart("Wall-clock seconds per trial","average end-to-end time");
+  {const mx=Math.max(...A.map(([k,a])=>a.stats.avg_seconds));
+   A.forEach(([k,a])=>bar(c,ARM_META[k].title.split("·")[0],a.stats.avg_seconds,mx,armColor(k),a.stats.avg_seconds.toFixed(0)+"s"));}
+
+  c=chart("Redundancy ratio","events emitted ÷ minimal accepting path (1.0 = perfectly efficient)");
+  {const vals=A.map(([k,a])=>{const G=GRAPHS[graphFor(k)];const mp=(G.minPath.high+G.minPath.standard)/2;
+     return (a.stats.events/a.stats.n_trials)/mp});
+   const mx=Math.max(...vals);
+   A.forEach(([k,a],i)=>bar(c,ARM_META[k].title.split("·")[0],vals[i],mx,armColor(k),vals[i].toFixed(1)+"×"));}
+
+  /* pareto */
+  c=chart("Completion vs cost frontier","up and left wins — protocol info pays for itself");
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("class","pareto");svg.setAttribute("viewBox","0 0 420 280");
+  const mxT=Math.max(...A.map(([k,a])=>a.stats.avg_tokens))*1.15;
+  const X=t=>46+t/mxT*350, Y=g=>240-g/100*210;
+  svg.innerHTML=`<line class="axis" x1="46" y1="240" x2="408" y2="240"/><line class="axis" x1="46" y1="20" x2="46" y2="240"/>
+    <text x="200" y="266">avg tokens / trial →</text>
+    <text x="14" y="140" transform="rotate(-90 14 140)">completion % ↑</text>
+    <text x="40" y="248" text-anchor="end">0</text>
+    <text x="40" y="26" text-anchor="end">100</text>`;
+  A.forEach(([k,a])=>{
+    const g=gcr(a),x=X(a.stats.avg_tokens),y=Y(g);
+    svg.innerHTML+=`<circle class="pt" cx="${x}" cy="${y}" r="7" fill="${armColor(k)}" color="${armColor(k)}"/>
+      <text class="ptl" x="${x+11}" y="${y+4}" fill="${armColor(k)}">${ARM_META[k].title.split("·")[0].trim()} ${g.toFixed(0)}%·${fmt(a.stats.avg_tokens)}</text>`;
+  });
+  c.appendChild(svg);
+
+  /* per-goal heat table */
+  c=chart("Per-goal pass rate","strict rung (role-pair for Setting A, marked *) — G6 is the final goal");
+  const tb=document.createElement("table");tb.className="heat";
+  let h="<tr><th style='text-align:left'>goal</th>";
+  armKeys().forEach(k=>h+=`<th style="color:${armColor(k)}">${ARM_META[k].title.split("·")[0].trim()}</th>`);
+  h+="</tr>";
+  GOAL_DEFS.forEach(g=>{
+    h+=`<tr><td class="gl"><b>${g.id}</b>${g.final?" 👑":""} ${g.d}</td>`;
+    armKeys().forEach(k=>{
+      const s=curRun().arms[k].stats;
+      const pg=s.strict_per_goal||s.role_pair_per_goal||{};
+      const v=pg[g.id];
+      const star=s.strict_per_goal==null?"*":"";
+      const col=v==null?"var(--dim)":v>=80?"var(--green)":v>=50?"var(--amber)":"var(--red)";
+      h+=`<td style="color:${col}">${v==null?"–":v.toFixed(0)+"%"+star}</td>`;
+    });
+    h+="</tr>";
+  });
+  tb.innerHTML=h;c.appendChild(tb);
+}
+
+/* ════════════════════════ load external data.json ════════════════════════ */
+$("loadfile").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{
+    const j=JSON.parse(rd.result);
+    const run=j.runs?j.runs[0]:{label:f.name,n:"?",arms:j.arms};
+    if(!run.label)run.label=f.name;
+    DATA.runs.unshift(run);S.runIdx=0;
+    if(!curRun().arms[S.arm])S.arm=Object.keys(curRun().arms)[0];
+    S.trial=0;renderRunSel();renderArmTabs();renderTrials();resetReplay();renderScoreboard();renderCards();
+  }catch(err){alert("could not parse: "+err.message)}};
+  rd.readAsText(f);
+};
+
+/* ════════════════════════ boot ════════════════════════ */
+renderPipe();renderRunSel();renderCards();S.trial=defaultTrial();renderArmTabs();renderTrials();resetReplay();renderScoreboard();
+$("foot-run").textContent=" · showing run "+curRun().label;
+</script>
+</body>
+</html>

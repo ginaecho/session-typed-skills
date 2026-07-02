@@ -1,0 +1,47 @@
+case_id: code_review
+description: |
+  Pull-request review and merge. Author submits to two reviewers and
+  triggers CI; the Merger collects both approvals and the CI coverage
+  result, then issues a merge decision back to the Author. Exercises a
+  2-of-N quorum + numeric-threshold pattern.
+version: v1
+protocol_name: CodeReview
+roles:
+  - Author
+  - Reviewer1
+  - Reviewer2
+  - CI
+  - Merger
+terminal_label: MergeDecision
+max_steps: 12
+branch_hints: [clean_pr, contested_pr]
+intent: |
+  Review and merge a pull request. The Author submits the PR to two
+  reviewers and triggers CI in parallel. Both reviewers must approve
+  (LGTM or 'approved' in their reply) and CI must report a non-trivial
+  coverage figure before the Merger issues a final merge or rejection.
+goals:
+  - id: G1
+    description: Reviewer1 approval must be explicit
+    metric: approval1
+    predicate: '"approved" in x.lower() or "lgtm" in x.lower()'
+    anchor: {sender: Reviewer1, receiver: Merger, label: Approval1}
+    threshold: contains approved/lgtm
+  - id: G2
+    description: Reviewer2 approval must be explicit
+    metric: approval2
+    predicate: '"approved" in x.lower() or "lgtm" in x.lower()'
+    anchor: {sender: Reviewer2, receiver: Merger, label: Approval2}
+    threshold: contains approved/lgtm
+  - id: G3
+    description: CI coverage report must be in [0,100]
+    metric: coverage
+    predicate: 0.0 <= float(x) <= 100.0
+    anchor: {sender: CI, receiver: Merger, label: CoverageReport}
+    threshold: percent
+  - id: G4
+    description: Merge decision must be explicit
+    metric: merge_decision
+    predicate: '"merged" in x.lower() or "rejected" in x.lower()'
+    anchor: {sender: Merger, receiver: Author, label: MergeDecision}
+    threshold: contains merged/rejected

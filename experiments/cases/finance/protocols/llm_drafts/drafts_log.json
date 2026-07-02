@@ -1,0 +1,106 @@
+{
+  "case_id": "finance",
+  "intent": "We need a Quarterly Finance Report pipeline that takes raw revenue data\nand produces a written report. The pipeline distinguishes 'high' revenue\n(above $50k, requires a tax-specialist audit) from 'standard' revenue.\nEvery revenue analysis must be approved by a tax verifier before it lands\nin the report.",
+  "module_name": "v1",
+  "max_attempts": 10,
+  "attempts_used": 11,
+  "attempts": [
+    {
+      "attempt": 1,
+      "valid": false,
+      "error": "Safety violation(s) at session state 89:\n    Trace=[Fetcher!RevenueAnalyst:FetchRevenueData(), ExpenseAnalyst!RevenueAnalyst:AnalyzeExpenses(), RevenueAnalyst?Fetcher:FetchRevenueData(), RevenueAnalyst?ExpenseAnalyst:AnalyzeExpenses(), RevenueAnalyst!TaxSpecialist:HighRevenue(Double), TaxSpecialist?RevenueAnalyst:HighRevenue(Double), TaxSpecialist!RevenueAnalyst:AuditCompleted(Bool), RevenueAnalyst?TaxSpecialist:AuditCompleted(Bool)]\n    Wait-for cycles: [[Writer, RevenueAnalyst, TaxVerifier], [Fetcher, Writer, RevenueAnalyst, TaxVerifier]]\n    Unfinished roles: {Writer=34, Fetcher=6, TaxVerif",
+      "deadlock_score": 2,
+      "draft_chars": 854,
+      "elapsed_s": 6.6
+    },
+    {
+      "attempt": 2,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 830,
+      "elapsed_s": 6.0
+    },
+    {
+      "attempt": 3,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 809,
+      "elapsed_s": 5.7
+    },
+    {
+      "attempt": 4,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 743,
+      "elapsed_s": 6.7
+    },
+    {
+      "attempt": 5,
+      "valid": false,
+      "error": "v1(line 22:36): Role not bound: All",
+      "deadlock_score": 1,
+      "draft_chars": 897,
+      "elapsed_s": 6.4
+    },
+    {
+      "attempt": 6,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 737,
+      "elapsed_s": 5.2
+    },
+    {
+      "attempt": 7,
+      "valid": false,
+      "error": "Safety violation(s) at session state 115:\n    Trace=[Fetcher!RevenueAnalyst:FetchRevenue(), Fetcher!ExpenseAnalyst:AnalyzeExpenses(), ExpenseAnalyst?Fetcher:AnalyzeExpenses(), ExpenseAnalyst!TaxVerifier:ExpenseAnalysis(Double), RevenueAnalyst?Fetcher:FetchRevenue(), RevenueAnalyst!TaxVerifier:RevenueAnalysis(Double), TaxVerifier?RevenueAnalyst:RevenueAnalysis(Double), TaxVerifier?ExpenseAnalyst:ExpenseAnalysis(Double), TaxVerifier!RevenueAnalyst:StandardRevenueApproval(Bool), TaxVerifier!Writer:FinalApproval(Bool), Writer?TaxVerifier:FinalApproval(Bool), Writer!Fetcher:GenerateReport(), Fetche",
+      "deadlock_score": 2,
+      "draft_chars": 945,
+      "elapsed_s": 6.3
+    },
+    {
+      "attempt": 8,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 803,
+      "elapsed_s": 6.3
+    },
+    {
+      "attempt": 9,
+      "valid": false,
+      "error": "Safety violation(s) at session state 115:\n    Trace=[Fetcher!RevenueAnalyst:FetchRawData(), RevenueAnalyst?Fetcher:FetchRawData(), RevenueAnalyst!ExpenseAnalyst:RevenueAnalysis(Double), ExpenseAnalyst?RevenueAnalyst:RevenueAnalysis(Double), RevenueAnalyst!TaxVerifier:StandardRevenue(), TaxVerifier?RevenueAnalyst:StandardRevenue(), TaxVerifier!RevenueAnalyst:Approval(Bool), RevenueAnalyst?TaxVerifier:Approval(Bool), RevenueAnalyst!Writer:Finalize(Double, Bool), Writer?RevenueAnalyst:Finalize(Double, Bool), Writer!Fetcher:GenerateReport(), Fetcher?Writer:GenerateReport()]\n    Unfinished roles: {",
+      "deadlock_score": 2,
+      "draft_chars": 909,
+      "elapsed_s": 6.8
+    },
+    {
+      "attempt": 10,
+      "valid": false,
+      "error": "Inconsistent external choice subjects for TaxVerifier: [TaxVerifier=RevenueAnalyst, TaxVerifier=TaxSpecialist]",
+      "deadlock_score": 2,
+      "draft_chars": 735,
+      "elapsed_s": 5.4
+    },
+    {
+      "attempt": "fix_1",
+      "valid": true,
+      "error": "",
+      "draft_chars": 998,
+      "elapsed_s": 5.7
+    }
+  ],
+  "kept_valid": {
+    "path": "experiments\\cases\\finance\\protocols\\llm_drafts\\v1_llm_valid.scr",
+    "from_attempt": "fix_1"
+  },
+  "kept_unsafe": {
+    "path": "experiments\\cases\\finance\\protocols\\llm_drafts\\v1_llm_unsafe.scr",
+    "from_attempt": 1,
+    "deadlock_score": 2
+  },
+  "ts": "2026-05-18T13:50:48"
+}

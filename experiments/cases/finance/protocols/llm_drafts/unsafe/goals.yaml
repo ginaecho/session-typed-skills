@@ -1,0 +1,62 @@
+source_protocol: experiments\cases\finance\protocols\llm_drafts\unsafe\v1.scr
+re_anchored_from: experiments\cases\finance\case.yaml
+n_canonical_goals: 6
+n_kept: 6
+n_dropped: 0
+dropped: []
+goals:
+- id: G1
+  description: High-path revenue must exceed $50,000
+  metric: revenue_amount
+  predicate: float(x) > 50000
+  anchor:
+    sender: RevenueAnalyst
+    receiver: TaxSpecialist
+    label: HighRevenue
+  threshold: '> 50000'
+- id: G2
+  description: Audit result must be non-empty
+  metric: audit_completeness
+  predicate: x.lower() == 'true'
+  anchor:
+    sender: TaxSpecialist
+    receiver: RevenueAnalyst
+    label: AuditCompleted
+  threshold: audit completion
+- id: G3
+  description: Tax verifier must approve the audit explicitly
+  metric: audit_approval
+  predicate: x.lower() == 'true'
+  anchor:
+    sender: TaxVerifier
+    receiver: RevenueAnalyst
+    label: Approval
+  threshold: explicit true approval
+- id: G4
+  description: Revenue analysis must be substantive (>10 chars)
+  metric: analysis_quality
+  predicate: len(x) > 10
+  anchor:
+    sender: RevenueAnalyst
+    receiver: Writer
+    label: FinalizeReport
+  threshold: '> 10 chars'
+- id: G5
+  description: Expense analysis must be substantive (>10 chars)
+  metric: expense_quality
+  predicate: len(x) > 10
+  anchor:
+    sender: RevenueAnalyst
+    receiver: Writer
+    label: FinalizeReport
+  threshold: '> 10 chars'
+- id: G6
+  description: A final quarterly report is produced and delivered to the user, terminating
+    the pipeline
+  metric: report_delivered
+  predicate: 'True'
+  anchor:
+    sender: Writer
+    receiver: Fetcher
+    label: GenerateReport
+  threshold: terminal event present

@@ -1,0 +1,27 @@
+# Banking transfer — refinement contracts (payload predicates)
+
+[Initiator -> SourceBank : Request]
+type: float
+require: x > 0
+require: x <= 1000000
+
+[SourceBank -> Approver : LargeTransfer]
+type: float
+require: x > 10000
+
+[SourceBank -> DestBank : SmallTransfer]
+type: float
+require: x > 0
+require: x <= 10000
+
+[SourceBank -> DestBank : Debit]
+type: float
+require: x > 0
+
+[DestBank -> AuditLog : Credit]
+type: float
+require: x > 0
+
+[AuditLog -> Initiator : Settled]
+type: str
+require: len(x) > 0

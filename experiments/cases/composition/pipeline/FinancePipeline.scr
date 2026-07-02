@@ -1,0 +1,13 @@
+module pipeline.FinancePipeline;
+
+// @use BankingSession from "../banking/Banking.scr";
+// @use AuditSession from "../audit/Audit.scr";
+
+data <java> "java.lang.Integer" from "rt.jar" as int;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+global protocol FinancePipeline(role Client, role Bank, role Auditor) {
+    do BankingSession(Client, Bank);
+    do AuditSession(Client, Auditor);
+    report(String) from Auditor to Client;
+}

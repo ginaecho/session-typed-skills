@@ -1,0 +1,71 @@
+case_id: rag
+description: |
+  Multi-source retrieval-augmented generation with a bounded verification
+  loop. Tests recursion and content correctness — two retrievers fetch in
+  parallel, the synthesizer drafts an answer, the fact-checker verifies it,
+  and on failure the synthesizer revises and re-submits until verified or a
+  documented "cannot answer" is emitted.
+
+version: v1
+protocol_name: MultiSourceRAG
+
+roles:
+  - User
+  - QueryPlanner
+  - Retriever1
+  - Retriever2
+  - Synthesizer
+  - FactChecker
+
+terminal_label: FinalAnswer
+max_steps: 30
+branch_hints: [verified, cannot_answer]
+
+role_descriptions:
+  User: asks a factual question and receives exactly one final answer
+  QueryPlanner: decomposes the question into sub-queries for the retrievers
+  Retriever1: retrieves documents for its sub-query from its source
+  Retriever2: retrieves documents for its sub-query from a second source
+  Synthesizer: drafts an answer with citations from the retrieved documents and revises on request
+  FactChecker: verifies each cited claim; returns verified, revise, or cannot-answer
+
+intent: |
+  Answer the user's factual question using retrieved documents. The
+  QueryPlanner decomposes the question; two retrievers fetch documents in
+  parallel from different sources. The Synthesizer drafts an answer with
+  citations drawn from the retrieved documents. The FactChecker verifies
+  each cited claim against the sources. If verification fails, the
+  Synthesizer revises and re-submits. After the verification settles, the
+  system emits either a verified answer or an explicit "cannot answer" with
+  a reason — exactly one final answer reaches the user.
+
+goals:
+  - id: G1
+    description: A retriever returns documents before synthesis
+    metric: documents_retrieved
+    predicate: len(x) > 0
+    anchor: {sender: Retriever1, receiver: Synthesizer, label: Documents}
+    threshold: non-empty
+
+  - id: G2
+    description: The synthesizer's draft is submitted to the fact-checker
+    metric: draft_factchecked
+    predicate: len(x) > 0
+    anchor: {sender: Synthesizer, receiver: FactChecker, label: Draft}
+    threshold: non-empty
+
+  - id: G3
+    description: A verified answer is explicitly confirmed by the fact-checker
+    metric: factcheck_verdict
+    predicate: len(x) > 0
+    anchor: {sender: FactChecker, receiver: Synthesizer, label: Verified}
+    threshold: non-empty
+    # Verified exists only on the verified branch.
+    branch: verified
+
+  - id: G4
+    description: The user receives exactly one terminal final answer
+    metric: user_answered
+    predicate: len(x) > 0
+    anchor: {sender: Synthesizer, receiver: User, label: FinalAnswer}
+    threshold: non-empty

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>STJP Live Demo — 8-arm benchmark</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div id="app">
+
+  <header id="head">
+    <span class="pulse"></span>
+    <h1>STJP Live Demo <span class="badge">8-arm benchmark</span></h1>
+    <nav id="page-tabs">
+      <button class="page-tab active" data-page="draft">① Setup &amp; Draft</button>
+      <button class="page-tab" data-page="run">② Run 8 arms &amp; observe</button>
+    </nav>
+    <div class="head-controls">
+      <select id="case-select" title="Pick a case"></select>
+      <button id="btn-expected" title="Show canonical + LLM-drafted protocol">expected protocol</button>
+      <button id="btn-reset" title="Reload page">↻ reset</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 1 — setup + drafting
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="page-draft" class="page active">
+
+    <!-- ─── stage 1: intent + draft ─────────────────────────────────── -->
+    <section id="stage-intent" class="stage">
+      <div class="stage-head">
+        <span class="step-num">1</span>
+        <h2>User intent → LLM-drafted global type</h2>
+        <span class="stage-status" id="intent-status">idle</span>
+      </div>
+      <div class="stage-body two-col">
+        <div class="col">
+          <label class="lbl">Intent (you can edit before drafting)</label>
+          <textarea id="intent" rows="8"
+            placeholder="select a case above; its default intent will appear here"></textarea>
+          <div class="row gap">
+            <label class="lbl">attempts</label>
+            <input id="max-attempts" type="number" min="1" max="20" value="4">
+            <button id="btn-draft" class="primary">▶ Draft &amp; Verify</button>
+            <span id="draft-summary" class="muted"></span>
+          </div>
+        </div>
+        <div class="col">
+          <label class="lbl">Architect ↔ Scribble loop (live)</label>
+          <div id="draft-feed" class="feed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── stage 2: drafted protocols + their visualizations ─────── -->
+    <section id="stage-drafts" class="stage collapsed">
+      <div class="stage-head">
+        <span class="step-num">2</span>
+        <h2>Drafted protocols + canonical reference</h2>
+        <span class="stage-status" id="drafts-status">awaiting draft</span>
+      </div>
+      <div class="stage-body three-col">
+
+        <div class="col proto-card" data-proto="valid">
+          <header>
+            <span class="tag tag-ok">VALID</span>
+            <span id="valid-attempt"></span>
+          </header>
+          <div class="proto-section">
+            <h6>State machine</h6>
+            <svg class="proto-machine-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section">
+            <h6>Message sequence</h6>
+            <svg class="proto-seq-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section proto-reasoning">
+            <h6>Reasoning</h6>
+            <div class="reasoning-body"></div>
+          </div>
+          <details class="proto-section">
+            <summary>Scribble source (v1.scr)</summary>
+            <pre class="proto-pre" id="valid-pre">(no draft yet)</pre>
+          </details>
+        </div>
+
+        <div class="col proto-card" data-proto="unsafe">
+          <header>
+            <span class="tag tag-warn">UNSAFE</span>
+            <span id="unsafe-attempt"></span>
+          </header>
+          <div class="proto-section">
+            <h6>State machine</h6>
+            <svg class="proto-machine-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section">
+            <h6>Message sequence</h6>
+            <svg class="proto-seq-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section proto-reasoning">
+            <h6>Reasoning</h6>
+            <div class="reasoning-body"></div>
+          </div>
+          <details class="proto-section">
+            <summary>Scribble source + reason rejected</summary>
+            <pre class="proto-pre" id="unsafe-pre">(no draft yet)</pre>
+            <div id="unsafe-err" class="err-trace"></div>
+          </details>
+        </div>
+
+        <div class="col proto-card" data-proto="canonical">
+          <header>
+            <span class="tag tag-mute">CANONICAL</span>
+            <span class="muted small">protocols/v1.scr</span>
+          </header>
+          <div class="proto-section">
+            <h6>State machine</h6>
+            <svg class="proto-machine-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section">
+            <h6>Message sequence</h6>
+            <svg class="proto-seq-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="proto-section proto-reasoning">
+            <h6>Reasoning</h6>
+            <div class="reasoning-body"></div>
+          </div>
+          <details class="proto-section">
+            <summary>Scribble source (v1.scr)</summary>
+            <pre class="proto-pre" id="canon-pre">(load a case)</pre>
+          </details>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 2 — 8-arm live run + summary
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="page-run" class="page">
+
+    <!-- ─── stage 3: 8-arm live run ────────────────────────────────── -->
+    <section id="stage-run" class="stage">
+      <div class="stage-head">
+        <span class="step-num">3</span>
+        <h2>8-arm benchmark — live</h2>
+        <span class="stage-status" id="run-status">awaiting run</span>
+        <div class="head-controls right">
+          <label class="lbl">trials</label>
+          <input id="n-trials" type="number" min="1" max="5" value="1">
+          <button id="btn-run" class="primary" disabled>▶ Run 8 arms</button>
+        </div>
+      </div>
+      <div class="stage-body">
+        <!-- Arm tabs: one per arm, click to switch the active full-width panel. -->
+        <div id="arm-tabs">
+          {% for arm in arms %}
+          <button class="arm-tab{% if loop.first %} active{% endif %}" data-arm="{{ arm }}">
+            <span class="arm-tab-key">{{ arm }}</span>
+            <span class="arm-tab-state" data-state="idle">idle</span>
+            <span class="arm-tab-counters">
+              <span class="arm-tab-g">G 0/6</span>
+              <span class="arm-tab-v" data-zero="1">V 0</span>
+            </span>
+          </button>
+          {% endfor %}
+        </div>
+        <div id="panel-stack">
+          {% for arm in arms %}
+          <div class="panel{% if loop.first %} active{% endif %}" data-arm="{{ arm }}">
+            <header class="panel-head">
+              <div class="arm-id">
+                <span class="arm-key">{{ arm }}</span>
+                <span class="arm-state" data-state="idle">idle</span>
+              </div>
+              <div class="arm-meta">
+                <span class="counter goals" title="Goals satisfied this attempt">G 0/6</span>
+                <span class="counter viol"  title="Monitor violations this attempt">V 0</span>
+                <button class="btn-roles" title="Per-role goals + system prompts + role description">roles</button>
+              </div>
+            </header>
+            <div class="view-tabs">
+              <button class="vtab active" data-view="events">events</button>
+              <button class="vtab" data-view="interactions">live interactions</button>
+              <button class="vtab" data-view="diagram">sequence diagram</button>
+              <button class="vtab" data-view="machine">state machine</button>
+              <button class="vtab" data-view="skills">skills + goals</button>
+              <button class="vtab" data-view="errors">errors <span class="vtab-count" data-zero="1">0</span></button>
+            </div>
+            <div class="view-body">
+              <div class="view view-events active" data-arm="{{ arm }}"></div>
+              <div class="view view-interactions">
+                <div class="interactions-toolbar">
+                  <span class="muted small">global type:</span>
+                  <select class="interactions-source">
+                    <option value="canonical">canonical (v1.scr)</option>
+                    <option value="valid">LLM-drafted valid</option>
+                    <option value="unsafe">LLM-drafted unsafe</option>
+                  </select>
+                  <span class="legend">
+                    <span class="dot ok"></span>valid message
+                    <span class="dot warn"></span>off-protocol step
+                    <span class="dot err"></span>undefined role-pair
+                  </span>
+                </div>
+                <div class="interactions-twin">
+                  <div class="interactions-half">
+                    <h5 class="iact-title">Global interactions <span class="muted small">(roles + role-pairs in the protocol)</span></h5>
+                    <svg class="interactions-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+                  </div>
+                  <div class="interactions-half">
+                    <h5 class="iact-title">Local types <span class="muted small">(! = send, ? = receive)</span></h5>
+                    <div class="locals-grid"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="view view-diagram">
+                <svg class="seq-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+              </div>
+              <div class="view view-machine">
+                <div class="machine-toolbar">
+                  <span class="muted small">protocol:</span>
+                  <select class="machine-source">
+                    <option value="canonical">canonical (v1.scr)</option>
+                    <option value="valid">LLM-drafted valid</option>
+                    <option value="unsafe">LLM-drafted unsafe</option>
+                  </select>
+                  <span class="muted small">— left = expected, right = actual (visited nodes glow; pulse marks the latest step)</span>
+                </div>
+                <div class="machine-twin">
+                  <div class="machine-half">
+                    <h5 class="machine-title">EXPECTED <span class="muted small">(protocol design)</span></h5>
+                    <svg class="machine-svg machine-svg-expected" xmlns="http://www.w3.org/2000/svg"></svg>
+                  </div>
+                  <div class="machine-half">
+                    <h5 class="machine-title">ACTUAL <span class="muted small">(this arm's live trace)</span></h5>
+                    <svg class="machine-svg machine-svg-actual" xmlns="http://www.w3.org/2000/svg"></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="view view-skills">
+                <div class="skills-list"></div>
+              </div>
+              <div class="view view-errors"><div class="empty">no violations yet</div></div>
+            </div>
+            <footer class="panel-foot">
+              <span class="tk">tokens 0</span>
+              <span class="att">attempt 0/0</span>
+              <span class="ok-rate"></span>
+            </footer>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── stage 4: summary tables ───────────────────────────────── -->
+    <section id="stage-summary" class="stage collapsed">
+      <div class="stage-head">
+        <span class="step-num">4</span>
+        <h2>Summary</h2>
+        <span class="stage-status" id="summary-status">awaiting run end</span>
+      </div>
+      <div class="stage-body">
+        <div id="summary-tables"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer id="foot">
+    <span class="muted">repo: testing_ideas · case: <span id="foot-case">—</span> · run: <span id="foot-run">—</span></span>
+    <span class="muted right">SSE: <span id="sse-state">idle</span></span>
+  </footer>
+</div>
+
+<!-- modal for prompt + protocol drill-in -->
+<div id="modal" class="hidden">
+  <div class="modal-card">
+    <header>
+      <span id="modal-title">prompt</span>
+      <button id="modal-close">×</button>
+    </header>
+    <div id="modal-tabs"></div>
+    <pre id="modal-body" class="modal-pre"></pre>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

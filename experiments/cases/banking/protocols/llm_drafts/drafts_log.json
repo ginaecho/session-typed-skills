@@ -1,0 +1,127 @@
+{
+  "case_id": "banking",
+  "intent": "Transfer an amount of money from a source account to a destination account.\nIf the amount exceeds $10,000 the transfer requires Approver authorization\nbefore any money moves. The SourceBank debits the source; the DestBank\ncredits the destination; the AuditLog records the final outcome and\nsettles back to the initiator. If the SourceBank cannot complete the debit\n(insufficient funds), the transfer fails, no money moves, and the AuditLog\nstill records and settles the rejection.",
+  "module_name": "v1",
+  "max_attempts": 10,
+  "attempts_used": 14,
+  "attempts": [
+    {
+      "attempt": 1,
+      "valid": false,
+      "error": "line 1:0 missing MODULE_KW at ''",
+      "deadlock_score": 0,
+      "draft_chars": 3,
+      "elapsed_s": 8.3
+    },
+    {
+      "attempt": 2,
+      "valid": false,
+      "error": "Safety violation(s) at session state 200:\n    Trace=[Initiator!SourceBank:TransferRequest(Double), SourceBank?Initiator:TransferRequest(Double), SourceBank!DestBank:StandardAmountProceed(), SourceBank!AuditLog:StandardAmountProceed(), AuditLog?SourceBank:StandardAmountProceed(), SourceBank!AuditLog:FailureDebit(String), AuditLog?SourceBank:FailureDebit(String), AuditLog!Initiator:FinalOutcome(String), DestBank?SourceBank:StandardAmountProceed(), Initiator?AuditLog:FinalOutcome(String), AuditLog!Initiator:Settled(), Initiator?AuditLog:Settled()]\n    Unfinished roles: {Approver=50, DestBank=40}\n",
+      "deadlock_score": 2,
+      "draft_chars": 1571,
+      "elapsed_s": 7.9
+    },
+    {
+      "attempt": 3,
+      "valid": false,
+      "error": "line 26:63 extraneous input 'Tracker' expecting ';'",
+      "deadlock_score": 0,
+      "draft_chars": 1063,
+      "elapsed_s": 6.5
+    },
+    {
+      "attempt": 4,
+      "valid": false,
+      "error": "v1(line 19:19): Cannot disambiguate name: Boolean",
+      "deadlock_score": 0,
+      "draft_chars": 1417,
+      "elapsed_s": 7.8
+    },
+    {
+      "attempt": 5,
+      "valid": false,
+      "error": "Safety violation(s) at session state 108:\n    Trace=[Initiator!SourceBank:StartTransfer(Double), SourceBank?Initiator:StartTransfer(Double), SourceBank!Initiator:InsufficientFunds(Bool), SourceBank!AuditLog:AuditOutcome(String), AuditLog?SourceBank:AuditOutcome(String), AuditLog!Initiator:Settled(), Initiator?SourceBank:InsufficientFunds(Bool), Initiator?AuditLog:Settled()]\n    Unfinished roles: {Approver=48, DestBank=40}\nSafety violation(s) at session state 161:\n    Trace=[Initiator!SourceBank:StartTransfer(Double), SourceBank?Initiator:StartTransfer(Double), SourceBank!Initiator:FundsAvailab",
+      "deadlock_score": 2,
+      "draft_chars": 1107,
+      "elapsed_s": 17.8
+    },
+    {
+      "attempt": 6,
+      "valid": false,
+      "error": "Source role not enabled: SourceBank",
+      "deadlock_score": 1,
+      "draft_chars": 1297,
+      "elapsed_s": 14.0
+    },
+    {
+      "attempt": 7,
+      "valid": false,
+      "error": "line 24:22 no viable alternative at input 'AuditLog'",
+      "deadlock_score": 0,
+      "draft_chars": 1138,
+      "elapsed_s": 7.8
+    },
+    {
+      "attempt": 8,
+      "valid": false,
+      "error": "Source role not enabled: DestBank",
+      "deadlock_score": 1,
+      "draft_chars": 1195,
+      "elapsed_s": 7.8
+    },
+    {
+      "attempt": 9,
+      "valid": false,
+      "error": "line 20:30 no viable alternative at input ')'",
+      "deadlock_score": 0,
+      "draft_chars": 816,
+      "elapsed_s": 10.4
+    },
+    {
+      "attempt": 10,
+      "valid": false,
+      "error": "line 1:0 missing MODULE_KW at ''",
+      "deadlock_score": 0,
+      "draft_chars": 11,
+      "elapsed_s": 6.5
+    },
+    {
+      "attempt": "fix_1",
+      "valid": false,
+      "error": "Safety violation(s) at session state 220:\n    Trace=[Initiator!SourceBank:TransferRequest(Double), SourceBank?Initiator:TransferRequest(Double), SourceBank!Approver:HighAmountApprovalRequired(), SourceBank!DestBank:HighAmountApprovalRequired(), SourceBank!AuditLog:HighAmountApprovalRequired(), AuditLog?SourceBank:HighAmountApprovalRequired(), Approver?SourceBank:HighAmountApprovalRequired(), Approver!SourceBank:Approval(Bool), SourceBank?Approver:Approval(Bool), SourceBank!AuditLog:Rejected(), SourceBank!Initiator:Rejected(), DestBank?SourceBank:HighAmountApprovalRequired(), SourceBank!DestBan",
+      "draft_chars": 1761,
+      "elapsed_s": 6.9
+    },
+    {
+      "attempt": "fix_2",
+      "valid": false,
+      "error": "Safety violation(s) at session state 285:\n    Trace=[Initiator!SourceBank:TransferRequest(Double), SourceBank?Initiator:TransferRequest(Double), SourceBank!DestBank:StandardAmountProceed(), SourceBank!AuditLog:StandardAmountProceed(), SourceBank!Initiator:StandardAmountProceed(), AuditLog?SourceBank:StandardAmountProceed(), DestBank?SourceBank:StandardAmountProceed(), SourceBank!DestBank:SuccessDebit(Double), SourceBank!AuditLog:SuccessDebit(Double), AuditLog?SourceBank:SuccessDebit(Double), AuditLog!Initiator:FinalOutcome(String), DestBank?SourceBank:SuccessDebit(Double), Initiator?SourceBank",
+      "draft_chars": 1737,
+      "elapsed_s": 8.1
+    },
+    {
+      "attempt": "fix_3",
+      "valid": false,
+      "error": "Safety violation(s) at session state 189:\n    Trace=[Initiator!SourceBank:TransferRequest(Double), SourceBank?Initiator:TransferRequest(Double), SourceBank!DestBank:StandardAmountProceed(), SourceBank!AuditLog:NotifyStandardAmountProceed(), AuditLog?SourceBank:NotifyStandardAmountProceed(), DestBank?SourceBank:StandardAmountProceed(), SourceBank!DestBank:SuccessDebit(Double), SourceBank!AuditLog:NotifyDebitSuccess(Double), AuditLog?SourceBank:NotifyDebitSuccess(Double), AuditLog!Initiator:FinalOutcome(String), DestBank?SourceBank:SuccessDebit(Double), Initiator?AuditLog:FinalOutcome(String), A",
+      "draft_chars": 1547,
+      "elapsed_s": 5.5
+    },
+    {
+      "attempt": "fix_4",
+      "valid": true,
+      "error": "",
+      "draft_chars": 1731,
+      "elapsed_s": 5.7
+    }
+  ],
+  "kept_valid": {
+    "path": "experiments\\cases\\banking\\protocols\\llm_drafts\\valid\\v1.scr",
+    "from_attempt": "fix_4"
+  },
+  "kept_unsafe": {
+    "path": "experiments\\cases\\banking\\protocols\\llm_drafts\\unsafe\\v1.scr",
+    "from_attempt": 2,
+    "deadlock_score": 2
+  },
+  "ts": "2026-06-11T18:29:45"
+}

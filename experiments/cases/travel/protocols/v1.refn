@@ -1,0 +1,25 @@
+# Travel booking — refinement contracts (payload predicates)
+
+[Flight -> Coordinator : FlightQuote]
+type: float
+require: x > 0
+
+[Hotel -> Coordinator : HotelQuote]
+type: float
+require: x > 0
+
+[Car -> Coordinator : CarQuote]
+type: float
+require: x > 0
+
+[Coordinator -> Payment : ChargePayment]
+type: float
+require: x > 0
+
+[Payment -> Coordinator : PaymentConfirmed]
+type: str
+require: len(x) > 0
+
+[Coordinator -> User : TripResult]
+type: str
+require: len(x) > 0

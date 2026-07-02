@@ -1,0 +1,22 @@
+# Refinement contracts for IntelReport (v1)
+# Each feed report must be non-empty; the synthesised draft must reference >= 60 chars.
+
+[Satellite -> Editor : SatReport]
+type: str
+require: len(x) > 0
+
+[Signals -> Editor : SignalsReport]
+type: str
+require: len(x) > 0
+
+[HumanIntel -> Editor : HumanReport]
+type: str
+require: len(x) > 0
+
+[Editor -> Analyst : Synthesize]
+type: str
+require: len(x) > 20
+
+[Analyst -> Reviewer : DraftReport]
+type: str
+require: len(x) > 60

@@ -1,0 +1,59 @@
+{
+  "case_id": "trade_settlement",
+  "intent": "We need a goods-for-payment settlement between a Buyer and a Seller, with an\nEscrow, a Shipper, and an Inspector. The Buyer will release payment only once\nthe goods have shipped, and the Seller will ship the goods only once payment\nhas been made. An Escrow service holds funds and a Shipper moves the goods; an\nInspector checks the delivered goods before the deal is finalised. Distinguish\n'domestic' shipments (no customs) from 'international' shipments (which require\na customs clearance step). The settlement is complete only after the goods are\ndelivered, inspected, and payment is released to the Seller.",
+  "module_name": "v1",
+  "max_attempts": 12,
+  "attempts_used": 5,
+  "attempts": [
+    {
+      "attempt": 1,
+      "valid": true,
+      "error": "",
+      "deadlock_score": 0,
+      "draft_chars": 2456,
+      "elapsed_s": 27.3
+    },
+    {
+      "attempt": 2,
+      "valid": true,
+      "error": "",
+      "deadlock_score": 0,
+      "draft_chars": 1476,
+      "elapsed_s": 14.1
+    },
+    {
+      "attempt": 3,
+      "valid": false,
+      "error": "v1(line 39:39): Role not bound: all",
+      "deadlock_score": 1,
+      "draft_chars": 1505,
+      "elapsed_s": 12.9
+    },
+    {
+      "attempt": 4,
+      "valid": true,
+      "error": "",
+      "deadlock_score": 0,
+      "draft_chars": 1611,
+      "elapsed_s": 14.4
+    },
+    {
+      "attempt": 5,
+      "valid": false,
+      "error": "Safety violation(s) at session state 143:\n    Trace=[Buyer!Escrow:PaymentRequest(Double), Escrow?Buyer:PaymentRequest(Double), Escrow!Buyer:PaymentFailed(), Escrow!Seller:PaymentFailed(), Buyer?Escrow:PaymentFailed(), Buyer!Seller:SettlementComplete(), Seller?Escrow:PaymentFailed(), Seller?Buyer:SettlementComplete()]\n    Unfinished roles: {Inspector=75, Shipper=57}\nRole progress violation for [Inspector, Shipper] in session state terminal set:\n    130,136,143,139,135",
+      "deadlock_score": 2,
+      "draft_chars": 1404,
+      "elapsed_s": 13.0
+    }
+  ],
+  "kept_valid": {
+    "path": "experiments\\cases\\trade_settlement\\protocols\\llm_drafts\\valid\\v1.scr",
+    "from_attempt": 1
+  },
+  "kept_unsafe": {
+    "path": "experiments\\cases\\trade_settlement\\protocols\\llm_drafts\\unsafe\\v1.scr",
+    "from_attempt": 5,
+    "deadlock_score": 2
+  },
+  "ts": "2026-06-17T14:07:58"
+}

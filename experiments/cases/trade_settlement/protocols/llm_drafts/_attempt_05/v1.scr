@@ -1,0 +1,32 @@
+module v1;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Boolean" from "rt.jar" as Bool;
+
+global protocol TradeSettlement(role Buyer, role Seller, role Escrow, role Shipper, role Inspector) {
+    PaymentRequest(Double) from Buyer to Escrow;
+    choice at Escrow {
+        PaymentConfirmed() from Escrow to Buyer;
+        PaymentConfirmed() from Escrow to Seller;
+        ShipGoods() from Seller to Shipper;
+        choice at Shipper {
+            DomesticShipment() from Shipper to Buyer;
+            DomesticShipment() from Shipper to Seller;
+            DomesticShipment() from Shipper to Inspector;
+            GoodsDelivered(String) from Shipper to Inspector;
+        } or {
+            InternationalShipment() from Shipper to Buyer;
+            InternationalShipment() from Shipper to Seller;
+            InternationalShipment() from Shipper to Inspector;
+            CustomsClearance(String) from Shipper to Inspector;
+            GoodsDelivered(String) from Shipper to Inspector;
+        }
+        InspectionReport(String) from Inspector to Buyer;
+        PaymentRelease(Double) from Buyer to Escrow;
+        PaymentReleased() from Escrow to Seller;
+    } or {
+        PaymentFailed() from Escrow to Buyer;
+        PaymentFailed() from Escrow to Seller;
+    }
+    SettlementComplete() from Buyer to Seller;
+}

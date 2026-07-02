@@ -1,0 +1,38 @@
+case_id: retry_loop
+description: |
+  Shape E — loop + simple branching. Worker attempts a task; Manager
+  inspects the result each round and either accepts (terminating the loop,
+  with Auditor confirmation) or rejects and loops back for another attempt.
+  Each branch carries substantive payload work, unlike shape D.
+version: v1
+protocol_name: RetryLoop
+roles:
+  - Worker
+  - Manager
+  - Auditor
+terminal_label: FinalSummary
+max_steps: 18
+branch_hints: [accept_first_try, retry_then_accept]
+intent: |
+  A Worker submits a numeric score for review; Manager decides accept or
+  retry; on accept, Auditor confirms and Manager issues a final summary.
+  Scores must be in [0,100]. The accept branch terminates the session.
+goals:
+  - id: G1
+    description: Attempt result must be a valid score in [0,100]
+    metric: score_validity
+    predicate: 0.0 <= float(x) <= 100.0
+    anchor: {sender: Worker, receiver: Manager, label: AttemptResult}
+    threshold: "[0,100]"
+  - id: G2
+    description: Audit confirmation must be explicit
+    metric: audit_confirm
+    predicate: '"confirm" in x.lower() or "ok" in x.lower() or "audit" in x.lower()'
+    anchor: {sender: Auditor, receiver: Manager, label: AuditConfirm}
+    threshold: contains confirm/ok/audit
+  - id: G3
+    description: Final summary must be substantive
+    metric: summary_length
+    predicate: len(x) > 10
+    anchor: {sender: Manager, receiver: Worker, label: FinalSummary}
+    threshold: "> 10 chars"

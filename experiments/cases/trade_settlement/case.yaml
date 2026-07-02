@@ -1,0 +1,79 @@
+case_id: trade_settlement
+description: |
+  Cross-party goods-for-payment settlement. The user's stated intent contains a
+  HIDDEN CIRCULAR DEPENDENCY (a deadlock): the Buyer will only pay after the
+  goods ship, and the Seller will only ship after payment — each waits for the
+  other. A human (or an LLM) reading the intent rarely notices; Scribble's
+  deadlock check catches it immediately. A safe protocol must break the cycle
+  with the Escrow holding funds first. This case tests: (a) does the validator
+  catch a deadlock the intent hides, and (b) once given a valid protocol, do
+  agents reach settlement — with global text vs projected local contracts, and
+  with vs without enforcement.
+
+version: v1
+protocol_name: TradeSettlement
+
+roles:
+  - Buyer
+  - Seller
+  - Escrow
+  - Shipper
+  - Inspector
+
+terminal_label: SettlementComplete
+max_steps: 28
+branch_hints: [domestic, international]
+
+# Held constant across all arms (see finance/banking rationale).
+role_descriptions:
+  Buyer: places the order and funds the purchase; receives the goods and final settlement
+  Seller: provides the goods; ships once funds are secured; receives payment on delivery
+  Escrow: holds the Buyer's funds until delivery is confirmed, then releases payment to the Seller (breaks the pay-vs-ship deadlock)
+  Shipper: transports the goods and reports dispatch and delivery
+  Inspector: verifies the delivered goods meet the order before funds are released
+
+intent: |
+  We need a goods-for-payment settlement between a Buyer and a Seller, with an
+  Escrow, a Shipper, and an Inspector. The Buyer will release payment only once
+  the goods have shipped, and the Seller will ship the goods only once payment
+  has been made. An Escrow service holds funds and a Shipper moves the goods; an
+  Inspector checks the delivered goods before the deal is finalised. Distinguish
+  'domestic' shipments (no customs) from 'international' shipments (which require
+  a customs clearance step). The settlement is complete only after the goods are
+  delivered, inspected, and payment is released to the Seller.
+
+goals:
+  - id: G1
+    description: The Buyer funds the escrow with a positive amount before any shipment
+    metric: escrow_funded
+    predicate: float(x) > 0
+    anchor: {sender: Buyer, receiver: Escrow, label: FundEscrow}
+    threshold: "> 0"
+
+  - id: G2
+    description: The Seller ships only after being told funds are secured
+    metric: ship_after_funds
+    predicate: len(x) > 0
+    anchor: {sender: Seller, receiver: Shipper, label: DispatchGoods}
+    threshold: non-empty
+
+  - id: G3
+    description: The Inspector explicitly passes the delivered goods
+    metric: inspection_passed
+    predicate: '"pass" in x.lower() or "ok" in x.lower() or "true" in x.lower()'
+    anchor: {sender: Inspector, receiver: Escrow, label: InspectionResult}
+    threshold: contains pass/ok/true
+
+  - id: G4
+    description: Escrow releases payment to the Seller (only after inspection)
+    metric: payment_released
+    predicate: float(x) > 0
+    anchor: {sender: Escrow, receiver: Seller, label: ReleasePayment}
+    threshold: "> 0"
+
+  - id: G5
+    description: The settlement terminates with completion back to the Buyer
+    metric: settled
+    predicate: 'True'
+    anchor: {sender: Escrow, receiver: Buyer, label: SettlementComplete}
+    threshold: terminal event present

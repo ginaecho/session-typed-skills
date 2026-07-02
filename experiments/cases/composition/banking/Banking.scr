@@ -1,0 +1,11 @@
+module banking.Banking;
+
+data <java> "java.lang.Integer" from "rt.jar" as int;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+aux global protocol BankingSession(role C, role B) {
+    open(String) from C to B;
+    deposit(int) from C to B;
+    confirm(int) from B to C;
+    close() from C to B;
+}

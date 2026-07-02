@@ -1,0 +1,18 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+
+// Strict linear pipeline. Each role receives from the previous and sends to the
+// next — the projected local type makes every agent's move determined, so there
+// is nothing to deliberate and idle agents wait instantly.
+global protocol ReportPipeline(
+    role Requester, role Researcher, role Analyst,
+    role Drafter, role Reviewer, role Publisher
+) {
+    RequestReport(String) from Requester to Researcher;
+    ResearchMaterial(String) from Researcher to Analyst;
+    Findings(String) from Analyst to Drafter;
+    DraftReport(String) from Drafter to Reviewer;
+    ApprovedReport(String) from Reviewer to Publisher;
+    Published(String) from Publisher to Requester;
+}

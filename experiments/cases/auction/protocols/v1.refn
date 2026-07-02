@@ -1,0 +1,26 @@
+# Refinement contracts for Auction (v1)
+# Each bid must be positive; the winner announcement names exactly one bidder.
+
+[BidderA -> Auctioneer : BidA]
+type: float
+require: x > 0.0
+
+[BidderB -> Auctioneer : BidB]
+type: float
+require: x > 0.0
+
+[BidderC -> Auctioneer : BidC]
+type: float
+require: x > 0.0
+
+[Auctioneer -> BidderA : WinnerA]
+type: str
+require: "winner" in x.lower() or "outbid" in x.lower()
+
+[Auctioneer -> BidderB : WinnerB]
+type: str
+require: "winner" in x.lower() or "outbid" in x.lower()
+
+[Auctioneer -> BidderC : WinnerC]
+type: str
+require: "winner" in x.lower() or "outbid" in x.lower()

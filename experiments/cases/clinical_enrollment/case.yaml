@@ -1,0 +1,56 @@
+case_id: clinical_enrollment
+description: |
+  Clinical-trial patient enrolment. Coordinator screens with PI;
+  if eligible, takes Patient consent + Lab baseline (sequenced) and
+  obtains EthicsBoard approval; then enrols. Refinements: eligibility
+  verdict explicit; baseline values in physiological range; ethics
+  approval explicit.
+version: v1
+protocol_name: ClinicalEnrollment
+roles:
+  - Coordinator
+  - PI
+  - Lab
+  - EthicsBoard
+  - Patient
+terminal_label: EnrolPatient
+max_steps: 14
+branch_hints: [routine, complex_case]
+intent: |
+  Enrol a patient in a clinical trial. The Coordinator screens with the
+  Principal Investigator, then collects signed consent from the Patient
+  and a baseline measurement from the Lab. The EthicsBoard must approve
+  before enrolment is finalised. The verdict must be explicit ('eligible'
+  or 'ineligible'); the baseline must be in a physiologically plausible
+  range; ethics approval must be explicit.
+goals:
+  - id: G1
+    description: PI verdict must be explicit (eligible/ineligible)
+    metric: eligibility
+    predicate: '"eligible" in x.lower() or "ineligible" in x.lower()'
+    anchor: {sender: PI, receiver: Coordinator, label: EligibilityVerdict}
+    threshold: explicit verdict
+  - id: G2
+    description: Patient consent must be substantive
+    metric: consent
+    predicate: len(x) > 0
+    anchor: {sender: Patient, receiver: Coordinator, label: ConsentSigned}
+    threshold: non-empty
+  - id: G3
+    description: Baseline measurement must be in physiological range
+    metric: baseline
+    predicate: 0.0 < float(x) < 1000.0
+    anchor: {sender: Lab, receiver: Coordinator, label: BaselineResult}
+    threshold: (0, 1000)
+  - id: G4
+    description: Ethics board approval must be explicit
+    metric: ethics
+    predicate: '"approved" in x.lower()'
+    anchor: {sender: EthicsBoard, receiver: Coordinator, label: EnrollmentApproved}
+    threshold: contains approved
+  - id: G5
+    description: Final enrolment message names the patient
+    metric: enrolment
+    predicate: len(x) > 0
+    anchor: {sender: Coordinator, receiver: Patient, label: EnrolPatient}
+    threshold: non-empty

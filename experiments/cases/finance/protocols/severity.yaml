@@ -1,0 +1,30 @@
+# Consequence-grading annotations for the finance case (BENCHMARK_DESIGN.md v2.1).
+# Milestones are SEMANTIC: matched by label regex (case-insensitive) across all
+# protocol vocabularies (canonical, 2026-05 draft, current draft) so intent-only
+# arms are graded after label alignment, not punished for dialect.
+milestones:
+  - id: revenue_to_audit
+    match: "HighRevenue|AuditHighRevenue|RequestAudit|HighRevenueNotification|NotifyTaxSpecialist"
+    branches: [high]
+  - id: audit_done
+    match: "Audited|AuditReport|AuditCompleted|AuditComplete|TaxAuditComplete"
+    branches: [high]
+  - id: approval
+    match: "Approval|Approved|ApproveAudit|RevenueAuditApproval"
+  - id: revenue_analysis
+    match: "RevenueAnalysis|FinalizeReport|FinalRevenueAnalysis"
+  - id: report
+    match: "GenerateReport"
+
+# chains: per-branch mandatory partial order over milestone ids
+chains:
+  high: [revenue_to_audit, audit_done, approval, revenue_analysis, report]
+  standard: [approval, revenue_analysis, report]
+
+terminal: report
+
+# irreversible actions and what authorizes them ("the report is filed").
+irreversible:
+  - id: report
+    requires: [approval]          # all branches: verifier approval before filing
+    requires_high: [audit_done]   # high branch additionally: audit before filing

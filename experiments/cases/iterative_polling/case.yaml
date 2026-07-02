@@ -1,0 +1,35 @@
+case_id: iterative_polling
+description: |
+  Shape D — loop sessions. A Client polls a Server in a loop and forwards
+  each result to a Logger; Client decides each iteration whether to continue
+  or stop. The choice is minimal/degenerate (Continue vs. Stop); the
+  load-bearing structural feature is the recursion. Pure "loop without any
+  choice" is not expressible in standard Scribble, so D uses the smallest
+  possible terminating choice.
+version: v1
+protocol_name: IterativePolling
+roles:
+  - Client
+  - Server
+  - Logger
+terminal_label: FinalReport
+max_steps: 16
+branch_hints: [short_loop, long_loop]
+intent: |
+  Build a polling agent that asks a Server for repeated readings and logs
+  them. The Client decides each round whether to keep polling or stop;
+  when it stops, the Logger emits a final report. Every reading must be
+  non-negative.
+goals:
+  - id: G1
+    description: All readings must be non-negative
+    metric: reading_validity
+    predicate: float(x) >= 0.0
+    anchor: {sender: Server, receiver: Client, label: Result}
+    threshold: ">= 0"
+  - id: G2
+    description: Final report must be non-empty
+    metric: final_report
+    predicate: len(x) > 0
+    anchor: {sender: Logger, receiver: Client, label: FinalReport}
+    threshold: non-empty

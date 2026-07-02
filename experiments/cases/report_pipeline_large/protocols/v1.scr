@@ -1,0 +1,18 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+
+// 10-role strict linear pipeline (scale task). Global-text agents must
+// re-read this whole protocol every turn; local-contract agents read one slice.
+global protocol ReportPipelineLarge(role Requester, role Researcher, role Analyst, role Drafter, role Editor, role FactChecker, role LegalReviewer, role ComplianceReviewer, role Approver, role Publisher) {
+    RequestReport(String) from Requester to Researcher;
+    ResearchMaterial(String) from Researcher to Analyst;
+    Findings(String) from Analyst to Drafter;
+    DraftReport(String) from Drafter to Editor;
+    EditedDraft(String) from Editor to FactChecker;
+    FactChecked(String) from FactChecker to LegalReviewer;
+    LegalCleared(String) from LegalReviewer to ComplianceReviewer;
+    ComplianceCleared(String) from ComplianceReviewer to Approver;
+    ApprovedReport(String) from Approver to Publisher;
+    Published(String) from Publisher to Requester;
+}

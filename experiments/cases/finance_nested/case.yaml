@@ -1,0 +1,70 @@
+case_id: finance_nested
+description: |
+  Finance reporting with 2x2 nested choice. Outer choice at Fetcher
+  (high vs standard revenue) and a different inner chooser per outer arm
+  (TaxSpecialist for high, RevenueAnalyst for standard). Each inner
+  chooser must read the payload from the outer step and pick the right
+  sub-branch. This is the complex-branching variant (v1c) of the finance
+  domain — designed to expose Finding 2 (LLM picks wrong message label)
+  at choice points where the cue lives in payload, not label.
+version: v1
+protocol_name: FinanceNested
+roles:
+  - Fetcher
+  - TaxSpecialist
+  - RevenueAnalyst
+  - TaxVerifier
+  - Writer
+terminal_label: GenerateReport
+max_steps: 16
+branch_hints: [high_anomalous, high_clean, standard_review, standard_direct]
+intent: |
+  Quarterly finance report with a TWO-LEVEL decision tree:
+
+  OUTER (at Fetcher): revenue above $50k routes via the Tax Specialist;
+  revenue at or below $50k routes via the Revenue Analyst directly.
+
+  INNER (within high path, at Tax Specialist): if the audit turns up
+  anomalies, escalate to the Tax Verifier for explicit approval before
+  the Revenue Analyst writes its analysis; if the audit is clean, the
+  Tax Specialist sends the result straight to the Revenue Analyst for a
+  quick analysis.
+
+  INNER (within standard path, at Revenue Analyst): if the data flags
+  a need for verifier review, route via the Tax Verifier; otherwise
+  send the analysis directly to the Writer.
+
+  The first message in each branch carries the cue: a large numeric
+  HighRevenue payload signals likely anomalies; a StandardRevenue
+  payload that mentions 'review' signals the verifier-review sub-branch.
+goals:
+  - id: G1
+    description: High-path revenue must exceed $50,000
+    metric: revenue_amount
+    predicate: float(x) > 50000
+    anchor: {sender: Fetcher, receiver: TaxSpecialist, label: HighRevenue}
+    threshold: "> 50000"
+  - id: G2
+    description: Anomalous audit content must be substantive
+    metric: anomalous_audit
+    predicate: len(x) > 10
+    anchor: {sender: TaxSpecialist, receiver: TaxVerifier, label: AnomalousAudit}
+    threshold: "> 10 chars"
+  - id: G3
+    description: Clean audit content must be substantive
+    metric: clean_audit
+    predicate: len(x) > 10
+    anchor: {sender: TaxSpecialist, receiver: RevenueAnalyst, label: CleanAudit}
+    threshold: "> 10 chars"
+  - id: G4
+    description: Verifier review approval must be explicit
+    metric: verifier_approval
+    predicate: '"approved" in x.lower() or "ok" in x.lower()'
+    anchor: {sender: TaxVerifier, receiver: Writer, label: ReviewApproval}
+    threshold: contains approved/ok
+  - id: G5
+    description: Final analysis to writer must be substantive
+    metric: analysis_quality
+    predicate: len(x) > 10
+    anchor: {sender: RevenueAnalyst, receiver: Writer, label: DirectAnalysis}
+    threshold: "> 10 chars"

@@ -1,0 +1,30 @@
+# Refinement contracts for the LLM-drafted valid QuarterlyFinanceReport
+# (llm_drafts/valid/v1.scr vocabulary). Added 2026-06-12 — before this file
+# existed, the WITH-llmvalid arms ran with NO guards at all (the canonical
+# v1.refn guards a different vocabulary), which is how the n=10 run's two
+# "standard branch on high revenue" disasters slipped through unflagged.
+
+# --- Value-dependent choice: the branch is determined by the data ---------
+# RevenueAnalyst has seen RawRevenueData (from Fetcher) before its choice.
+# >$50k revenue MUST take the high branch (tax-specialist audit path).
+[choice at RevenueAnalyst]
+when: float(RawRevenueData) > 50000
+require: HighRevenueNotification
+over: StandardRevenueNotification
+
+# --- Payload guards --------------------------------------------------------
+[Fetcher -> RevenueAnalyst : RawRevenueData]
+type: float
+require: x > 0
+
+[ExpenseAnalyst -> RevenueAnalyst : ExpenseData]
+type: float
+require: x >= 0
+
+[RevenueAnalyst -> Writer : FinalRevenueAnalysis]
+type: str
+require: len(x) > 10
+
+[TaxVerifier -> RevenueAnalyst : Approval]
+type: str
+require: len(x) > 0

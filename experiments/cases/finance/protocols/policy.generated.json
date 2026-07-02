@@ -1,0 +1,1284 @@
+{
+  "apiVersion": "agent-os.policy/v1",
+  "kind": "PolicyDocument",
+  "metadata": {
+    "name": "stjp-finance-QuarterlyFinanceReport",
+    "description": "Auto-generated from the Scribble-verified STJP protocol QuarterlyFinanceReport (valid draft). Deadlock-free by construction; ordering + stateful-value + refinement conditions encoded.",
+    "version": "1.0.0",
+    "source": "stjp.governance.policy_export",
+    "scope": {
+      "protocol": "QuarterlyFinanceReport",
+      "roles": [
+        "Fetcher",
+        "RevenueAnalyst",
+        "ExpenseAnalyst",
+        "Writer",
+        "TaxVerifier",
+        "TaxSpecialist"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "name": "Fetcher.s4.send.RawRevenueData.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Fetcher"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "4"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "RawRevenueData"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 996,
+      "message": "Fetcher may send RawRevenueData to RevenueAnalyst at state 4 -> 6  [payload must satisfy: x > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "6",
+        "payload_type": "Double",
+        "refinement": {
+          "type": "float",
+          "require": [
+            "x > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Fetcher.s6.receive.GenerateReport.to.Writer",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Fetcher"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "6"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "GenerateReport"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "Writer"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 994,
+      "message": "Fetcher may receive GenerateReport from Writer at state 6 -> 5",
+      "override": false,
+      "stjp": {
+        "next_state": "5",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s23.receive.RawRevenueData.to.Fetcher",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "23"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "RawRevenueData"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "Fetcher"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 977,
+      "message": "RevenueAnalyst may receive RawRevenueData from Fetcher at state 23 -> 25",
+      "override": false,
+      "stjp": {
+        "next_state": "25",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s35.send.StandardBranchAck.to.TaxVerifier",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "35"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardBranchAck"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 965,
+      "message": "RevenueAnalyst may send StandardBranchAck to TaxVerifier at state 35 -> 36",
+      "override": false,
+      "stjp": {
+        "next_state": "36",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s36.send.NotifyStandardRole.to.TaxSpecialist",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "36"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardRole"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 964,
+      "message": "RevenueAnalyst may send NotifyStandardRole to TaxSpecialist at state 36 -> 32",
+      "override": false,
+      "stjp": {
+        "next_state": "32",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s25.receive.ExpenseData.to.ExpenseAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "25"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "ExpenseData"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "ExpenseAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 975,
+      "message": "RevenueAnalyst may receive ExpenseData from ExpenseAnalyst at state 25 -> 26",
+      "override": false,
+      "stjp": {
+        "next_state": "26",
+        "payload_type": "Double"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s26.send.HighRevenueNotification.to.TaxVerifier",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "26"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighRevenueNotification"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 974,
+      "message": "RevenueAnalyst may send HighRevenueNotification to TaxVerifier at state 26 -> 27",
+      "override": false,
+      "stjp": {
+        "next_state": "27",
+        "payload_type": "String",
+        "choice_guard": {
+          "when": "float(RawRevenueData) > 50000",
+          "require": "HighRevenueNotification",
+          "over": [
+            "StandardRevenueNotification"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s26.send.StandardRevenueNotification.to.TaxVerifier",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "26"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardRevenueNotification"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 974,
+      "message": "RevenueAnalyst may send StandardRevenueNotification to TaxVerifier at state 26 -> 34",
+      "override": false,
+      "stjp": {
+        "next_state": "34",
+        "payload_type": "String",
+        "choice_guard": {
+          "when": "float(RawRevenueData) > 50000",
+          "require": "HighRevenueNotification",
+          "over": [
+            "StandardRevenueNotification"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s27.send.HighRevenueNotification.to.TaxSpecialist",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "27"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighRevenueNotification"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 973,
+      "message": "RevenueAnalyst may send HighRevenueNotification to TaxSpecialist at state 27 -> 28",
+      "override": false,
+      "stjp": {
+        "next_state": "28",
+        "payload_type": "String",
+        "choice_guard": {
+          "when": "float(RawRevenueData) > 50000",
+          "require": "HighRevenueNotification",
+          "over": [
+            "StandardRevenueNotification"
+          ],
+          "type": "stateful-value"
+        }
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s28.send.HighBranchNotification.to.Writer",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "28"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighBranchNotification"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Writer"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 972,
+      "message": "RevenueAnalyst may send HighBranchNotification to Writer at state 28 -> 29",
+      "override": false,
+      "stjp": {
+        "next_state": "29",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s29.send.NotifyTaxSpecialist.to.TaxSpecialist",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "29"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyTaxSpecialist"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 971,
+      "message": "RevenueAnalyst may send NotifyTaxSpecialist to TaxSpecialist at state 29 -> 30",
+      "override": false,
+      "stjp": {
+        "next_state": "30",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s30.receive.AuditReport.to.TaxSpecialist",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "30"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "AuditReport"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 970,
+      "message": "RevenueAnalyst may receive AuditReport from TaxSpecialist at state 30 -> 31",
+      "override": false,
+      "stjp": {
+        "next_state": "31",
+        "payload_type": "Bool"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s31.send.HighBranchAck.to.TaxVerifier",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "31"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighBranchAck"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 969,
+      "message": "RevenueAnalyst may send HighBranchAck to TaxVerifier at state 31 -> 32",
+      "override": false,
+      "stjp": {
+        "next_state": "32",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s32.receive.Approval.to.TaxVerifier",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "32"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approval"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 968,
+      "message": "RevenueAnalyst may receive Approval from TaxVerifier at state 32 -> 33",
+      "override": false,
+      "stjp": {
+        "next_state": "33",
+        "payload_type": "Bool"
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s33.send.FinalRevenueAnalysis.to.Writer",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "33"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FinalRevenueAnalysis"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Writer"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 967,
+      "message": "RevenueAnalyst may send FinalRevenueAnalysis to Writer at state 33 -> 24  [payload must satisfy: len(x) > 10]",
+      "override": false,
+      "stjp": {
+        "next_state": "24",
+        "payload_type": "String",
+        "refinement": {
+          "type": "str",
+          "require": [
+            "len(x) > 10"
+          ]
+        }
+      }
+    },
+    {
+      "name": "RevenueAnalyst.s34.send.StandardBranchNotification.to.Writer",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "34"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardBranchNotification"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Writer"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 966,
+      "message": "RevenueAnalyst may send StandardBranchNotification to Writer at state 34 -> 35",
+      "override": false,
+      "stjp": {
+        "next_state": "35",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "ExpenseAnalyst.s41.send.ExpenseData.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "ExpenseAnalyst"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "41"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "ExpenseData"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 959,
+      "message": "ExpenseAnalyst may send ExpenseData to RevenueAnalyst at state 41 -> 42  [payload must satisfy: x >= 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "42",
+        "payload_type": "Double",
+        "refinement": {
+          "type": "float",
+          "require": [
+            "x >= 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Writer.s49.receive.HighBranchNotification.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Writer"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "49"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighBranchNotification"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 951,
+      "message": "Writer may receive HighBranchNotification from RevenueAnalyst at state 49 -> 51",
+      "override": false,
+      "stjp": {
+        "next_state": "51",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "Writer.s49.receive.StandardBranchNotification.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Writer"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "49"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardBranchNotification"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 951,
+      "message": "Writer may receive StandardBranchNotification from RevenueAnalyst at state 49 -> 51",
+      "override": false,
+      "stjp": {
+        "next_state": "51",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "Writer.s51.receive.FinalRevenueAnalysis.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Writer"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "51"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "FinalRevenueAnalysis"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 949,
+      "message": "Writer may receive FinalRevenueAnalysis from RevenueAnalyst at state 51 -> 52",
+      "override": false,
+      "stjp": {
+        "next_state": "52",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "Writer.s52.send.GenerateReport.to.Fetcher",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "Writer"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "52"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "GenerateReport"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "Fetcher"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 948,
+      "message": "Writer may send GenerateReport to Fetcher at state 52 -> 50",
+      "override": false,
+      "stjp": {
+        "next_state": "50",
+        "payload_type": null
+      }
+    },
+    {
+      "name": "TaxVerifier.s60.receive.HighRevenueNotification.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "60"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighRevenueNotification"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 940,
+      "message": "TaxVerifier may receive HighRevenueNotification from RevenueAnalyst at state 60 -> 62",
+      "override": false,
+      "stjp": {
+        "next_state": "62",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxVerifier.s60.receive.StandardRevenueNotification.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "60"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardRevenueNotification"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 940,
+      "message": "TaxVerifier may receive StandardRevenueNotification from RevenueAnalyst at state 60 -> 64",
+      "override": false,
+      "stjp": {
+        "next_state": "64",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxVerifier.s62.receive.HighBranchAck.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "62"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighBranchAck"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 938,
+      "message": "TaxVerifier may receive HighBranchAck from RevenueAnalyst at state 62 -> 63",
+      "override": false,
+      "stjp": {
+        "next_state": "63",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxVerifier.s63.send.Approval.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "63"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "Approval"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 937,
+      "message": "TaxVerifier may send Approval to RevenueAnalyst at state 63 -> 61  [payload must satisfy: len(x) > 0]",
+      "override": false,
+      "stjp": {
+        "next_state": "61",
+        "payload_type": "Bool",
+        "refinement": {
+          "type": "str",
+          "require": [
+            "len(x) > 0"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TaxVerifier.s64.receive.StandardBranchAck.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxVerifier"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "64"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "StandardBranchAck"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 936,
+      "message": "TaxVerifier may receive StandardBranchAck from RevenueAnalyst at state 64 -> 63",
+      "override": false,
+      "stjp": {
+        "next_state": "63",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxSpecialist.s71.receive.HighRevenueNotification.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "71"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "HighRevenueNotification"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 929,
+      "message": "TaxSpecialist may receive HighRevenueNotification from RevenueAnalyst at state 71 -> 73",
+      "override": false,
+      "stjp": {
+        "next_state": "73",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxSpecialist.s71.receive.NotifyStandardRole.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "71"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyStandardRole"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 929,
+      "message": "TaxSpecialist may receive NotifyStandardRole from RevenueAnalyst at state 71 -> 72",
+      "override": false,
+      "stjp": {
+        "next_state": "72",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxSpecialist.s73.receive.NotifyTaxSpecialist.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "73"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "receive"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "NotifyTaxSpecialist"
+          },
+          {
+            "field": "sender",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 927,
+      "message": "TaxSpecialist may receive NotifyTaxSpecialist from RevenueAnalyst at state 73 -> 74",
+      "override": false,
+      "stjp": {
+        "next_state": "74",
+        "payload_type": "String"
+      }
+    },
+    {
+      "name": "TaxSpecialist.s74.send.AuditReport.to.RevenueAnalyst",
+      "condition": {
+        "all": [
+          {
+            "field": "role",
+            "operator": "eq",
+            "value": "TaxSpecialist"
+          },
+          {
+            "field": "session_state",
+            "operator": "eq",
+            "value": "74"
+          },
+          {
+            "field": "direction",
+            "operator": "eq",
+            "value": "send"
+          },
+          {
+            "field": "label",
+            "operator": "eq",
+            "value": "AuditReport"
+          },
+          {
+            "field": "receiver",
+            "operator": "eq",
+            "value": "RevenueAnalyst"
+          }
+        ]
+      },
+      "action": "allow",
+      "priority": 926,
+      "message": "TaxSpecialist may send AuditReport to RevenueAnalyst at state 74 -> 72",
+      "override": false,
+      "stjp": {
+        "next_state": "72",
+        "payload_type": "Bool"
+      }
+    }
+  ],
+  "defaults": {
+    "action": "deny",
+    "message": "No STJP protocol rule permits this message at this session state (off-protocol)."
+  },
+  "conflictResolution": "DENY_OVERRIDES",
+  "stjpExtensions": {
+    "conditionTypes": [
+      "sequence",
+      "stateful-value",
+      "refinement"
+    ],
+    "note": "These condition types extend the toolkit's stateless field-op-value model; STJP is the reference backend."
+  }
+}

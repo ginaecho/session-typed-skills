@@ -1,0 +1,72 @@
+# STJP — SECURITY-CLEAN (GitHub-passable) requirements
+#
+# This file contains ONLY packages with NO known vulnerabilities.
+# Use this for production/public-facing deployments.
+#
+# Core compiler + monitoring (NO Azure SDKs, NO Flask, NO vulnerable transitive deps)
+#
+# Setup:
+#   python -m venv .venv
+#   .venv\Scripts\Activate.ps1
+#   pip install -r requirements-secure.txt
+#
+# This gives you the STJP compiler, protocol validation, and monitoring.
+# LLM orchestration and demo UI require additional optional packages
+# (see stjp_core/README.md for setup).
+
+# Core library packages (no known vulnerabilities)
+pydantic==2.13.4
+pydantic_core==2.46.4
+pydantic-settings==2.10.1
+
+# Parsing and validation
+annotated-types==0.7.0
+attrs==26.1.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+referencing==0.37.0
+rpds-py==0.30.0
+
+# Utilities
+python-dotenv==1.2.2
+python-dateutil==2.9.0.post0
+pytz==2026.2
+six==1.17.0
+tqdm==4.67.3
+click==8.3.3
+colorama==0.4.6
+
+# Logging / observability (non-vulnerable versions)
+opentelemetry-api==1.40.0
+opentelemetry-sdk==1.40.0
+opentelemetry-semantic-conventions==0.61b0
+
+# Data/compute
+numpy==2.4.4
+z3-solver==4.16.0.0
+SQLAlchemy==2.0.49
+
+# Config + specs
+PyYAML==6.0.3            # case.yaml loading (case_loader, criticality_gate, graders) — no known vulns
+packaging==26.2
+certifi==2026.4.22
+propcache==0.4.1
+zipp==3.23.1
+
+# Type hints
+typing_extensions==4.15.0
+typing-inspection==0.4.2
+
+# Protocols / serialization
+protobuf==6.33.6
+proto-plus==1.28.0
+jiter==0.14.0
+jmespath==1.1.0
+isodate==0.7.2
+
+# Misc system
+distro==1.9.0
+psutil==7.2.2
+wrapt==1.17.3
+backoff==2.2.1
+tenacity==9.1.4

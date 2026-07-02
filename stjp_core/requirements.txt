@@ -1,0 +1,16 @@
+# STJP — Python dependencies
+#
+# SECURITY-FOCUSED: Includes only the GitHub-passable requirements.
+#
+# Setup (recommended - passes security scan):
+#   python -m venv .venv
+#   .venv\Scripts\Activate.ps1          # Windows PowerShell
+#   pip install -r requirements.txt
+#
+# This gives you the STJP compiler, validation, and monitoring.
+#
+# For extended features (Foundry LLM backend, live demo UI):
+#   See stjp_core/README.md for optional installs.
+
+# Use secure, non-vulnerable packages only
+-r requirements-secure.txt

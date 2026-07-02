@@ -1,0 +1,71 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol FinanceNested(
+    role Fetcher,
+    role TaxSpecialist,
+    role RevenueAnalyst,
+    role TaxVerifier,
+    role Writer
+) {
+    choice at Fetcher {
+
+        // ===== OUTER: HIGH revenue branch =====
+        HighRevenue(Double) from Fetcher to TaxSpecialist;
+        HighNotice() from Fetcher to RevenueAnalyst;
+        HighNotice() from Fetcher to TaxVerifier;
+        HighNotice() from Fetcher to Writer;
+
+        choice at TaxSpecialist {
+
+            // INNER (HIGH): anomalous audit — needs explicit verifier escalation
+            AnomalousAudit(String) from TaxSpecialist to TaxVerifier;
+            AnomalousNotice() from TaxSpecialist to RevenueAnalyst;
+            AnomalousNotice() from TaxSpecialist to Writer;
+
+            EscalatedApproval(String) from TaxVerifier to RevenueAnalyst;
+            EscalatedAnalysis(String) from RevenueAnalyst to Writer;
+            GenerateReport() from Writer to Fetcher;
+
+        } or {
+
+            // INNER (HIGH): clean audit — direct to revenue analyst
+            CleanAudit(String) from TaxSpecialist to RevenueAnalyst;
+            CleanNotice() from TaxSpecialist to TaxVerifier;
+            CleanNotice() from TaxSpecialist to Writer;
+
+            QuickAnalysis(String) from RevenueAnalyst to Writer;
+            GenerateReport() from Writer to Fetcher;
+        }
+
+    } or {
+
+        // ===== OUTER: STANDARD revenue branch =====
+        StandardRevenue(String) from Fetcher to RevenueAnalyst;
+        StandardNotice() from Fetcher to TaxSpecialist;
+        StandardNotice() from Fetcher to TaxVerifier;
+        StandardNotice() from Fetcher to Writer;
+
+        choice at RevenueAnalyst {
+
+            // INNER (STANDARD): needs verifier review
+            ReviewRequest(String) from RevenueAnalyst to TaxVerifier;
+            ReviewNotice() from RevenueAnalyst to TaxSpecialist;
+            ReviewNotice() from RevenueAnalyst to Writer;
+
+            ReviewApproval(String) from TaxVerifier to Writer;
+            GenerateReport() from Writer to Fetcher;
+
+        } or {
+
+            // INNER (STANDARD): direct to writer (no review needed)
+            DirectAnalysis(String) from RevenueAnalyst to Writer;
+            DirectNotice() from RevenueAnalyst to TaxSpecialist;
+            DirectNotice() from RevenueAnalyst to TaxVerifier;
+
+            GenerateReport() from Writer to Fetcher;
+        }
+    }
+}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>STJP Benchmark Index — 8-arm matrix across cases</title>
+<style>
+ :root { --bg:#0b1220; --panel:#111a2e; --line:#1f2c4d; --text:#d8e2ff;
+   --muted:#6f7fa6; --ok:#5dd39e; --warn:#ffb84d; --err:#ff6b6b; }
+ * { box-sizing:border-box; }
+ body { background:var(--bg); color:var(--text); margin:0; padding:24px;
+   font:13px/1.5 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif; }
+ h1 { margin:0 0 4px; font-size:21px; }
+ .sub { color:var(--muted); margin-bottom:18px; font-size:12px; }
+ table { width:100%; border-collapse:collapse; background:var(--panel);
+   border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+ th,td { padding:9px 7px; text-align:center; font-size:12px;
+   border-bottom:1px solid var(--line); }
+ thead th { background:rgba(255,255,255,.04); color:var(--muted);
+   font-weight:500; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+ td.case { text-align:left; min-width:210px; }
+ td.case b { font-size:13px; }
+ td.case .run-ts { color:var(--muted); font-size:10px; margin-left:8px; }
+ td.case .desc { color:var(--muted); font-size:11px; }
+ td.case .roles { color:var(--muted); font-size:10px; font-style:italic; }
+ td.n { font-weight:600; }
+ td.arm { font-weight:700; }
+ td.arm .viol { display:block; font-weight:400; font-size:9px; color:var(--muted); }
+ td.good { color:var(--ok); }
+ td.mid  { color:var(--warn); }
+ td.bad  { color:var(--err); }
+ td.muted { color:var(--muted); font-style:italic; }
+ .footer { margin-top:16px; color:var(--muted); font-size:11px; }
+ .footer code { background:var(--line); padding:1px 5px; border-radius:3px; }
+</style></head><body>
+<h1>STJP Benchmark — 8-arm matrix across cases</h1>
+<div class="sub">cross-case index · generated 2026-05-21 14:25:38 · 13 cases,
+ 2 with runs · each cell = Set B success rate (all goals pass);
+ "viol" = Set A monitor violations. Arm definitions: baselines/README.md.</div>
+<table>
+ <thead><tr>
+   <th>Case · run · description · roles</th><th>N</th><th class="arm">bare</th><th class="arm">maf-native</th><th class="arm">maf-foundry</th><th class="arm">maf-gc</th><th class="arm">maf-gc-unsafe</th><th class="arm">maf-gc-llmvalid</th><th class="arm">spec</th><th class="arm">min</th>
+ </tr></thead>
+ <tbody>
+<tr><td class="case"><b>auction</b><span class="run-ts">2026-05-15 16:27</span><br><span class="desc">Sealed-bid auction with three bidders. Auctioneer opens to each</span><br><span class="roles">Auctioneer, BidderA, BidderB, BidderC</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>banking</b><span class="run-ts"></span><br><span class="desc">Banking transfer with an amount-dependent approval branch. Tests safety</span><br><span class="roles">Initiator, SourceBank, DestBank, Approver, AuditLog</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>clinical_enrollment</b><span class="run-ts">2026-05-15 15:47</span><br><span class="desc">Clinical-trial patient enrolment. Coordinator screens with PI;</span><br><span class="roles">Coordinator, PI, Lab, EthicsBoard, Patient</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>code_review</b><span class="run-ts">2026-05-18 13:15</span><br><span class="desc">Pull-request review and merge. Author submits to two reviewers and</span><br><span class="roles">Author, Reviewer1, Reviewer2, CI, Merger</span></td><td class="n">1</td><td class="arm bad">0%<span class="viol">29 viol</span></td><td class="arm bad">0%<span class="viol">32 viol</span></td><td class="arm bad">0%<span class="viol">36 viol</span></td><td class="arm bad">0%<span class="viol">21 viol</span></td><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td></tr>
+<tr><td class="case"><b>finance</b><span class="run-ts">2026-05-21 11:16</span><br><span class="desc">Quarterly Finance Report pipeline with high-revenue audit branching.</span><br><span class="roles">Fetcher, RevenueAnalyst, ExpenseAnalyst, Writer, TaxVerifier, TaxSpecialist</span></td><td class="n">10</td><td class="arm bad">0%<span class="viol">378 viol</span></td><td class="arm bad">0%<span class="viol">458 viol</span></td><td class="arm bad">0%<span class="viol">478 viol</span></td><td class="arm bad">0%<span class="viol">184 viol</span></td><td class="arm bad">10%<span class="viol">0 viol</span></td><td class="arm mid">40%<span class="viol">63 viol</span></td><td class="arm good">80%<span class="viol">0 viol</span></td><td class="arm mid">60%<span class="viol">23 viol</span></td></tr>
+<tr><td class="case"><b>finance_nested</b><span class="run-ts">2026-05-15 16:51</span><br><span class="desc">Finance reporting with 2x2 nested choice. Outer choice at Fetcher</span><br><span class="roles">Fetcher, TaxSpecialist, RevenueAnalyst, TaxVerifier, Writer</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>intel_report</b><span class="run-ts">2026-05-15 15:42</span><br><span class="desc">Multi-source intelligence report — the Editor coordinates 3 feeder</span><br><span class="roles">Editor, Satellite, Signals, HumanIntel, Analyst, Reviewer</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>iterative_polling</b><span class="run-ts"></span><br><span class="desc">Shape D — loop sessions. A Client polls a Server in a loop and forwards</span><br><span class="roles">Client, Server, Logger</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>nested_retry</b><span class="run-ts"></span><br><span class="desc">Shape F — loop + complicated (nested) branching. Editorial workflow with</span><br><span class="roles">Author, Reviewer, Editor, Publisher</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>rag</b><span class="run-ts"></span><br><span class="desc">Multi-source retrieval-augmented generation with a bounded verification</span><br><span class="roles">User, QueryPlanner, Retriever1, Retriever2, Synthesizer, FactChecker</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>retry_loop</b><span class="run-ts">2026-05-15 18:47</span><br><span class="desc">Shape E — loop + simple branching. Worker attempts a task; Manager</span><br><span class="roles">Worker, Manager, Auditor</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>travel</b><span class="run-ts"></span><br><span class="desc">Travel booking with all-or-nothing rollback. Tests transactional integrity</span><br><span class="roles">User, Coordinator, Flight, Hotel, Car, Payment</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+<tr><td class="case"><b>travel_saga</b><span class="run-ts">2026-05-15 16:24</span><br><span class="desc">Travel booking with three suppliers (Hotel, Flight, Car). Customer</span><br><span class="roles">Customer, Agent, Hotel, Flight, Car</span></td><td class="muted" colspan="9">no runs yet</td></tr>
+ </tbody>
+</table>
+<div class="footer">
+ Refresh with <code>python scripts/index_builder.py</code> after a
+ <code>case_runner.py</code> run. Per-arm detail lives in each run's
+ <code>summary.json</code> (Set A + process cost) and
+ <code>summary_eval.json</code> (Set B goal metrics).
+</div>
+</body></html>

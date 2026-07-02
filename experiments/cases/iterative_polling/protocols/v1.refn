@@ -1,0 +1,9 @@
+# IterativePolling refinements
+
+[Server -> Client : Result]
+type:    float
+require: x >= 0.0
+
+[Server -> Logger : Result]
+type:    float
+require: x >= 0.0

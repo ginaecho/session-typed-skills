@@ -1,0 +1,47 @@
+# Secrets and environment variables
+.env
+*.env
+
+# Images
+*.png
+*.PNG
+*.jpg
+*.jpeg
+
+# scribble-java (full Java compiler - not project code)
+scribble-java/
+
+# Runtime-generated experiment outputs
+experiments/logs/
+experiments/cases/*/runs/
+
+# Python virtual environment and build artifacts
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Java build artifacts
+target/
+*.class
+
+# Claude Code local settings and memory (machine-specific)
+.claude/
+
+# Runtime-generated within stjp_core
+stjp_core/logs/
+stjp_core/generated_agents/conversations/
+stjp_core/generated_agents/experiment_results*.json
+stjp_core/generated_agents/foundry_native_run.json
+
+# Office documents stay local only (pitch/patent material)
+*.docx
+*.pptx
+~$*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.bak

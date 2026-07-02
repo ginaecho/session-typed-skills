@@ -1,0 +1,71 @@
+case_id: travel
+description: |
+  Travel booking with all-or-nothing rollback. Tests transactional integrity
+  with exception propagation across roles — flight, hotel, and car are quoted,
+  then either all are confirmed and payment is charged, or any failure triggers
+  a clean rollback (all bookings cancelled, no payment charged).
+
+version: v1
+protocol_name: TravelBooking
+
+roles:
+  - User
+  - Coordinator
+  - Flight
+  - Hotel
+  - Car
+  - Payment
+
+terminal_label: TripResult
+max_steps: 24
+branch_hints: [available, unavailable]
+
+role_descriptions:
+  User: requests a trip (flight + hotel + car within a budget) and receives the final result
+  Coordinator: gathers the three quotes, decides book-vs-rollback, drives payment, reports to the user
+  Flight: quotes a flight price and confirms or cancels the flight booking
+  Hotel: quotes a hotel price and confirms or cancels the hotel booking
+  Car: quotes a rental-car price and confirms or cancels the car booking
+  Payment: charges the total only when all three legs are confirmed; otherwise is told to skip
+
+intent: |
+  Book a flight, a hotel, and a rental car for a trip, within the user's
+  budget. The Coordinator gathers a quote from each of the three booking
+  agents. If all three are available and the total is within budget, confirm
+  every booking, charge payment, and tell the user the trip is booked. If any
+  leg is unavailable or the total exceeds budget, cancel every provisional
+  booking, do not charge payment, and tell the user the trip could not be
+  booked. The outcome must be all-or-nothing — never a partial booking.
+
+goals:
+  - id: G1
+    description: Each leg returns a positive-priced quote before any decision
+    metric: flight_quote
+    predicate: float(x) > 0
+    anchor: {sender: Flight, receiver: Coordinator, label: FlightQuote}
+    threshold: "> 0"
+
+  - id: G2
+    description: Payment is charged only on a confirmed (available) trip
+    metric: payment_charged
+    predicate: float(x) > 0
+    anchor: {sender: Coordinator, receiver: Payment, label: ChargePayment}
+    threshold: "> 0"
+    # ChargePayment exists only on the available branch.
+    branch: available
+
+  - id: G3
+    description: On rollback, payment is explicitly skipped (not charged)
+    metric: payment_skipped
+    predicate: len(x) > 0
+    anchor: {sender: Coordinator, receiver: Payment, label: SkipPayment}
+    threshold: non-empty
+    # SkipPayment exists only on the unavailable branch.
+    branch: unavailable
+
+  - id: G4
+    description: The user receives exactly one terminal trip result
+    metric: user_informed
+    predicate: len(x) > 0
+    anchor: {sender: Coordinator, receiver: User, label: TripResult}
+    threshold: non-empty

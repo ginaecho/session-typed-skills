@@ -1,0 +1,61 @@
+module v1;
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Boolean" from "rt.jar" as Bool;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol TradeSettlement(role Buyer, role Seller, role Escrow, role Shipper, role Inspector) {
+    // Buyer initiates payment to Escrow
+    Payment(Double) from Buyer to Escrow;
+
+    // Escrow confirms payment clearance to Seller
+    PaymentHeld() from Escrow to Seller;
+
+    // Seller decides to ship or cancel
+    choice at Seller {
+        ProceedShipment() from Seller to Buyer;   // Notify all roles for shipment
+        ProceedShipment() from Seller to Escrow;
+        ProceedShipment() from Seller to Shipper;
+        ProceedShipment() from Seller to Inspector;
+
+        // Shipment begins
+        PrepareGoods() from Seller to Shipper;
+
+        // Buyer declares the shipment type (domestic or international)
+        choice at Buyer {
+            DomesticShipment() from Buyer to Escrow;    // Notify all roles for domestic shipment
+            DomesticShipment() from Buyer to Shipper;
+            DomesticShipment() from Buyer to Inspector;
+
+            // Shipper delivers goods directly (domestic)
+            DeliverGoods(String) from Shipper to Inspector;
+        } or {
+            InternationalShipment() from Buyer to Escrow; // Notify all roles for international shipment
+            InternationalShipment() from Buyer to Shipper;
+            InternationalShipment() from Buyer to Inspector;
+
+            // Shipper delivers goods via customs (international)
+            CustomsClearance(String) from Shipper to Inspector;
+            DeliverGoods(String) from Shipper to Inspector;
+        }
+
+        // Inspector inspects the delivered goods
+        InspectGoods(Bool) from Inspector to Buyer;
+
+        // Buyer instructs Escrow to release payment
+        ReleasePayment() from Buyer to Escrow;
+
+        // Escrow releases payment to Seller
+        PaymentReleased() from Escrow to Seller;
+
+        // Protocol ends when settlement is complete
+        SettlementComplete() from Escrow to Buyer;
+    } or {
+        CancelShipment() from Seller to Buyer;   // Notify all roles for cancellation
+        CancelShipment() from Seller to Escrow;
+        CancelShipment() from Seller to Shipper;
+        CancelShipment() from Seller to Inspector;
+
+        // No further actions; settlement complete
+        SettlementComplete() from Escrow to Buyer;
+    }
+}

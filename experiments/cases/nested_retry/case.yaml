@@ -1,0 +1,34 @@
+case_id: nested_retry
+description: |
+  Shape F — loop + complicated (nested) branching. Editorial workflow with
+  per-round revision; outer choice is revise-vs-accept, and each side has
+  its own inner choice (major-vs-minor edit on revise; publish-vs-schedule
+  on accept). Exercises shape F: rec + nested choice.
+version: v1
+protocol_name: NestedRetry
+roles:
+  - Author
+  - Reviewer
+  - Editor
+  - Publisher
+terminal_label: Publish
+max_steps: 22
+branch_hints: [accept_publish, accept_schedule, revise_minor, revise_major_then_accept]
+intent: |
+  Editorial pipeline with iterative review. Each round, Reviewer rates the
+  draft; Editor decides revise vs. accept. On revise, Author chooses major
+  or minor edit (both loop). On accept, Publisher chooses publish or
+  schedule (both terminate). Ratings must be in [0,10].
+goals:
+  - id: G1
+    description: Review rating must be in [0,10]
+    metric: rating_validity
+    predicate: 0.0 <= float(x) <= 10.0
+    anchor: {sender: Reviewer, receiver: Editor, label: Review}
+    threshold: "[0,10]"
+  - id: G2
+    description: Publish notice must be substantive
+    metric: publish_decision
+    predicate: len(x) > 5
+    anchor: {sender: Publisher, receiver: Author, label: Publish}
+    threshold: "> 5 chars"

@@ -1,0 +1,35 @@
+module v1;
+
+data <java> "java.lang.Double" from "rt.jar" as Double;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+// Canonical SAFE protocol: the Escrow holds the Buyer's funds FIRST, which
+// breaks the circular "pay-after-ship / ship-after-pay" deadlock the intent
+// describes. Choice at Seller distinguishes domestic vs international (customs).
+global protocol TradeSettlement(
+    role Buyer, role Seller, role Escrow, role Shipper, role Inspector
+) {
+    FundEscrow(Double) from Buyer to Escrow;
+    FundsSecured(String) from Escrow to Seller;
+
+    choice at Seller {
+        DomesticNote() from Seller to Escrow;
+        DomesticNote() from Seller to Shipper;
+        DomesticNote() from Seller to Inspector;
+        DomesticNote() from Seller to Buyer;
+        DispatchGoods(String) from Seller to Shipper;
+        Delivered(String) from Shipper to Inspector;
+    } or {
+        IntlNote() from Seller to Escrow;
+        IntlNote() from Seller to Shipper;
+        IntlNote() from Seller to Inspector;
+        IntlNote() from Seller to Buyer;
+        DispatchGoods(String) from Seller to Shipper;
+        CustomsCleared(String) from Shipper to Inspector;
+        Delivered(String) from Shipper to Inspector;
+    }
+
+    InspectionResult(String) from Inspector to Escrow;
+    ReleasePayment(Double) from Escrow to Seller;
+    SettlementComplete(String) from Escrow to Buyer;
+}

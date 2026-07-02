@@ -1,0 +1,26 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol TravelSaga(
+    role Customer,
+    role Agent,
+    role Hotel,
+    role Flight,
+    role Car
+) {
+    BookTrip(String) from Customer to Agent;
+
+    ReserveHotel(String) from Agent to Hotel;
+    HotelConfirmed(Double) from Hotel to Agent;
+
+    ReserveFlight(String) from Agent to Flight;
+    FlightConfirmed(Double) from Flight to Agent;
+
+    ReserveCar(String) from Agent to Car;
+    CarConfirmed(Double) from Car to Agent;
+
+    Charge(Double) from Agent to Customer;
+    TripBooked(String) from Customer to Agent;
+}

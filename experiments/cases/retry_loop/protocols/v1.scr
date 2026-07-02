@@ -1,0 +1,26 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol RetryLoop(role Worker, role Manager, role Auditor) {
+    StartTask(String) from Worker to Manager;
+    StartTask(String) from Worker to Auditor;
+
+    rec Attempt {
+        AttemptResult(Double) from Worker to Manager;
+        AttemptResult(Double) from Worker to Auditor;
+
+        choice at Manager {
+            Accept(String) from Manager to Worker;
+            Accept(String) from Manager to Auditor;
+            AuditConfirm(String) from Auditor to Manager;
+            AuditConfirm(String) from Auditor to Worker;
+            FinalSummary(String) from Manager to Worker;
+        } or {
+            Retry(String) from Manager to Worker;
+            Retry(String) from Manager to Auditor;
+            continue Attempt;
+        }
+    }
+}

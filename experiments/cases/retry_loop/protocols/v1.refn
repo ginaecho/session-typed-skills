@@ -1,0 +1,11 @@
+# RetryLoop refinements
+
+[Worker -> Manager : AttemptResult]
+type:    float
+require: x >= 0.0
+require: x <= 100.0
+
+[Worker -> Auditor : AttemptResult]
+type:    float
+require: x >= 0.0
+require: x <= 100.0

@@ -1,0 +1,26 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol ClinicalEnrollment(
+    role Coordinator,
+    role PI,
+    role Lab,
+    role EthicsBoard,
+    role Patient
+) {
+    ScreenPatient(String) from Coordinator to PI;
+    EligibilityVerdict(String) from PI to Coordinator;
+
+    RequestConsent(String) from Coordinator to Patient;
+    ConsentSigned(String) from Patient to Coordinator;
+
+    RequestBaseline(String) from Coordinator to Lab;
+    BaselineResult(Double) from Lab to Coordinator;
+
+    EnrollmentRequest(String) from Coordinator to EthicsBoard;
+    EnrollmentApproved(String) from EthicsBoard to Coordinator;
+
+    EnrolPatient(String) from Coordinator to Patient;
+}

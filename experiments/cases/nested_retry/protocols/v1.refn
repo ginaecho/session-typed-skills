@@ -1,0 +1,16 @@
+# NestedRetry refinements
+
+[Reviewer -> Author : Review]
+type:    float
+require: x >= 0.0
+require: x <= 10.0
+
+[Reviewer -> Editor : Review]
+type:    float
+require: x >= 0.0
+require: x <= 10.0
+
+[Reviewer -> Publisher : Review]
+type:    float
+require: x >= 0.0
+require: x <= 10.0

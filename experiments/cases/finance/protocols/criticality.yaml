@@ -1,0 +1,23 @@
+# Criticality annotations for the finance case (BENCHMARK_DESIGN_V3_CRITICALITY.md).
+# Drives experiments/scripts/criticality_gate.py — Layer-1b critical-property tests.
+# Labels here are the LLM-drafted valid vocabulary (what the WITH-arms project from).
+
+# C1 — data provenance ("no guessing"): the revenue number the analyst reports
+# must be the real number it received, not invented.
+provenance:
+  - source:  {label: RawRevenueData}          # carries the datum (Fetcher -> RevenueAnalyst)
+    derived: {label: FinalRevenueAnalysis}     # RevenueAnalyst -> Writer
+    check: numeric                             # the source number must appear / derive in derived payload
+
+# C2 — context completeness ("read everything first"): the analyst aggregates
+# revenue + expense before finalizing; the final analysis must cover both inputs.
+context:
+  - actor: RevenueAnalyst
+    requires: [RawRevenueData, ExpenseData]    # must be RECV'd before...
+    output: FinalRevenueAnalysis                # ...this SEND
+    cover: numeric                             # output payload should reference each input's value
+
+# C3 — authorization before irreversible action: reuse the severity grader's
+# S4 class (report filed before approval/audit).
+authorization:
+  use_severity: true

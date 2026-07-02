@@ -1,0 +1,12 @@
+# STJP — Full install (core + demo)
+#
+# ⚠️  This file includes BOTH:
+#   - Core library (security-focused)
+#   - Optional Flask demo (experimental, has known vulnerabilities)
+#
+# RECOMMENDED: Use requirements.txt (core only) for production.
+#
+# This file is for backward compatibility and development.
+
+-r requirements-core.txt
+-r requirements-demo.txt

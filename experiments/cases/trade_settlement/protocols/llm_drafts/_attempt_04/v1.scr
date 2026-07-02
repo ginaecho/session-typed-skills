@@ -1,0 +1,38 @@
+module v1;
+data <java> "java.lang.String" from "rt.jar" as String;
+
+global protocol TradeSettlement(role Buyer, role Seller, role Escrow, role Shipper, role Inspector) {
+    // Initial payment from Buyer to Escrow
+    PaymentInitiated() from Buyer to Escrow;
+    PaymentConfirmation() from Escrow to Buyer;
+    PaymentConfirmation() from Escrow to Seller;
+
+    choice at Buyer { 
+        DomesticShipment() from Buyer to Escrow;     // Notify all roles in both branches
+        DomesticShipment() from Buyer to Seller;
+        DomesticShipment() from Buyer to Shipper;
+        DomesticShipment() from Buyer to Inspector;
+
+        // Domestic shipment flow
+        GoodsShipped() from Seller to Shipper;
+        GoodsDelivered() from Shipper to Inspector;
+        InspectionPassed() from Inspector to Buyer;
+        PaymentReleased() from Buyer to Escrow;
+        PaymentTransferred() from Escrow to Seller;
+    } or {
+        InternationalShipment() from Buyer to Escrow; // Notify all roles in both branches
+        InternationalShipment() from Buyer to Seller;
+        InternationalShipment() from Buyer to Shipper;
+        InternationalShipment() from Buyer to Inspector;
+
+        // International shipment flow
+        GoodsShipped() from Seller to Shipper;
+        CustomsClearance() from Shipper to Inspector;
+        GoodsDelivered() from Shipper to Inspector;
+        InspectionPassed() from Inspector to Buyer;
+        PaymentReleased() from Buyer to Escrow;
+        PaymentTransferred() from Escrow to Seller;
+    }
+    // Final settlement confirmation
+    SettlementComplete() from Escrow to Buyer;
+}

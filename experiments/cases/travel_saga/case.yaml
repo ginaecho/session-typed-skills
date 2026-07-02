@@ -1,0 +1,56 @@
+case_id: travel_saga
+description: |
+  Travel booking with three suppliers (Hotel, Flight, Car). Customer
+  asks the Agent to book; the Agent sequences three reservations; on
+  success the Agent charges and confirms. Refinements: each
+  confirmation carries a positive price; total charge within plausible
+  bounds. v1 is the happy path only — rollback/compensation in v2.
+version: v1
+protocol_name: TravelSaga
+roles:
+  - Customer
+  - Agent
+  - Hotel
+  - Flight
+  - Car
+terminal_label: TripBooked
+max_steps: 12
+branch_hints: [domestic, international]
+intent: |
+  Book a trip. The Customer asks the Agent to book; the Agent reserves
+  hotel, then flight, then car. Each supplier confirms with a price.
+  The Agent totals the charges and bills the Customer; the Customer
+  confirms the booking. Every reservation must come back with a
+  positive numerical price; the total charge must not exceed plausible
+  bounds.
+goals:
+  - id: G1
+    description: Hotel price must be positive and plausible
+    metric: hotel_price
+    predicate: 0.0 < float(x) < 10000.0
+    anchor: {sender: Hotel, receiver: Agent, label: HotelConfirmed}
+    threshold: (0, 10000)
+  - id: G2
+    description: Flight price must be positive and plausible
+    metric: flight_price
+    predicate: 0.0 < float(x) < 10000.0
+    anchor: {sender: Flight, receiver: Agent, label: FlightConfirmed}
+    threshold: (0, 10000)
+  - id: G3
+    description: Car price must be positive and plausible
+    metric: car_price
+    predicate: 0.0 < float(x) < 5000.0
+    anchor: {sender: Car, receiver: Agent, label: CarConfirmed}
+    threshold: (0, 5000)
+  - id: G4
+    description: Total charge to customer must be plausible
+    metric: charge
+    predicate: 0.0 < float(x) < 25000.0
+    anchor: {sender: Agent, receiver: Customer, label: Charge}
+    threshold: (0, 25000)
+  - id: G5
+    description: Customer final confirmation non-empty
+    metric: confirmation
+    predicate: len(x) > 0
+    anchor: {sender: Customer, receiver: Agent, label: TripBooked}
+    threshold: non-empty

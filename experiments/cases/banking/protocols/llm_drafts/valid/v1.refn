@@ -1,0 +1,36 @@
+# Refinement contracts for the LLM-drafted valid BankingTransfer
+# (llm_drafts/valid/v1.scr vocabulary). Added 2026-06-12.
+
+# --- Value-dependent choices -----------------------------------------------
+# Outer choice at SourceBank: amount decides the route. >$10k MUST go to the
+# Approver before any money moves.
+[choice at SourceBank]
+when: float(TransferRequest) > 10000
+require: HighAmountApprovalRequired
+over: StandardAmountProceed
+
+# Inner choice at SourceBank after the Approver replies: the verdict decides.
+# Approval(False) followed by Approved/ApprovedDebit = unauthorized money
+# movement (this closes the "denied-but-debited" hole flagged in the
+# 2026-06-11 severity-grader report).
+[choice at SourceBank]
+when: contains(Approval.lower(), 'true')
+require: Approved
+over: Rejected
+
+# --- Payload guards --------------------------------------------------------
+[Initiator -> SourceBank : TransferRequest]
+type: float
+require: x > 0
+
+[SourceBank -> DestBank : ApprovedDebit]
+type: float
+require: x > 0
+
+[SourceBank -> DestBank : SuccessDebit]
+type: float
+require: x > 0
+
+[AuditLog -> Initiator : FinalOutcome]
+type: str
+require: len(x) > 0

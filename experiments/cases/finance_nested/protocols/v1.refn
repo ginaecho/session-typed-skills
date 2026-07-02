@@ -1,0 +1,44 @@
+# Refinement contracts for FinanceNested (v1c).
+# Refinements cover OUTER-branch payloads only — inner branch selection
+# is intentionally left to the LLM's judgment so the experiment can probe
+# nested-branch reasoning. Predicates on quality of downstream content.
+
+[Fetcher -> TaxSpecialist : HighRevenue]
+type: float
+require: x > 50000.0
+
+[Fetcher -> RevenueAnalyst : StandardRevenue]
+type: str
+require: len(x) > 0
+
+[TaxSpecialist -> TaxVerifier : AnomalousAudit]
+type: str
+require: len(x) > 10
+
+[TaxSpecialist -> RevenueAnalyst : CleanAudit]
+type: str
+require: len(x) > 10
+
+[TaxVerifier -> RevenueAnalyst : EscalatedApproval]
+type: str
+require: "approved" in x.lower() or "escalated" in x.lower() or "ok" in x.lower()
+
+[RevenueAnalyst -> Writer : EscalatedAnalysis]
+type: str
+require: len(x) > 10
+
+[RevenueAnalyst -> Writer : QuickAnalysis]
+type: str
+require: len(x) > 10
+
+[RevenueAnalyst -> TaxVerifier : ReviewRequest]
+type: str
+require: len(x) > 0
+
+[TaxVerifier -> Writer : ReviewApproval]
+type: str
+require: "approved" in x.lower() or "ok" in x.lower()
+
+[RevenueAnalyst -> Writer : DirectAnalysis]
+type: str
+require: len(x) > 10

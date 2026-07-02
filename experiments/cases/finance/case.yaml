@@ -1,0 +1,97 @@
+case_id: finance
+description: |
+  Quarterly Finance Report pipeline with high-revenue audit branching.
+  Tests the classic refinement-vs-sequencing failure pair: bare agents
+  miss both message labels AND payload constraints; spec agents recover
+  message labels but the standard branch still skips the audit step.
+
+version: v1
+protocol_name: QuarterlyFinanceReport
+
+roles:
+  - Fetcher
+  - RevenueAnalyst
+  - ExpenseAnalyst
+  - Writer
+  - TaxVerifier
+  - TaxSpecialist
+
+terminal_label: GenerateReport
+max_steps: 24                     # bumped from 12: gives bare/MAF arms 3x the protocol-arm typical event budget so we measure "failed to coordinate", not "ran out of turns"
+branch_hints: [high, standard]
+
+# Role descriptions (prose) — included in EVERY arm's prompt so the
+# variable being measured is purely "what protocol info comes on top",
+# not "did anyone tell the agent what its role does." Without these,
+# bare/MAF-intent-only arms would be unfairly punished: spec/min arms
+# get role descriptions implicitly via their projected local types
+# (which list the messages each role sends/receives), whereas bare
+# arms would otherwise have only role NAMES with no semantic content.
+role_descriptions:
+  Fetcher: retrieves raw revenue data on request
+  RevenueAnalyst: analyzes revenue, classifying it as high (>$50k) or standard
+  ExpenseAnalyst: analyzes expense data
+  TaxSpecialist: audits high-revenue items when an audit is requested
+  TaxVerifier: verifies the tax audit is correct before approved figures land in the report
+  Writer: composes the final quarterly report from approved analyses and delivers it back to the user (the Fetcher)
+
+intent: |
+  We need a Quarterly Finance Report pipeline that takes raw revenue data
+  and produces a written report. The pipeline distinguishes 'high' revenue
+  (above $50k, requires a tax-specialist audit) from 'standard' revenue.
+  Every revenue analysis must be approved by a tax verifier before it lands
+  in the report.
+
+goals:
+  - id: G1
+    description: High-path revenue must exceed $50,000
+    metric: revenue_amount
+    predicate: float(x) > 50000
+    anchor: {sender: Fetcher, receiver: TaxSpecialist, label: HighRevenue}
+    threshold: "> 50000"
+    # HighRevenue exists ONLY on the high branch. On standard-branch trials
+    # it is vacuously satisfied (skipped), not failed for a missing anchor.
+    branch: high
+
+  - id: G2
+    description: Audit result must be non-empty
+    metric: audit_completeness
+    predicate: len(x) > 0
+    anchor: {sender: TaxSpecialist, receiver: RevenueAnalyst, label: AuditedRevenue}
+    threshold: non-empty
+    # AuditedRevenue (the tax-specialist audit) happens ONLY on the high
+    # branch; the standard branch has no audit step. Vacuous on standard.
+    branch: high
+
+  - id: G3
+    description: Tax verifier must approve the audit explicitly
+    metric: audit_approval
+    predicate: '"approved" in x.lower() or "ok" in x.lower()'
+    anchor: {sender: TaxVerifier, receiver: RevenueAnalyst, label: RevenueAuditApproval}
+    threshold: contains approved/ok
+
+  - id: G4
+    description: Revenue analysis must be substantive (>10 chars)
+    metric: analysis_quality
+    predicate: len(x) > 10
+    anchor: {sender: RevenueAnalyst, receiver: Writer, label: RevenueAnalysis}
+    threshold: "> 10 chars"
+
+  - id: G5
+    description: Expense analysis must be substantive (>10 chars)
+    metric: expense_quality
+    predicate: len(x) > 10
+    anchor: {sender: ExpenseAnalyst, receiver: Writer, label: ExpenseAnalysis}
+    threshold: "> 10 chars"
+
+  - id: G6
+    description: A final quarterly report is produced and delivered to the user, terminating the pipeline
+    metric: report_delivered
+    # Existence-check: any terminal-event payload (incl. empty) satisfies.
+    # The point is "did the pipeline converge on a final artifact at all?" —
+    # not the report's content (G4/G5 already cover content quality).
+    # Without G6, bare arms could "win" G1-G5 piecemeal across attempts
+    # while never converging on a final report.
+    predicate: 'True'
+    anchor: {sender: Writer, receiver: Fetcher, label: GenerateReport}
+    threshold: terminal event present

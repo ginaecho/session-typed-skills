@@ -1,0 +1,24 @@
+module v1;
+
+data <java> "java.lang.String" from "rt.jar" as String;
+data <java> "java.lang.Double" from "rt.jar" as Double;
+
+global protocol Auction(
+    role Auctioneer,
+    role BidderA,
+    role BidderB,
+    role BidderC
+) {
+    OpenForA(String) from Auctioneer to BidderA;
+    BidA(Double) from BidderA to Auctioneer;
+
+    OpenForB(String) from Auctioneer to BidderB;
+    BidB(Double) from BidderB to Auctioneer;
+
+    OpenForC(String) from Auctioneer to BidderC;
+    BidC(Double) from BidderC to Auctioneer;
+
+    WinnerA(String) from Auctioneer to BidderA;
+    WinnerB(String) from Auctioneer to BidderB;
+    WinnerC(String) from Auctioneer to BidderC;
+}

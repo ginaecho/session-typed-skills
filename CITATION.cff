@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software or build on the ideas in it, please cite it as below."
+type: software
+title: "Session-Typed Skills: a session-typed static compiler for safe interactions in skills for agents"
+authors:
+  - family-names: Chen
+    given-names: Tzu-Chun
+    alias: ginaecho
+repository-code: "https://github.com/ginaecho/session-typed-skills"
+license: MIT
+version: 0.1.0
+date-released: "2026-07-02"
+keywords:
+  - multiparty session types
+  - multi-agent systems
+  - LLM agents
+  - protocol verification
+  - Scribble
+  - deadlock freedom
+  - runtime monitoring
+  - agent skills
+abstract: >-
+  Session-Typed Skills (STJP, the Session-Typed Judge Panel) treats the
+  conversation between LLM agents as the artifact to type-check. A
+  natural-language intent is drafted into a multiparty session type, validated
+  for deadlock-freedom by the Scribble compiler, and statically projected into
+  one interaction-safe skill per agent plus a runtime enforcement monitor and
+  an execution scheduler derived from the same proof. Benchmarked on real
+  Azure AI Foundry agents: catches deadlocks no runtime approach can, prevents
+  unauthorized irreversible actions, and cuts agent calls and token cost by
+  removing idle-agent polling.
