@@ -26,7 +26,6 @@ In plain English: **All agents with protocol succeeded, but STJP's version used 
 
 ## 2. Reading the results table
 
-```
 | arm | GCR | CGC | Disasters | Cost-to-goal | Seconds/trial |
 |---|---|---|---|---|---|
 | A: Intent only | 0% | 0% | 18 | ∞ | — |
@@ -35,7 +34,6 @@ In plain English: **All agents with protocol succeeded, but STJP's version used 
 | C+spec: Local + gate | 90% | 70% | 0 | 91k | 127s |
 | C+min: Local + gate | 100% | 100% | 0 | 38k | 96s |
 | STJP: Local + gate + scheduler | 100% | 100% | 0 | 13.3k | 32s |
-```
 
 ### Column meanings
 
