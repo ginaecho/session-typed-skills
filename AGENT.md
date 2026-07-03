@@ -476,45 +476,139 @@ If still stuck, look at existing cases (finance, banking) for examples.
 
 ---
 
-## 📝 Commit Message Template
+## 🔐 Git identity — ALWAYS commit/push/PR as Gina Chen
 
-When you commit work:
+**Every** git commit, push, branch, and pull request you make in this project must be attributed to the project owner, never to Claude:
+
+- **Author / committer:** `Gina Chen <tzuchunchen+microsoft@microsoft.com>`
+- **GitHub account for push & PR:** `tzuchunchen_microsoft` (the `gh` CLI is authenticated as this account)
+- **Do NOT** add a `Co-Authored-By: Claude ...` trailer. Do NOT set the author to any bot/assistant identity.
+
+Set the identity inline on every commit so it is correct regardless of local git config:
+
+```bash
+git -c user.name="Gina Chen" -c user.email="tzuchunchen+microsoft@microsoft.com" \
+    commit -m "<message>"
+```
+
+Branches you create for review use the `gc/` prefix, e.g. `gc/stjp-updates-docs`.
+Open PRs with `gh pr create` (runs as `tzuchunchen_microsoft`).
+
+---
+
+## 🚀 Publishing workflow — TWO hops, in this order
+
+This project lives in two GitHub repos. Changes flow **source first, then mirror** —
+never publish to the mirror without the source being updated first.
+
+```
+  (local working copy)
+        │  hop 1: commit + push
+        ▼
+  ginaecho/session-typed-skills  (main)      ← the SOURCE OF TRUTH
+        │  hop 2: sync tracked files into a subfolder + PR
+        ▼
+  mcaps-microsoft/eag-innovation  (main)
+        └── agentic-governance/stjp/          ← the MIRROR (internal MS monorepo)
+```
+
+### Hop 1 — commit & push to the source repo (`ginaecho/session-typed-skills`)
+
+This local repo's `origin` **is** `ginaecho/session-typed-skills`. Commit your work
+here first and push to `main`:
+
+```bash
+# from the project root
+git add -A
+git -c user.name="Gina Chen" -c user.email="tzuchunchen+microsoft@microsoft.com" \
+    commit -m "<type>: <short description>
+
+<longer explanation if needed>"
+git push origin main
+```
+
+Use a `gc/<topic>` branch + PR instead of pushing straight to `main` only if the
+change warrants review; otherwise a direct push to `main` is fine for this repo
+(it is the owner's own project).
+
+### Hop 2 — mirror into the internal monorepo (`mcaps-microsoft/eag-innovation`)
+
+Sync the **tracked** files (everything `git ls-files` returns — this already
+excludes `scribble-java/`, images, `.env`, `.docx`/`.pptx`, venvs, and run outputs
+via `.gitignore`) into `agentic-governance/stjp/` in the internal repo, via a
+branch + PR. **Never push to that repo's `main` directly** — it is a shared
+Microsoft org repo.
+
+The exact procedure (verified 2026-07-03, PR #107):
+
+```bash
+SRC="/c/Users/tzuchunchen/OneDrive - Microsoft/Documents/Projects/testing_ideas"
+WORK="/c/Users/TZUCHU~1/e"        # short base path — Windows MAX_PATH (260) blocks
+                                  # the deep experiments/.../llm_drafts/ paths otherwise
+git config --global core.longpaths true   # also required for the deep paths
+
+# 1. Sparse-clone ONLY agentic-governance (the monorepo has Windows-illegal
+#    filenames elsewhere that break a full checkout)
+rm -rf "$WORK" && mkdir -p "$WORK" && cd "$WORK"
+git clone --depth 1 --no-checkout --filter=blob:none \
+    https://github.com/mcaps-microsoft/eag-innovation.git
+cd eag-innovation
+git config core.longpaths true
+git sparse-checkout init --cone
+git sparse-checkout set agentic-governance
+git checkout main
+git checkout -b gc/stjp-updates-docs
+
+# 2. Replace the old copy: delete everything under agentic-governance/,
+#    then copy the source repo's tracked files into agentic-governance/stjp/
+git rm -r --quiet agentic-governance
+mkdir -p agentic-governance/stjp
+cd "$SRC"
+git ls-files -z | while IFS= read -r -d '' f; do
+    mkdir -p "$WORK/eag-innovation/agentic-governance/stjp/$(dirname "$f")"
+    cp "$f" "$WORK/eag-innovation/agentic-governance/stjp/$f"
+done
+
+# 3. Stage, verify, commit as Gina, push, PR
+cd "$WORK/eag-innovation"
+git add agentic-governance
+#   sanity checks before committing:
+#   - files under stjp/:   git ls-files -- agentic-governance/stjp | wc -l   (== source count)
+#   - leftovers:           git ls-files -- agentic-governance | grep -v '/stjp/' | wc -l   (== 0)
+#   - nothing outside:     git diff --cached --name-only | grep -v '^agentic-governance/'   (empty)
+#   - no excluded types:   git diff --cached --name-only --diff-filter=A | grep -Ei '\.(png|jpg|env|docx|pptx)$|/scribble-java/'   (empty)
+git -c user.name="Gina Chen" -c user.email="tzuchunchen+microsoft@microsoft.com" \
+    commit -m "Restructure agentic-governance: sync Session-Typed Skills (STJP) under stjp/"
+git push -u origin gc/stjp-updates-docs
+gh pr create --repo mcaps-microsoft/eag-innovation \
+    --base main --head gc/stjp-updates-docs \
+    --title "..." --body "..."
+```
+
+**Gotchas already discovered (don't re-learn them):**
+- Git reports many files as **renames** (R), not adds (A), because the old copy
+  had the same basenames. `git diff --cached --diff-filter=A | wc -l` will
+  under-count — trust `git ls-files -- agentic-governance/stjp | wc -l` instead.
+- The full monorepo checkout fails ("checkout failed") due to Windows-illegal
+  filenames outside `agentic-governance/` — that is why the sparse checkout is
+  mandatory.
+- Do **not** run history-rewriting git ops (`pull --rebase`, etc.) against a repo
+  while a live experiment run is writing to it.
+
+### Commit message shape (both hops)
 
 ```
 <type>: <short description>
 
 <longer explanation if needed>
 
-Files touched:
-- experiments/cases/<case>/ (if new case)
-- stjp_core/<module>/ (if bug fix)
-- etc.
-
-Testing:
+Testing (for code changes):
 - Ran case_runner.py <case> 3 --arms <arms>
 - Verified <metric> improved / stayed flat / regressed
 ```
 
-Examples:
-```
-feat: add supply_chain use case
-
-New case tests coordination across 5 suppliers.
-Protocol has choice logic for inventory levels.
-
-Files: experiments/cases/supply_chain/
-Testing: finance 3 baseline still passes; supply_chain 1 succeeds
-```
-
-```
-fix: monitor now allows concurrent actions on different channels
-
-Was enforcing strict global ordering; now respects MPST theory
-(concurrent on different channels is safe).
-
-Files: stjp_core/monitor/monitor.py
-Testing: re-ran finance, banking, trade_deadlock (n=3); no regressions
-```
+Examples: `feat: add supply_chain use case`,
+`fix: monitor now allows concurrent actions on different channels`.
 
 ---
 
