@@ -34,9 +34,11 @@ Metrics (per trial, then aggregated):
 Cost-to-goal = total agent_calls / GCR-fraction (calls per DELIVERED goal), the
 same "true cost" idea as the finance table's tokens/GCR.
 
-Commands mirror engine.py: init / next / submit / report. Add `--auto` to
-submit to self-answer with a contract-follower (deterministic; validates the
-plumbing and metrics with no LLM). Real runs answer polls with subagents.
+Commands mirror engine.py: init / next / submit / report. Every poll must be
+answered by the driver (a subagent) — there is deliberately NO self-answer /
+auto shortcut, so an arm's numbers always reflect real per-poll decisions.
+Cost (agent_calls) is counted per answered poll in `submit`, so it can't be
+gamed by bypassing `next`.
 """
 from __future__ import annotations
 
@@ -232,7 +234,6 @@ def cmd_next(args) -> int:
         for role in roles:
             polls.append({"trial": trial["trial"], "role": role,
                           "prompt": _prompt_for(state, trial, role)})
-            trial["agent_calls"] += 1
     state["round"] += 1
     (run_dir / "state.json").write_text(json.dumps(state, indent=2), encoding="utf-8")
     print(json.dumps({"done": False, "round": state["round"], "polls": polls}))
@@ -271,36 +272,10 @@ def _advance(state, trial, role, direction, peer, label):
     return False
 
 
-def _auto_reply(state, trial, role):
-    """Deterministic contract-follower for --auto validation (no LLM)."""
-    rs = trial["role_states"][role]
-    sends = _send_transitions(state, role, rs)
-    if not sends:
-        return '{"action":"wait","reason":"no enabled send"}'
-    t = sends[0]
-    payload = {"Double": "1000.00", "String": f"{t[3].lower()}_ok"}.get(t[4], "ok")
-    return json.dumps({"action": "send", "to": t[2], "label": t[3], "payload": payload})
-
-
 def cmd_submit(args) -> int:
     run_dir = Path(args.dir)
     state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
-    if args.auto:
-        # regenerate polls for the round just issued and self-answer
-        replies = []
-        for trial in state["trials"]:
-            if trial["status"] != "active":
-                continue
-            if state["schedule"] == "enabled":
-                roles = [r for r in state["roles"]
-                         if _send_transitions(state, r, trial["role_states"][r])]
-            else:
-                roles = list(state["roles"])
-            for role in roles:
-                replies.append({"trial": trial["trial"], "role": role,
-                                "reply": _auto_reply(state, trial, role)})
-    else:
-        replies = json.loads(Path(args.file).read_text(encoding="utf-8"))["replies"]
+    replies = json.loads(Path(args.file).read_text(encoding="utf-8"))["replies"]
 
     by_trial = {}
     for r in replies:
@@ -311,7 +286,11 @@ def cmd_submit(args) -> int:
         if trial["status"] != "active":
             continue
         delivered = 0
-        for item in sorted(by_trial.get(trial["trial"], []), key=lambda r: r["role"]):
+        items = sorted(by_trial.get(trial["trial"], []), key=lambda r: r["role"])
+        # cost = one LLM decision per answered poll, counted HERE (not in next),
+        # so it reflects real work regardless of how the driver calls the engine.
+        trial["agent_calls"] += len(items)
+        for item in items:
             role = item["role"]
             action = _parse_reply(item.get("reply", ""))
             if action is None:
@@ -444,8 +423,7 @@ def main() -> int:
     p = sub.add_parser("next"); p.add_argument("--dir", required=True)
     p = sub.add_parser("submit")
     p.add_argument("--dir", required=True)
-    p.add_argument("--file", default=None)
-    p.add_argument("--auto", action="store_true")
+    p.add_argument("--file", required=True)
     p = sub.add_parser("report"); p.add_argument("--dir", required=True)
     args = ap.parse_args()
     return {"init": cmd_init, "next": cmd_next,

@@ -24,8 +24,10 @@ ARM_LABEL = {
 }
 
 
-def collect(root: Path, arm: str) -> dict:
+def collect(root: Path, arm: str, limit: int | None = None) -> dict:
     dirs = sorted(root.glob(f"{arm}__trial_*"))
+    if limit is not None:
+        dirs = dirs[:limit]
     reached = clean = disasters = calls = 0
     secs = []
     missing = n = 0
