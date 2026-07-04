@@ -1,6 +1,6 @@
 # Integration stress suite — generated complex cases
 
-**Verdict: FAILURES PRESENT** — 2105/2110 checks over 100 seeded iterations (2481.5s, Scribble judging throughout).
+**Verdict: FAILURES PRESENT** — 2105/2110 checks over 100 seeded iterations (2151.7s, Scribble judging throughout).
 
 Each iteration generates a fresh 4-7-role protocol with nested choices, then runs the five stages described in `experiments/scripts/integration_stress.py` (round-trip, mutation catch, critic oracle, revisor loop, incremental chain).
 

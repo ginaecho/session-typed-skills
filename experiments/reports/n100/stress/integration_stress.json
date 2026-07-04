@@ -4,7 +4,7 @@
   "checks_total": 2110,
   "checks_passed": 2105,
   "all_passed": false,
-  "elapsed_seconds": 2481.5,
+  "elapsed_seconds": 2151.7,
   "runs": [
     {
       "seed": 1,
@@ -67,7 +67,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6060ms"
+          "detail": "10886ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -92,7 +92,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7766ms"
+          "detail": "13278ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -179,7 +179,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4824ms"
+          "detail": "8020ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -204,7 +204,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "5920ms"
+          "detail": "9742ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -291,7 +291,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6978ms"
+          "detail": "11845ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -316,7 +316,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8682ms"
+          "detail": "14537ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -403,7 +403,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5477ms"
+          "detail": "8411ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -428,7 +428,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "6485ms"
+          "detail": "10444ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -515,7 +515,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8458ms"
+          "detail": "14767ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -540,7 +540,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11177ms"
+          "detail": "19464ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -627,7 +627,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5076ms"
+          "detail": "9198ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -652,7 +652,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "6614ms"
+          "detail": "11096ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -739,7 +739,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6100ms"
+          "detail": "9700ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -764,7 +764,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7601ms"
+          "detail": "11940ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -851,7 +851,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7240ms"
+          "detail": "11409ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -876,7 +876,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8807ms"
+          "detail": "14901ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -968,7 +968,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "12795ms"
+          "detail": "20543ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -993,7 +993,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15326ms"
+          "detail": "26461ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1080,7 +1080,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5049ms"
+          "detail": "7730ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1105,7 +1105,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "6285ms"
+          "detail": "9818ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1197,7 +1197,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "17066ms"
+          "detail": "26921ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1222,7 +1222,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "20818ms"
+          "detail": "34589ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1309,7 +1309,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9771ms"
+          "detail": "16331ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1334,7 +1334,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "13028ms"
+          "detail": "22777ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1421,7 +1421,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6903ms"
+          "detail": "11030ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1446,7 +1446,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8182ms"
+          "detail": "13352ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1533,7 +1533,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5643ms"
+          "detail": "10193ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1558,7 +1558,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7844ms"
+          "detail": "13201ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1645,7 +1645,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5733ms"
+          "detail": "9255ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1670,7 +1670,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7394ms"
+          "detail": "10103ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1757,7 +1757,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9726ms"
+          "detail": "12119ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1782,7 +1782,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "13517ms"
+          "detail": "16806ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1869,7 +1869,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13671ms"
+          "detail": "17027ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -1894,7 +1894,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "18431ms"
+          "detail": "22107ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -1981,7 +1981,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6894ms"
+          "detail": "8553ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2006,7 +2006,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8709ms"
+          "detail": "10171ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2093,7 +2093,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4535ms"
+          "detail": "5291ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2118,7 +2118,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "5536ms"
+          "detail": "7053ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2205,7 +2205,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6215ms"
+          "detail": "8262ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2230,7 +2230,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8087ms"
+          "detail": "9972ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2317,7 +2317,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7361ms"
+          "detail": "9115ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2342,7 +2342,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9542ms"
+          "detail": "11637ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2429,7 +2429,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5501ms"
+          "detail": "6749ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2454,7 +2454,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "6699ms"
+          "detail": "8574ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2546,7 +2546,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8550ms"
+          "detail": "10341ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2571,7 +2571,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9836ms"
+          "detail": "11712ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2663,7 +2663,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "14521ms"
+          "detail": "17381ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2688,7 +2688,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "17994ms"
+          "detail": "21100ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2775,7 +2775,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11595ms"
+          "detail": "14153ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2800,7 +2800,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14577ms"
+          "detail": "17257ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -2887,7 +2887,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6319ms"
+          "detail": "6917ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -2912,7 +2912,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7714ms"
+          "detail": "8991ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3004,7 +3004,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10916ms"
+          "detail": "11435ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3029,7 +3029,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14589ms"
+          "detail": "14341ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3116,7 +3116,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4577ms"
+          "detail": "4527ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3141,7 +3141,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "5613ms"
+          "detail": "5526ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3228,7 +3228,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5042ms"
+          "detail": "4853ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3253,7 +3253,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "6200ms"
+          "detail": "6397ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3345,7 +3345,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6565ms"
+          "detail": "6749ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3370,7 +3370,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8141ms"
+          "detail": "8131ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3457,7 +3457,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4489ms"
+          "detail": "4603ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3482,7 +3482,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "5744ms"
+          "detail": "5664ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3569,7 +3569,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4104ms"
+          "detail": "4218ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3594,7 +3594,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "5225ms"
+          "detail": "5237ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3681,7 +3681,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6541ms"
+          "detail": "5623ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3706,7 +3706,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8572ms"
+          "detail": "7080ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3793,7 +3793,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9067ms"
+          "detail": "7596ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3818,7 +3818,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12340ms"
+          "detail": "9262ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -3905,7 +3905,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11416ms"
+          "detail": "7913ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -3930,7 +3930,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "13151ms"
+          "detail": "9848ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4017,7 +4017,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8005ms"
+          "detail": "6696ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4042,7 +4042,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10709ms"
+          "detail": "9252ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4129,7 +4129,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6957ms"
+          "detail": "5814ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4154,7 +4154,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10175ms"
+          "detail": "8409ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4241,7 +4241,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13722ms"
+          "detail": "11354ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4266,7 +4266,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "21095ms"
+          "detail": "17956ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4353,7 +4353,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6199ms"
+          "detail": "5643ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4378,7 +4378,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7916ms"
+          "detail": "6935ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4465,7 +4465,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9330ms"
+          "detail": "7800ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4490,7 +4490,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11675ms"
+          "detail": "9610ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4582,7 +4582,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11089ms"
+          "detail": "8806ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4607,7 +4607,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "13926ms"
+          "detail": "11826ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4694,7 +4694,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5741ms"
+          "detail": "5066ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4719,7 +4719,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7684ms"
+          "detail": "6537ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4806,7 +4806,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5533ms"
+          "detail": "4719ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4831,7 +4831,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7248ms"
+          "detail": "5906ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -4918,7 +4918,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11536ms"
+          "detail": "9608ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -4943,7 +4943,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15138ms"
+          "detail": "12034ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5025,7 +5025,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8783ms"
+          "detail": "6950ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5050,7 +5050,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10957ms"
+          "detail": "8565ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5137,7 +5137,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7139ms"
+          "detail": "5342ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5162,7 +5162,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8299ms"
+          "detail": "7074ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5249,7 +5249,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9188ms"
+          "detail": "7971ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5274,7 +5274,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12875ms"
+          "detail": "10228ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5361,7 +5361,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9674ms"
+          "detail": "7639ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5386,7 +5386,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11670ms"
+          "detail": "9647ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5473,7 +5473,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5795ms"
+          "detail": "5208ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5498,7 +5498,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7723ms"
+          "detail": "6315ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5585,7 +5585,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13073ms"
+          "detail": "10941ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5610,7 +5610,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15543ms"
+          "detail": "12853ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5697,7 +5697,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8475ms"
+          "detail": "6569ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5722,7 +5722,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10000ms"
+          "detail": "8186ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5804,7 +5804,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10287ms"
+          "detail": "8400ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5829,7 +5829,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14118ms"
+          "detail": "10872ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -5916,7 +5916,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7179ms"
+          "detail": "5901ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -5941,7 +5941,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9602ms"
+          "detail": "7541ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6028,7 +6028,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7416ms"
+          "detail": "6319ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6053,7 +6053,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9779ms"
+          "detail": "7688ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6140,7 +6140,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5691ms"
+          "detail": "4753ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6165,7 +6165,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8007ms"
+          "detail": "6221ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6252,7 +6252,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5588ms"
+          "detail": "4549ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6277,7 +6277,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7309ms"
+          "detail": "5997ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6364,7 +6364,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "5616ms"
+          "detail": "4486ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6389,7 +6389,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7127ms"
+          "detail": "5754ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6476,7 +6476,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6804ms"
+          "detail": "5676ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6501,7 +6501,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8869ms"
+          "detail": "7030ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6593,7 +6593,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8925ms"
+          "detail": "7101ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6618,7 +6618,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11513ms"
+          "detail": "9809ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6705,7 +6705,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9813ms"
+          "detail": "7840ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6730,7 +6730,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14979ms"
+          "detail": "11592ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6822,7 +6822,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10901ms"
+          "detail": "9446ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6847,7 +6847,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14223ms"
+          "detail": "12089ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -6939,7 +6939,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "6837ms"
+          "detail": "5774ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -6964,7 +6964,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9018ms"
+          "detail": "7351ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7051,7 +7051,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10177ms"
+          "detail": "8474ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7076,7 +7076,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12441ms"
+          "detail": "10604ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7168,7 +7168,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "21557ms"
+          "detail": "15277ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7193,7 +7193,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "40289ms"
+          "detail": "23514ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7280,7 +7280,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11031ms"
+          "detail": "7707ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7305,7 +7305,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12150ms"
+          "detail": "9015ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7392,7 +7392,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "4813ms"
+          "detail": "4161ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7417,7 +7417,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "7770ms"
+          "detail": "5260ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7504,7 +7504,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7267ms"
+          "detail": "4274ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7529,7 +7529,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8725ms"
+          "detail": "5479ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7621,7 +7621,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "19326ms"
+          "detail": "10926ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7646,7 +7646,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "25103ms"
+          "detail": "14113ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7733,7 +7733,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7541ms"
+          "detail": "4566ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7758,7 +7758,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9176ms"
+          "detail": "5938ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7845,7 +7845,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7056ms"
+          "detail": "4362ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7870,7 +7870,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8759ms"
+          "detail": "5626ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -7957,7 +7957,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13012ms"
+          "detail": "7988ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -7982,7 +7982,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "17619ms"
+          "detail": "10637ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8069,7 +8069,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7936ms"
+          "detail": "4838ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8094,7 +8094,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9684ms"
+          "detail": "5996ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8181,7 +8181,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13449ms"
+          "detail": "7611ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8206,7 +8206,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15189ms"
+          "detail": "9362ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8293,7 +8293,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7225ms"
+          "detail": "4327ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8318,7 +8318,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "8949ms"
+          "detail": "5663ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8405,7 +8405,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "43985ms"
+          "detail": "25333ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8430,7 +8430,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "53273ms"
+          "detail": "32920ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8517,7 +8517,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "15141ms"
+          "detail": "8494ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8542,7 +8542,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "18837ms"
+          "detail": "10592ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8629,7 +8629,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "11402ms"
+          "detail": "6740ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8654,7 +8654,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15313ms"
+          "detail": "8651ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8741,7 +8741,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10789ms"
+          "detail": "6292ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8766,7 +8766,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12893ms"
+          "detail": "7879ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8853,7 +8853,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9346ms"
+          "detail": "5636ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8878,7 +8878,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12072ms"
+          "detail": "7176ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -8965,7 +8965,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "12477ms"
+          "detail": "7315ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -8990,7 +8990,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "14591ms"
+          "detail": "9010ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9077,7 +9077,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "25692ms"
+          "detail": "15691ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9102,7 +9102,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "26909ms"
+          "detail": "22516ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9189,7 +9189,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8452ms"
+          "detail": "6930ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9214,7 +9214,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9925ms"
+          "detail": "8479ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9301,7 +9301,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "18969ms"
+          "detail": "15051ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9326,7 +9326,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "26768ms"
+          "detail": "22186ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9418,7 +9418,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "12840ms"
+          "detail": "10559ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9443,7 +9443,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "20875ms"
+          "detail": "13425ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9530,7 +9530,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10171ms"
+          "detail": "5990ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9555,7 +9555,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "12193ms"
+          "detail": "7259ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9642,7 +9642,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7841ms"
+          "detail": "4753ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9667,7 +9667,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10429ms"
+          "detail": "6216ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9754,7 +9754,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8705ms"
+          "detail": "5338ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9779,7 +9779,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10816ms"
+          "detail": "6486ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9861,7 +9861,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "14635ms"
+          "detail": "8700ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9886,7 +9886,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "19699ms"
+          "detail": "11441ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -9973,7 +9973,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "8092ms"
+          "detail": "4696ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -9998,7 +9998,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9913ms"
+          "detail": "6085ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10085,7 +10085,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9061ms"
+          "detail": "5435ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10110,7 +10110,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "10434ms"
+          "detail": "6502ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10197,7 +10197,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "7386ms"
+          "detail": "4736ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10222,7 +10222,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "9277ms"
+          "detail": "5972ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10309,7 +10309,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "15062ms"
+          "detail": "8490ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10334,7 +10334,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "19126ms"
+          "detail": "10676ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10421,7 +10421,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "14916ms"
+          "detail": "8812ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10446,7 +10446,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "18478ms"
+          "detail": "10638ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10533,7 +10533,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9557ms"
+          "detail": "5613ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10558,7 +10558,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11737ms"
+          "detail": "6921ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10645,7 +10645,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "10823ms"
+          "detail": "5952ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10670,7 +10670,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15304ms"
+          "detail": "8026ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10757,7 +10757,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "12133ms"
+          "detail": "6944ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10782,7 +10782,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "15344ms"
+          "detail": "8398ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10869,7 +10869,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9241ms"
+          "detail": "5606ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -10894,7 +10894,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11544ms"
+          "detail": "6914ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -10981,7 +10981,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "13264ms"
+          "detail": "7519ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -11006,7 +11006,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "17049ms"
+          "detail": "9789ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -11093,7 +11093,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "15619ms"
+          "detail": "9541ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -11118,7 +11118,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "22262ms"
+          "detail": "13189ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
@@ -11205,7 +11205,7 @@
         {
           "check": "S5.extension_0_valid",
           "ok": true,
-          "detail": "9305ms"
+          "detail": "5785ms"
         },
         {
           "check": "S5.extension_0_blast_radius",
@@ -11230,7 +11230,7 @@
         {
           "check": "S5.extension_1_valid",
           "ok": true,
-          "detail": "11584ms"
+          "detail": "6985ms"
         },
         {
           "check": "S5.extension_1_blast_radius",
