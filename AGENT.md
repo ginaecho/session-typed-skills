@@ -51,6 +51,8 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 | `baselines/registry.py` | ARM DEFINITIONS — where to register new arms (4 places) |
 | `baselines/instructions.py` | Prompt builders for each arm |
 | `scripts/case_runner.py` | **THE** benchmark driver—run this to test |
+| `scripts/integration_stress.py` | Generated-protocol stress suite (10 seeded iterations over the round-trip / mutation / critic-oracle / revisor / incremental surface) — reports to `experiments/reports/stress/` |
+| `subagent_trials/` | Foundry-free agent-interaction harness (engine + cases + committed reports; see `docs/results/RESULT_5_SUBAGENT_VALIDATION.md`) |
 | `scripts/case_loader.py` | Loads case.yaml into a Case object |
 | `CLAUDE.md` | How the 8-arm matrix works (agents: read this!) |
 

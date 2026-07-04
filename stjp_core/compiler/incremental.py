@@ -61,7 +61,19 @@ class ExtensionError(Exception):
 # ─────────────────────────────────────────────────────────────────────────────
 
 _AUX_RE = re.compile(r'aux\s+global\s+protocol\s+(\w+)\s*\(([^)]*)\)')
-_HEADER_RE = re.compile(r'(global\s+protocol\s+\w+\s*\()([^)]*)(\))', re.DOTALL)
+_HEADER_RE = re.compile(r'(global\s+protocol\s+(\w+)\s*\()([^)]*)(\))', re.DOTALL)
+
+
+def _main_header_match(text: str) -> re.Match | None:
+    """First `global protocol` header that is NOT an `aux` one. A composed
+    parent carries spliced `aux global protocol` blocks BEFORE the main
+    protocol, so a naive first-match lands inside a child (a bug the
+    integration stress suite caught on chained extensions)."""
+    for m in _HEADER_RE.finditer(text):
+        prefix = text[max(0, m.start() - 8):m.start()]
+        if 'aux' not in prefix:
+            return m
+    return None
 
 
 def child_fingerprint(child_text: str) -> str:
@@ -137,21 +149,21 @@ def extend_parent_text(parent_text: str, child_filename: str,
             rf'\1\n\n// @use {child_protocol} from "{child_filename}";',
             parent_text, count=1)
 
-    # b) declare any new roles in the protocol header
-    hm = _HEADER_RE.search(parent_text)
+    # b) declare any new roles in the MAIN protocol header (never an aux one)
+    hm = _main_header_match(parent_text)
     if not hm:
         raise ExtensionError("no `global protocol` header found in parent")
-    declared = re.findall(r'role\s+(\w+)', hm.group(2))
+    declared = re.findall(r'role\s+(\w+)', hm.group(3))
     missing = [r for r in role_args if r not in declared]
     if missing:
-        new_params = hm.group(2).rstrip() + ''.join(
+        new_params = hm.group(3).rstrip() + ''.join(
             f', role {r}' for r in missing)
-        parent_text = (parent_text[:hm.start(2)] + new_params +
-                       parent_text[hm.end(2):])
+        parent_text = (parent_text[:hm.start(3)] + new_params +
+                       parent_text[hm.end(3):])
 
-    # c) the do-call at the anchor
+    # c) the do-call at the anchor, inside the MAIN protocol body
     do_line = f"    do {child_protocol}({', '.join(role_args)});"
-    hm = _HEADER_RE.search(parent_text)
+    hm = _main_header_match(parent_text)
     brace_pos = parent_text.index('{', hm.end())
     depth, pos = 1, brace_pos + 1
     while pos < len(parent_text) and depth > 0:
@@ -346,13 +358,12 @@ def add_subprotocol(parent_path: Path, child_path: Path,
 
     # 2. deterministic parent extension
     parent_text = parent_path.read_text(encoding='utf-8')
-    old_parsed_name = re.search(r'global\s+protocol\s+(\w+)', parent_text)
-    protocol_name = old_protocol_name or (
-        old_parsed_name.group(1) if old_parsed_name else "")
     old_roles = []
-    hm = _HEADER_RE.search(parent_text)
+    protocol_name = old_protocol_name or ""
+    hm = _main_header_match(parent_text)
     if hm:
-        old_roles = re.findall(r'role\s+(\w+)', hm.group(2))
+        protocol_name = protocol_name or hm.group(2)
+        old_roles = re.findall(r'role\s+(\w+)', hm.group(3))
 
     try:
         rel_child = _relative_child_ref(child_path, out_dir)
