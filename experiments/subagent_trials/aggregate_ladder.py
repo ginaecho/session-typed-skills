@@ -55,6 +55,7 @@ def collect(root: Path, arm: str, limit: int | None = None) -> dict:
         "CGC_pct": round(100 * clean / n, 1) if n else 0.0,
         "disasters": disasters,
         "total_calls": calls,
+        "avg_calls_per_trial": round(calls / n, 1) if n else None,
         "cost_to_goal_calls": round(calls / gcr, 1) if gcr > 0 else None,
         "avg_seconds": round(sum(secs) / len(secs), 1) if secs else None,
     }
@@ -78,18 +79,20 @@ def main() -> int:
     (out / "ladder_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     # markdown table
-    hdr = "| arm | GCR | CGC | Disasters | Cost-to-goal (calls) | Sec/trial | n (missing) |"
+    hdr = "| arm | GCR | CGC | Disasters | Calls/trial | Cost-to-goal (calls) | n (missing) |"
     sep = "|---|---|---|---|---|---|---|"
     lines = [f"# Ladder table — {args.case} (no Foundry, cheap subagents)", "",
              f"Cost unit = **LLM agent-calls** (tokens are not metered without "
-             f"Foundry; calls are the model-independent coordination-cost proxy).", "",
+             f"Foundry; calls are the model-independent coordination-cost proxy). "
+             f"Cost-to-goal = total calls / GCR-fraction, the finance table's "
+             f"\"true cost per delivered result\".", "",
              hdr, sep]
     for r in rows:
         c2g = r["cost_to_goal_calls"] if r["cost_to_goal_calls"] is not None else "∞"
-        sec = r["avg_seconds"] if r["avg_seconds"] is not None else "—"
+        cpt = r["avg_calls_per_trial"] if r["avg_calls_per_trial"] is not None else "—"
         miss = f"{r['n']} ({r['missing']})" if r["missing"] else f"{r['n']}"
         lines.append(f"| {r['label']} | {r['GCR_pct']}% | {r['CGC_pct']}% | "
-                     f"{r['disasters']} | {c2g} | {sec} | {miss} |")
+                     f"{r['disasters']} | {cpt} | {c2g} | {miss} |")
     (out / "ladder_table.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
     print(f"\nwrote {out}/ladder_summary.json and ladder_table.md")
