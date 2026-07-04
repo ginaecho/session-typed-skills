@@ -149,7 +149,10 @@ What you'll learn:
 - `reference/CHOICE_GUARDS_AND_GATE.md` — How value-dependent choice guards and the enforcement gate work (technical)
 - `reference/FOUNDRY_VISIBILITY.md` — Exact code to make agents/threads/traces visible in the Azure AI Foundry portal
 - `reference/STJP_V3_PLAN.md` — **Latest plan**: governance plane + decentralized execution plane (summarized in `1_TECH_SETUP.md` section 7)
-- `reference/PROTOCOL_EVOLUTION.md` — How to update a protocol and re-validate
+- `reference/PROTOCOL_EVOLUTION.md` — How to update a protocol and re-validate (now includes the built incremental sub-protocol slice: child verified once, projection diff, monitor regen for affected roles only)
+- `reference/CRITIC_REVISOR.md` — The Critic (cross-message policies: information flow, ordering, separation of duty, aggregates — static AND runtime) and the Revisor repair loop
+- `reference/SKILL_COMPACTION.md` — Bottom-up STJP: compact EXISTING skill markdowns into local types, compose the global type, Scribble-validate it
+- `reference/BENCHMARK_PLAN_V2.md` — Benchmark hardening (E1–E7 + verdict corpus): what each experiment measures, real numbers vs measurement-pending, and how to swap real data into the figures/tables
 - `reference/GAP_CLOSED.md` — Refinement call-site closure record (referenced by `experiments/README.md` and `stjp_core/README.md`)
 
 ### `results/` — the evidence behind the guides (current, plain English)
@@ -160,6 +163,9 @@ Each follows the same template: at-a-glance summary → the story → how the te
 - `results/RESULT_2_TOKEN_EFFICIENCY.md` — **Same task, one-third the tokens**: everyone completes 100%; lean projected contract 8.8k tokens vs 24.1k with no contract (−63%). Mechanism: less deliberation + smaller prompts.
 - `results/RESULT_3_PROTOCOL_LADDER.md` — **More protocol support, better outcomes** (8 settings, n=10): no protocol 0% → rejected protocol 10% → validated text 40% → projected contracts 60–100%. Also the best place to see, with real traces, exactly what "a violation" and "success" mean.
 - `results/RESULT_4_FULL_STACK.md` — **The latest headline** (pre-registered, 2026-07-02): full STJP stack is simultaneously the safest (100%, 0 disasters) and the cheapest/fastest (13.3k tokens, 32s per delivered report — 9× cheaper than the same protocol as text).
+- `results/RESULT_5_SUBAGENT_VALIDATION.md` — **Foundry-free validation of the 2026-07 components** (Critic/Revisor, skill compaction, incremental extension): 211/211 stress checks over generated protocols; subagent-driven trials n=10 — unchecked prose skills 0/10 (all deadlock) vs STJP 10/10 at protocol-minimum cost, extended protocol 10/10, compaction gauntlet 10/10 detect + 10/10 repair.
+- `results/RESULT_6_BENCHMARK_HARDENING.md` — **Benchmark Plan v2** (test the testers + mutation testing + adversarial gate + pass^k + translation fidelity + roles/portability): verdict corpus 40/40, checker 95.6% detection/0% FP, gate exfiltration ladder 0→41.7→91.7→100%, pass^10 CI story, equivalence scorer 100%. Design in `reference/BENCHMARK_PLAN_V2.md`.
+- `results/RESULT_7_N100_SCALE.md` — **n=100 scale run** (all deterministic benchmarks): Wilson CI narrows from [72,100]% to [96.3,100]%; pass^10@floor jumps 0.039→0.686 (17.6×); integration stress 2105/2110; 100-protocol mutation corpus 95.1%/0% FP; subagent trials 0/100 unchecked vs 100/100 STJP; equivalence scorer 300/300.
 
 Earlier run reports, kept here for history (technical, not rewritten):
 

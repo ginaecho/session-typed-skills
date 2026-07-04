@@ -172,11 +172,48 @@ end to end.
   full-regeneration path (`authoring/evolution_loop.py`) — editing or deleting
   an existing interaction is not a pure composition.
 
+### Built 2026-07-04 — the incremental slice (`stjp_core/compiler/incremental.py`)
+
+The deterministic engine under the change-request flow, realizing the
+pay-once-per-change discipline in engineering form:
+
+- **Child verified once** — `validate_child_once()` checks the child
+  `aux global protocol` standalone (promoted to a scratch global) and caches
+  the verdict by content hash (`.stjp_child_cache.json`). Re-adding the same
+  child to another parent is a cache hit — the Gheri-Yoshida OOPSLA'23
+  verify-once idea, with the full compose+validate kept as the safety net.
+- **Deterministic extension** — `extend_parent_text()` inserts the
+  `// @use` + `do Child(roles);` at a named anchor (`end` / `start` /
+  `after:<Label>` / `before:<Label>`) and declares any NEW roles in the
+  parent header (the Deniélou-Yoshida POPL'11 dynamic-role case). No LLM is
+  involved when the child already exists.
+- **Incremental re-projection** — `incremental_project()` diffs each role's
+  new EFSM against the old one by canonical signature; only roles whose
+  local type actually changed are re-projected.
+- **Regenerate only the blast radius** — changed/new roles get a fresh local
+  contract markdown + a STANDALONE monitor script
+  (`generation/monitor_codegen.py`: dependency-free Python embedding the
+  EFSM + refinements — deterministic code, droppable next to any runtime).
+  Unchanged roles keep their artifacts untouched.
+
+```bash
+python -m stjp_core.compiler.incremental \
+    --parent v1.scr --child compliance_child.scr \
+    --roles Corrector,ComplianceOfficer --at after:ClassifiedRequest -o out/
+# EXTENDED with ComplianceReview (child verified) — re-projected 2 role(s)
+# ['ComplianceOfficer', 'Corrector'], kept 2 unchanged ['Auditor', 'Classifier']
+```
+
+Tests: `stjp_core/tests/test_incremental.py` (child cache, unsafe child
+rejected standalone, end-to-end extension with projection diff, generated
+monitor verdicts on good/bad traces, anchor/arity errors, determinism).
+
 ### Phase 3 — designed, not built
 
-- **Projection-preserving composition** (Gheri-Yoshida OOPSLA'23): verify each
-  child once; compose without re-projecting the parent. Evolution becomes
-  pay-once-per-change.
+- **Projection-preserving composition, formally** (Gheri-Yoshida OOPSLA'23):
+  today the composed whole is still re-validated (conservative); adopting the
+  compatibility relation itself would let the re-check be skipped with a
+  proof rather than a cache.
 - **Dynamically-updatable MPST** (Anderson-Rathke): apply the change to a
   **live** workflow instance, migrating in-flight interactions v1 → v2.
 - **Subtyping safety gate** (`ROADMAP.md` §2.2): before deploying v2, prove

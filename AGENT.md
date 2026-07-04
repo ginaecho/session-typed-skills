@@ -28,10 +28,11 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 
 | File | Purpose |
 |---|---|
-| `compiler/` | Scribble integration, protocol parsing, EFSM projection |
+| `compiler/` | Scribble integration, protocol parsing, EFSM projection; `local_type.py` + `global_synthesizer.py` (bottom-up local→global synthesis); `incremental.py` (add a child sub-protocol: child verified once, projection diff, regen only affected roles) |
 | `monitor/` | Runtime monitor (checks each message against the protocol) |
+| `critic/` | Critic (cross-message policies via `.policy` sidecars — static over every path + runtime over traces) and Revisor (LLM repairs, Scribble+Critic re-judge). See `docs/reference/CRITIC_REVISOR.md` |
 | `foundry/` | Azure AI Foundry integration (agents, threads, traces) |
-| `generation/` | Skill/prompt generation from protocols |
+| `generation/` | Skill/prompt generation from protocols; `skill_compactor.py` (EXISTING skills → local types, see `docs/reference/SKILL_COMPACTION.md`); `monitor_codegen.py` (standalone per-role monitor scripts) |
 | `requirements-core.txt` | Dependencies |
 | `CLAUDE.md` | Setup instructions (Azure config) |
 
@@ -50,6 +51,8 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 | `baselines/registry.py` | ARM DEFINITIONS — where to register new arms (4 places) |
 | `baselines/instructions.py` | Prompt builders for each arm |
 | `scripts/case_runner.py` | **THE** benchmark driver—run this to test |
+| `scripts/integration_stress.py` | Generated-protocol stress suite (10 seeded iterations over the round-trip / mutation / critic-oracle / revisor / incremental surface) — reports to `experiments/reports/stress/` |
+| `subagent_trials/` | Foundry-free agent-interaction harness (engine + cases + committed reports; see `docs/results/RESULT_5_SUBAGENT_VALIDATION.md`) |
 | `scripts/case_loader.py` | Loads case.yaml into a Case object |
 | `CLAUDE.md` | How the 8-arm matrix works (agents: read this!) |
 

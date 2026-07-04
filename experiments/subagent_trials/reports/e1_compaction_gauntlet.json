@@ -1,0 +1,130 @@
+{
+  "experiment": "compaction_gauntlet",
+  "runs": 10,
+  "raw": [
+    {
+      "run": 1,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 2,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 3,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 4,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 5,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 6,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 7,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 8,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 9,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    },
+    {
+      "run": 10,
+      "verdict": "unsafe",
+      "stage": "compatibility",
+      "as_expected": true
+    }
+  ],
+  "revised": [
+    {
+      "run": 1,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 2,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 3,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 4,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 5,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 6,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 7,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 8,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 9,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    },
+    {
+      "run": 10,
+      "verdict": "safe",
+      "stage": "scribble",
+      "as_expected": true
+    }
+  ],
+  "raw_detection_rate": 10,
+  "revision_success_rate": 10
+}
