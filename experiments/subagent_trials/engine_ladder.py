@@ -224,6 +224,15 @@ def cmd_next(args) -> int:
         (run_dir / "state.json").write_text(json.dumps(state, indent=2), encoding="utf-8")
         print(json.dumps({"done": True}))
         return 0
+    # IDEMPOTENT: if next was already called for the current round and no
+    # submit has landed since, reissue the SAME round's polls rather than
+    # advancing. Without this, a driver calling next() repeatedly before
+    # submit() silently collapses several logical rounds into one round
+    # number, which corrupts round-based causal disaster detection.
+    if state.get("awaiting_submit"):
+        print(json.dumps({"done": False, "round": state["round"],
+                          "polls": state["_pending_polls"]}))
+        return 0
     polls = []
     for trial in active:
         if trial["started"] is None:
@@ -237,6 +246,8 @@ def cmd_next(args) -> int:
             polls.append({"trial": trial["trial"], "role": role,
                           "prompt": _prompt_for(state, trial, role)})
     state["round"] += 1
+    state["awaiting_submit"] = True
+    state["_pending_polls"] = polls
     (run_dir / "state.json").write_text(json.dumps(state, indent=2), encoding="utf-8")
     print(json.dumps({"done": False, "round": state["round"], "polls": polls}))
     return 0
@@ -278,6 +289,8 @@ def cmd_submit(args) -> int:
     run_dir = Path(args.dir)
     state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
     replies = json.loads(Path(args.file).read_text(encoding="utf-8"))["replies"]
+    state["awaiting_submit"] = False
+    state.pop("_pending_polls", None)
 
     by_trial = {}
     for r in replies:
