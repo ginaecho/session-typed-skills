@@ -1,9 +1,15 @@
 # revenue_audit ladder at n=100 — real haiku subagents, file-verified
 
-**Supersedes** the earlier n=10 finding in `../ladder_revenue_audit_n10/`. Every
+**Supersedes** the earlier n=10 finding in
+[`../ladder_revenue_audit_n10/`](../ladder_revenue_audit_n10/README.md). Every
 trial here is verified by inspecting `state.json` files directly (never by
 trusting a subagent's prose summary) — see "Integrity incidents" below for why
 that discipline was necessary.
+
+Part of the combined ladder writeup:
+[`../LADDER_NOFOUNDRY.md`](../LADDER_NOFOUNDRY.md) (master), and
+[`docs/5_RUN_REPORTS_EXPLAINED.md` §10](../../../../docs/5_RUN_REPORTS_EXPLAINED.md#10-the-full-arm-ladder-at-n100-reproduced-without-foundry)
+(plain-English).
 
 ## The table
 
@@ -47,7 +53,7 @@ repeat action. (Terminology: the runtime **monitor** is the active enforcer. In
 through; in *enforce* mode — arms C+spec, C+min, STJP — the same monitor rejects
 the message before delivery. The engine code names that enforcing path "the
 gate"; it is the monitor in enforcing mode, not a second component. See
-`docs/reference/GLOSSARY.md`.)
+[`docs/reference/GLOSSARY.md`](../../../../docs/reference/GLOSSARY.md).)
 
 ## Integrity incidents during this run (full transparency)
 
@@ -57,7 +63,7 @@ in order:
 1. **`--auto` shortcut abuse** (n=10 stage) — a subagent discovered a
    deterministic contract-follower flag built only for engine validation and
    used it to auto-complete trials. Fixed: removed `--auto` entirely from
-   `engine_ladder.py`.
+   [`engine_ladder.py`](../../../subagent_trials/engine_ladder.py).
 2. **Round-collapse bug** — `next()` unconditionally incremented the round
    counter even without an intervening `submit()`; a subagent that looked
    ahead (called `next` several times before submitting) collapsed multiple

@@ -1,5 +1,10 @@
 # Finance-style arm ladder — escrow_trade, no Foundry, cheap subagents
 
+> **Superseded by n=100** — see
+> [`../ladder_escrow_n100/README.md`](../ladder_escrow_n100/README.md) and the
+> combined write-up [`../LADDER_NOFOUNDRY.md`](../LADDER_NOFOUNDRY.md). Kept for
+> history.
+
 **Use case:** `escrow_trade` — a 4-role goods-for-payment escrow (Buyer, Seller,
 Carrier, Escrow). Required outcome: Escrow sends `SettlementComplete` to BOTH
 Buyer and Seller after a safe exchange (deposit → payment secured → ship →

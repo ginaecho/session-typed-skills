@@ -13,9 +13,11 @@ This document has two parts:
   each run 100 times, that stress-test one piece of the system at a time — the
   safety checker, the security gate, the reliability math, the translator, the
   scaling behaviour, and the portability. This is the "prove it holds up under
-  pressure" part. It also includes **§10**, the full six-arm ladder from §2
-  reproduced at n=100 without Foundry (cheap subagents) — with an explicit note
-  on why its cost column reads in *calls*, not *tokens*.
+  pressure" part. It also includes
+  [**§10**](#10-the-full-arm-ladder-at-n100-reproduced-without-foundry), the full
+  six-arm ladder from [§2](#2-reading-the-results-table) reproduced at n=100
+  without Foundry (cheap subagents) — with an explicit note on why its cost
+  column reads in *calls*, not *tokens*.
 
 ---
 
@@ -663,10 +665,11 @@ missed violations — the enforcement machinery was perfect at scale.
 
 ---
 
-## 10. The full arm-ladder, reproduced at n=100 (no Foundry) — the direct analog of §2
+## 10. The full arm-ladder at n=100, reproduced without Foundry
 
 The interaction trials above are a **two-way** cut (no-rulebook vs STJP). The
-finance table in §2 was the **full six-arm ladder**. That whole ladder has now
+finance table in [§2](#2-reading-the-results-table) was the **full six-arm
+ladder**. That whole ladder has now
 been reproduced at **n=100 per arm** — but **without Foundry**, with cheap
 Claude subagents answering every poll — across two use cases: `revenue_audit`
 (a safety-first case) and `escrow_trade` (a cost-first case). These are the
@@ -701,8 +704,8 @@ n=100.
 
 ### Why this is *not* laid out in the exact same format as §2
 
-Two columns from the §2 finance table **cannot be reproduced here**, and this
-is an honest limitation, not an oversight:
+Two columns from the [§2](#2-reading-the-results-table) finance table **cannot
+be reproduced here**, and this is an honest limitation, not an oversight:
 
 1. **Cost-to-goal is in *calls*, not *tokens* — and the numbers are raw counts,
    not thousands.** These n=100 runs are the **no-Foundry** reproduction, and
@@ -729,8 +732,11 @@ because those are the only two measurements Foundry provided that a
 tokens-unmetered, wave-scheduled subagent harness cannot honestly reproduce.
 
 Full tables, per-arm findings, and the integrity log for these runs:
-`experiments/reports/n100/LADDER_NOFOUNDRY.md` (master), with per-case detail in
-`ladder_revenue_audit_n100/README.md` and `ladder_escrow_n100/README.md`.
+[`experiments/reports/n100/LADDER_NOFOUNDRY.md`](../experiments/reports/n100/LADDER_NOFOUNDRY.md)
+(master), with per-case detail in
+[`ladder_revenue_audit_n100/README.md`](../experiments/reports/n100/ladder_revenue_audit_n100/README.md)
+and
+[`ladder_escrow_n100/README.md`](../experiments/reports/n100/ladder_escrow_n100/README.md).
 
 ---
 
@@ -764,7 +770,7 @@ Every number in Part 2 is reproducible from files in the repository:
 | E7 portability (59/59) | `experiments/reports/n100/e7/cross_runtime.json` | `python experiments/scripts/cross_runtime.py` |
 | Full pipeline stress | `experiments/reports/n100/stress/integration_stress.json` | `python experiments/scripts/integration_stress.py 100` |
 | Interaction trials | `experiments/reports/n100/subagent/summary.json` | `python experiments/subagent_trials/run_n100.py --trials 100` |
-| Arm-ladder n=100 (§10, no Foundry) | `experiments/reports/n100/ladder_revenue_audit_n100/`, `ladder_escrow_n100/` | `python experiments/subagent_trials/aggregate_ladder.py --root <root> --case <case> --out <out>` |
+| Arm-ladder n=100 ([§10](#10-the-full-arm-ladder-at-n100-reproduced-without-foundry), no Foundry) | [`ladder_revenue_audit_n100/`](../experiments/reports/n100/ladder_revenue_audit_n100/README.md), [`ladder_escrow_n100/`](../experiments/reports/n100/ladder_escrow_n100/README.md) | `python experiments/subagent_trials/aggregate_ladder.py --root <root> --case <case> --out <out>` |
 | **Full technical write-up** | `experiments/reports/n100/REPORT_N100.md` | — |
 
 The design rationale for each experiment (the deeper "why") is in

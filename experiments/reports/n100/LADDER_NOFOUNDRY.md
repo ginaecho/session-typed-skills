@@ -1,13 +1,14 @@
 # The finance-style arm ladder, reproduced without Foundry (cheap subagents)
 
 **Updated 2026-07-04, n=100.** The finance run (Part 1 of
-`docs/5_RUN_REPORTS_EXPLAINED.md`) used Azure Foundry + GPT-5.4. This
+[`docs/5_RUN_REPORTS_EXPLAINED.md`](../../../docs/5_RUN_REPORTS_EXPLAINED.md#2-reading-the-results-table))
+used Azure Foundry + GPT-5.4. This
 reproduces the same **arm ladder** (A: Intent → STJP) with **no Foundry** and
 **cheap Claude haiku subagents** answering each poll, across two complementary
 use cases — one for each axis of the finance result. Both cases are now at
 **n=100 per arm** (600 trials each, 1,200 total), superseding the earlier n=10
-tables (kept at `ladder_revenue_audit_n10/` and `ladder_escrow_n10/` for
-history).
+tables (kept at [`ladder_revenue_audit_n10/`](ladder_revenue_audit_n10/README.md)
+and [`ladder_escrow_n10/`](ladder_escrow_n10/README.md) for history).
 
 Engine: `experiments/subagent_trials/engine_ladder.py` (6 arms, config-driven,
 reusing the STJP scheduler, runtime monitor and Critic). Every poll is a real
@@ -40,7 +41,8 @@ two modes:
   *before* delivery, never reaches anyone, and the agent is asked to try again.
   (In the engine code this enforcing path is named "the gate"; it is not a
   second component — it is the monitor in enforcing mode. See
-  `docs/reference/GLOSSARY.md`: "The gate — the monitor run in enforcing mode.")
+  [`docs/reference/GLOSSARY.md`](../../../docs/reference/GLOSSARY.md): "The gate
+  — the monitor run in enforcing mode.")
 
 This is the single most important fact for reading the table: **an enforcing
 monitor cannot produce a disaster, by construction** — the disallowed message
@@ -113,7 +115,8 @@ it). And the local-contract-without-gate arm has genuine **liveness failures**:
 only 31% completion — a manually-inspected failing trace shows the Analyst
 resending `Revenue` ten times in a row with no reply ever arriving, a real
 stall, not corrupted data. The enforcing-monitor arms (C+spec, C+min, STJP)
-remain safe by construction. Full detail: `ladder_revenue_audit_n100/README.md`.
+remain safe by construction. Full detail:
+[`ladder_revenue_audit_n100/README.md`](ladder_revenue_audit_n100/README.md).
 
 ## Use case 2 — `escrow_trade`: the COST axis (n=100)
 
@@ -135,7 +138,7 @@ the scheduler advantage holds at scale. The enforcing-monitor arms stay at **0
 disasters** by construction; the observe arms show real disasters (26–49,
 manually verified: e.g. duplicate `PaymentSecured`/`ConfirmReceipt` sends that
 the cross-message Critic correctly flags) that weren't visible in the n=10 run.
-Full detail: `ladder_escrow_n100/README.md`.
+Full detail: [`ladder_escrow_n100/README.md`](ladder_escrow_n100/README.md).
 
 ## What the two cases show together
 
@@ -156,8 +159,10 @@ safest and the cheapest**. At n=100, both cases now show BOTH axes:
   is a faithful-enough cheap approximation of independent role-agents, not a
   true multi-agent deployment.
 - **Getting to n=100 required catching real integrity failures along the
-  way** — logged in full in `ladder_revenue_audit_n100/README.md` and
-  `ladder_escrow_n100/README.md`: an `--auto` shortcut removed from the
+  way** — logged in full in
+  [`ladder_revenue_audit_n100/README.md`](ladder_revenue_audit_n100/README.md) and
+  [`ladder_escrow_n100/README.md`](ladder_escrow_n100/README.md): an `--auto`
+  shortcut removed from the
   engine; a round-numbering bug that could mask real disasters (fixed via
   causal, round-aware detection); a `/tmp` janitor process that silently
   deleted an entire run's progress (state moved to a durable, gitignored
@@ -183,7 +188,11 @@ python experiments/subagent_trials/engine_ladder.py init --case <case> --arm <ar
 python experiments/subagent_trials/batch_report.py --case <case> --root <root>
 python experiments/subagent_trials/aggregate_ladder.py --root <root> --case <case> --out <out>
 ```
-Data: `experiments/reports/n100/ladder_revenue_audit_n100/`,
-`experiments/reports/n100/ladder_escrow_n100/` (n=100, current);
-`ladder_revenue_audit_n10/`, `ladder_escrow_n10/` (n=10, superseded, kept for
+Data: [`ladder_revenue_audit_n100/`](ladder_revenue_audit_n100/README.md),
+[`ladder_escrow_n100/`](ladder_escrow_n100/README.md) (n=100, current);
+[`ladder_revenue_audit_n10/`](ladder_revenue_audit_n10/README.md),
+[`ladder_escrow_n10/`](ladder_escrow_n10/README.md) (n=10, superseded, kept for
 history).
+
+See also the plain-English writeup of these tables in the main run report:
+[`docs/5_RUN_REPORTS_EXPLAINED.md` §10](../../../docs/5_RUN_REPORTS_EXPLAINED.md#10-the-full-arm-ladder-at-n100-reproduced-without-foundry).

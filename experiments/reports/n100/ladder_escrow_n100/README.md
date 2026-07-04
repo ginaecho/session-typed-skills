@@ -1,8 +1,14 @@
 # escrow_trade ladder at n=100 — real haiku subagents, file-verified
 
-**Supersedes** the earlier n=10 finding in `../ladder_escrow_n10/`. All 600
+**Supersedes** the earlier n=10 finding in
+[`../ladder_escrow_n10/`](../ladder_escrow_n10/README.md). All 600
 trials (6 arms × 100) verified by inspecting `state.json` files directly —
 never by trusting a subagent's prose summary.
+
+Part of the combined ladder writeup:
+[`../LADDER_NOFOUNDRY.md`](../LADDER_NOFOUNDRY.md) (master), and
+[`docs/5_RUN_REPORTS_EXPLAINED.md` §10](../../../../docs/5_RUN_REPORTS_EXPLAINED.md#10-the-full-arm-ladder-at-n100-reproduced-without-foundry)
+(plain-English).
 
 ## The table
 
@@ -37,7 +43,7 @@ C-min — it records a violation but lets the message through; in *enforce* mode
 — arms C+spec, C+min, STJP — the same monitor rejects the message before
 delivery. The engine code names that enforcing path "the gate"; it is the
 monitor in enforcing mode, not a second component. See
-`docs/reference/GLOSSARY.md`.)
+[`docs/reference/GLOSSARY.md`](../../../../docs/reference/GLOSSARY.md).)
 **STJP is both the safest arm and the cheapest** (7.0 calls/trial vs
 24.5–28.8 for the others) — the scheduler's 4× cost advantage from the n=10
 run holds at scale.
@@ -65,7 +71,7 @@ processed), so re-deriving that from round numbers is redundant and, for
 same-round concurrent polling, actively wrong. The round-based check is
 still applied to the **observe** arms (intent, global_text, local_obs), where it
 is the only signal available. This is documented in
-`experiments/subagent_trials/engine_ladder.py::_disasters_and_findings`.
+[`engine_ladder.py::_disasters_and_findings`](../../../subagent_trials/engine_ladder.py).
 
 ## Integrity incidents during this run (full transparency)
 
