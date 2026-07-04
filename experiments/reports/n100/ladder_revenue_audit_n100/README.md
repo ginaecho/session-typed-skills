@@ -39,9 +39,15 @@ n=100 with a cheap model (where it's actually MORE pronounced than the n=10 /
 GPT-5.4 finance result, which makes sense: a lean contract without enforcement
 is more fragile with a weaker model).
 
-The gate arms (C+spec, C+min, STJP) are safe/live by construction — the gate
-structurally prevents premature filing and the projected contract prevents
-stalling on an unenforced repeat action.
+The enforcing-monitor arms (C+spec, C+min, STJP) are safe/live by construction
+— the monitor, run in enforcing mode, structurally blocks a premature filing
+before delivery, and the projected contract prevents stalling on an unenforced
+repeat action. (Terminology: the runtime **monitor** is the active enforcer. In
+*observe* mode — arms A, B, C-min — it records a violation but lets the message
+through; in *enforce* mode — arms C+spec, C+min, STJP — the same monitor rejects
+the message before delivery. The engine code names that enforcing path "the
+gate"; it is the monitor in enforcing mode, not a second component. See
+`docs/reference/GLOSSARY.md`.)
 
 ## Integrity incidents during this run (full transparency)
 

@@ -10,9 +10,84 @@ tables (kept at `ladder_revenue_audit_n10/` and `ladder_escrow_n10/` for
 history).
 
 Engine: `experiments/subagent_trials/engine_ladder.py` (6 arms, config-driven,
-reusing the STJP scheduler/gate/monitor/Critic). Every poll is a real model
-decision (no auto shortcut); cost = LLM agent-calls (tokens aren't metered
+reusing the STJP scheduler, runtime monitor and Critic). Every poll is a real
+model decision (no auto shortcut); cost = LLM agent-calls (tokens aren't metered
 without Foundry).
+
+## The six arms — three knobs, and how to read the tables
+
+The six arms are not six unrelated systems. They are the **same pipeline with
+three independent knobs**, turned one at a time. Once you know which knob each
+step turns, the tables below (and their surprises) read straightforwardly.
+
+**Knob 1 — what contract the agent is shown.**
+- *Intent* (A): the plain-English task + its role description, nothing else.
+- *Global text* (B): the whole validated protocol pasted in as one text block.
+- *Local contract* (C-*): each agent is shown only its **own** projected slice
+  of the protocol — what it may send, what it must wait for, which values are
+  legal — either as verbose markdown (*spec*) or one line per step (*min*).
+
+**Knob 2 — the runtime monitor, and whether it enforces.**
+The **monitor is the system's active enforcer.** It is a small plain-Python
+program (not an AI agent) that sits beside each role and walks that role's
+per-role state machine, checking every message against it. It runs in one of
+two modes:
+- **Observe mode** (arms A, B, C-min): the monitor still checks every message,
+  but it only **records** a violation and lets the message through. This is
+  where the *Disasters* column comes from on those arms.
+- **Enforce mode** (arms C+spec, C+min, STJP): the **same** monitor **blocks**
+  any message its state machine does not allow — the message is rejected
+  *before* delivery, never reaches anyone, and the agent is asked to try again.
+  (In the engine code this enforcing path is named "the gate"; it is not a
+  second component — it is the monitor in enforcing mode. See
+  `docs/reference/GLOSSARY.md`: "The gate — the monitor run in enforcing mode.")
+
+This is the single most important fact for reading the table: **an enforcing
+monitor cannot produce a disaster, by construction** — the disallowed message
+never lands. That is why every enforcing arm shows **0 disasters** at any sample
+size, while the observe arms show real, non-zero disaster counts once measured
+at n=100.
+
+**Knob 3 — the scheduler (who gets polled each round).**
+- *Poll-all* (every arm except STJP): every round, **all** roles are polled at
+  once — "everyone act, hope you coordinate." Each poll is one model call, i.e.
+  one unit of cost, whether or not that role has anything legal to do yet.
+- *Enabled-sender* (STJP only): before each round the scheduler consults every
+  role's state machine and polls **only** the role(s) that actually have a legal
+  send available right now. It never spends a call on a role whose turn it
+  structurally is not.
+
+Knob 3 is the entire cost story: STJP's **~7 calls/trial vs ~24–29** for the
+others is not a smarter per-call agent — it is simply not paying for calls to
+roles that cannot legally act yet.
+
+### Reading the surprises in the tables with these three knobs
+
+- **Why C-min shows disasters *and* 100% goal-completion at once.**
+  Goal-completion (GCR) asks "did the trial reach the goal at all?"; *Disasters*
+  asks "did a safety-critical violation happen on the way?" These are
+  independent. C-min shows its agents their local contract but runs the monitor
+  in **observe** mode, so nothing is ever blocked — duplicate and out-of-order
+  messages all get delivered (and recorded as disasters), yet the run still
+  stumbles to the goal. In fact C-min has the **highest** GCR precisely because
+  it never blocks anything, whereas the enforcing arms occasionally stall when
+  an agent keeps re-attempting a message the monitor rejects. The honest column
+  that reconciles this is **CGC** (goal reached *and* zero violations), where
+  C-min falls well below the enforcing arms.
+- **Why C+min matches — or slightly beats — C+spec.** These two differ on
+  **only** Knob 1's sub-choice: C+spec shows the verbose markdown contract,
+  C+min the lean one-line-per-step form. Same monitor, same enforce mode, same
+  poll-all scheduler. A lean contract turns out to be *easier* for a cheap model
+  to follow (and cheaper in tokens), so the minimal form loses nothing and
+  sometimes helps.
+- **What STJP actually is.** STJP is **C+min plus Knob 3** — the lean local
+  contract, the enforcing monitor, and *additionally* the enabled-sender
+  scheduler. It is built on C+min, **not** on C+spec. Concretely: STJP = *lean
+  local contract + enforcing monitor + enabled-sender scheduler*. Because the
+  ladder adds one ingredient at a time, each effect reads cleanly off the table:
+  the **enforcing monitor** buys the safety (disasters → 0), the **lean
+  contract** trims a little cost, and the **scheduler** delivers the large
+  ~3–4× cost drop.
 
 ## Use case 1 — `revenue_audit`: the SAFETY axis (n=100)
 
@@ -37,8 +112,8 @@ by inspecting traces: `Filer→Analyst:Filed` at round 1, no `Approval` before
 it). And the local-contract-without-gate arm has genuine **liveness failures**:
 only 31% completion — a manually-inspected failing trace shows the Analyst
 resending `Revenue` ten times in a row with no reply ever arriving, a real
-stall, not corrupted data. The gate/scheduler arms remain safe by construction.
-Full detail: `ladder_revenue_audit_n100/README.md`.
+stall, not corrupted data. The enforcing-monitor arms (C+spec, C+min, STJP)
+remain safe by construction. Full detail: `ladder_revenue_audit_n100/README.md`.
 
 ## Use case 2 — `escrow_trade`: the COST axis (n=100)
 
@@ -56,7 +131,7 @@ safe; at n=100 a real safety signal on the observe arms emerges too.
 
 **This is the finance cost collapse, now with a safety story too.** STJP
 remains **~4× cheaper** than the other arms (7.0 vs 24.5–28.8 calls/trial) —
-the scheduler advantage holds at scale. The gate/scheduler arms stay at **0
+the scheduler advantage holds at scale. The enforcing-monitor arms stay at **0
 disasters** by construction; the observe arms show real disasters (26–49,
 manually verified: e.g. duplicate `PaymentSecured`/`ConfirmReceipt` sends that
 the cross-message Critic correctly flags) that weren't visible in the n=10 run.
@@ -67,9 +142,9 @@ Full detail: `ladder_escrow_n100/README.md`.
 The finance headline was that the full STJP stack is **simultaneously the
 safest and the cheapest**. At n=100, both cases now show BOTH axes:
 
-- **Safety:** every observe/local-contract-without-gate arm has a real,
-  non-zero disaster or failure rate once measured at scale; every gate/
-  scheduler arm has 0 disasters, by construction, in both cases.
+- **Safety:** every observe arm (monitor recording only) has a real, non-zero
+  disaster or failure rate once measured at scale; every enforcing-monitor arm
+  has 0 disasters, by construction, in both cases.
 - **Cost:** STJP is the cheapest arm in both cases (4× in escrow_trade, ~3×
   in revenue_audit), via the same mechanism — the EFSM scheduler polls only
   the one role whose turn it is.
@@ -91,9 +166,9 @@ safest and the cheapest**. At n=100, both cases now show BOTH axes:
   own auto-responder scripts instead of reasoning per poll, caught either by
   self-confession or by the `malformed == agent_calls` signature and
   discarded/replayed. A second detection bug (a strict round<round causal
-  check producing false-positive disasters on *gated* arms, where gate
-  acceptance already proves causal validity) was found and fixed mid-analysis
-  of the escrow_trade n=100 data.
+  check producing false-positive disasters on the *enforcing-monitor* arms,
+  where the monitor's acceptance of a send already proves causal validity) was
+  found and fixed mid-analysis of the escrow_trade n=100 data.
 - Every number in both n=100 tables was verified by inspecting `state.json`
   contents directly (trace non-emptiness, malformed-vs-calls ratio) — never
   by trusting an agent's own completion summary. The final audit on both

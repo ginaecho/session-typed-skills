@@ -29,17 +29,25 @@ sends `PaymentSecured` three times and `ConfirmReceipt` twice before stalling
 without ever settling). This wasn't visible at n=10; it needed the larger
 sample to show up reliably.
 
-**The gate/scheduler arms remain at 0 disasters** — the gate structurally
-prevents these issues by construction, independent of sample size.
+**The enforcing-monitor arms (C+spec, C+min, STJP) remain at 0 disasters** —
+the monitor, run in enforcing mode, structurally blocks these off-contract
+messages before delivery, independent of sample size. (Terminology: the
+runtime **monitor** is the active enforcer. In *observe* mode — arms A, B,
+C-min — it records a violation but lets the message through; in *enforce* mode
+— arms C+spec, C+min, STJP — the same monitor rejects the message before
+delivery. The engine code names that enforcing path "the gate"; it is the
+monitor in enforcing mode, not a second component. See
+`docs/reference/GLOSSARY.md`.)
 **STJP is both the safest arm and the cheapest** (7.0 calls/trial vs
 24.5–28.8 for the others) — the scheduler's 4× cost advantage from the n=10
 run holds at scale.
 
 ## A detection bug found and fixed mid-analysis
 
-The first pass of this table showed `C+spec` (a gated arm) with **111
-disasters** — worse than every observe arm, which is structurally impossible
-for a gate that enforces per-role contract order. Investigating one flagged
+The first pass of this table showed `C+spec` (an enforcing-monitor arm) with
+**111 disasters** — worse than every observe arm, which is structurally
+impossible for a monitor that enforces per-role contract order before delivery.
+Investigating one flagged
 trial (`local_gate__trial_003`) showed the full 7-message trade delivered
 cleanly in 3 rounds, with `ConfirmReceipt` and both `SettlementComplete`s
 landing in the *same* round (round 3) — a legitimate outcome of `schedule=
@@ -49,13 +57,13 @@ role's send from the *same* round's submission.
 
 The causal disaster detector (built for `revenue_audit`, reused here)
 required `before.round < after.round` **strictly**, which flagged same-round
-causally-valid sequences as violations. Fixed: for **gated** arms, the
-round-based causal check is now skipped entirely — the gate's acceptance of
-a send is itself proof of causal validity (it cannot advance a role's EFSM
+causally-valid sequences as violations. Fixed: for **enforcing-monitor** arms,
+the round-based causal check is now skipped entirely — the monitor's acceptance
+of a send is itself proof of causal validity (it cannot advance a role's EFSM
 state to enable a "before" transition until the real "before" message was
 processed), so re-deriving that from round numbers is redundant and, for
 same-round concurrent polling, actively wrong. The round-based check is
-still applied to **ungated** arms (intent, global_text, local_obs), where it
+still applied to the **observe** arms (intent, global_text, local_obs), where it
 is the only signal available. This is documented in
 `experiments/subagent_trials/engine_ladder.py::_disasters_and_findings`.
 
