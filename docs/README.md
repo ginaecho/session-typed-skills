@@ -149,7 +149,9 @@ What you'll learn:
 - `reference/CHOICE_GUARDS_AND_GATE.md` — How value-dependent choice guards and the enforcement gate work (technical)
 - `reference/FOUNDRY_VISIBILITY.md` — Exact code to make agents/threads/traces visible in the Azure AI Foundry portal
 - `reference/STJP_V3_PLAN.md` — **Latest plan**: governance plane + decentralized execution plane (summarized in `1_TECH_SETUP.md` section 7)
-- `reference/PROTOCOL_EVOLUTION.md` — How to update a protocol and re-validate
+- `reference/PROTOCOL_EVOLUTION.md` — How to update a protocol and re-validate (now includes the built incremental sub-protocol slice: child verified once, projection diff, monitor regen for affected roles only)
+- `reference/CRITIC_REVISOR.md` — The Critic (cross-message policies: information flow, ordering, separation of duty, aggregates — static AND runtime) and the Revisor repair loop
+- `reference/SKILL_COMPACTION.md` — Bottom-up STJP: compact EXISTING skill markdowns into local types, compose the global type, Scribble-validate it
 - `reference/GAP_CLOSED.md` — Refinement call-site closure record (referenced by `experiments/README.md` and `stjp_core/README.md`)
 
 ### `results/` — the evidence behind the guides (current, plain English)

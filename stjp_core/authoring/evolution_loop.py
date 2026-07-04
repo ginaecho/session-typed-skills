@@ -225,7 +225,21 @@ class ProtocolEvolutionLoop:
             
             if is_valid:
                 print("    SCRIBBLE SAYS: (silence) = VALID!")
-                
+
+                # Step 2.5: Critic — cross-message policy check (only when a
+                # .policy sidecar exists for this case). A Critic failure is
+                # treated exactly like a Scribble error: the findings go back
+                # to the Architect LLM as the error to fix.
+                critic_error = self._run_critic_gate(draft_path)
+                if critic_error:
+                    print(f"    CRITIC SAYS: POLICY VIOLATION\n{critic_error}")
+                    print("    -> LLM will analyze the Critic findings and fix...")
+                    error = critic_error
+                    previous_protocol = draft
+                    if draft_path.exists():
+                        draft_path.unlink()
+                    continue
+
                 # Step 3: LLM generates skills (pass user_requirement for business rules!)
                 print("\n[3] LLM GENERATING SKILLS FILES...")
                 self.skills_generator.generate_all_skills(draft, module_name, user_requirement)
@@ -319,6 +333,35 @@ class ProtocolEvolutionLoop:
         
         return False
     
+    def _run_critic_gate(self, draft_path: Path) -> str:
+        """Run the static Critic on a Scribble-valid draft.
+
+        Looks for a `.policy` sidecar (``<stem>.policy`` next to the draft, or
+        ``policies.policy`` in the protocols dir). Returns "" when there is
+        nothing to check or all policies hold; otherwise the findings formatted
+        as LLM feedback (so the fix loop treats them like a compiler error).
+        """
+        from stjp_core.critic.policies import find_policy_file, parse_policy_file
+        from stjp_core.critic.critic import run_static_critic
+
+        policy_path = find_policy_file(draft_path)
+        if policy_path is None:
+            return ""
+        try:
+            policies = parse_policy_file(policy_path)
+            print(f"\n[2.5] CRITIC — {len(policies)} cross-message "
+                  f"policy(ies) from {policy_path.name}...")
+            report = run_static_critic(draft_path, policies)
+            print(f"    {report.summary_line()}")
+            if report.passed:
+                return ""
+            return report.as_llm_feedback()
+        except Exception as e:
+            # The Critic must never brick the authoring loop on a malformed
+            # sidecar — surface the problem and continue without the gate.
+            print(f"    CRITIC SKIPPED (error: {e})")
+            return ""
+
     def rollback(self, version_num: int) -> bool:
         """Rollback to a specific version within the active protocol"""
         protocol_id = self.version_control.get_active_protocol_id()

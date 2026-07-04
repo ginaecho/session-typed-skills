@@ -1,0 +1,30 @@
+# Cross-message policies for the QuarterlyFinanceReport protocol (v1.scr).
+# Checked by the STJP Critic: statically over every path of the global type
+# (stjp_core/critic/critic.py), and at runtime over the trace. The Revisor
+# repairs the protocol if any of these ever fail on a draft.
+#
+#   python -m stjp_core.critic.critic experiments/cases/finance/protocols/v1.scr
+
+[sequence]
+id: S1
+description: the tax verifier's approval must precede the revenue analysis reaching the Writer
+before: TaxVerifier -> RevenueAnalyst : RevenueAuditApproval
+after: RevenueAnalyst -> Writer : RevenueAnalysis
+
+[flow]
+id: F1
+description: raw audited figures must never flow to the ExpenseAnalyst
+source: TaxSpecialist -> * : AuditedRevenue
+forbidden_role: ExpenseAnalyst
+
+[separation]
+id: D1
+description: no self-approval — the audit requester must not also approve
+first: * -> * : RevenueAuditRequest
+second: * -> * : RevenueAuditApproval
+
+[aggregate]
+id: A1
+description: exactly one audit round-trip per run
+count: RevenueAnalyst -> TaxVerifier : RevenueAuditRequest
+max: 1
