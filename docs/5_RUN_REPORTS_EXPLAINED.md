@@ -13,7 +13,9 @@ This document has two parts:
   each run 100 times, that stress-test one piece of the system at a time — the
   safety checker, the security gate, the reliability math, the translator, the
   scaling behaviour, and the portability. This is the "prove it holds up under
-  pressure" part.
+  pressure" part. It also includes **§10**, the full six-arm ladder from §2
+  reproduced at n=100 without Foundry (cheap subagents) — with an explicit note
+  on why its cost column reads in *calls*, not *tokens*.
 
 ---
 
@@ -661,7 +663,78 @@ missed violations — the enforcement machinery was perfect at scale.
 
 ---
 
-## 10. What Part 2 proves, in one paragraph
+## 10. The full arm-ladder, reproduced at n=100 (no Foundry) — the direct analog of §2
+
+The interaction trials above are a **two-way** cut (no-rulebook vs STJP). The
+finance table in §2 was the **full six-arm ladder**. That whole ladder has now
+been reproduced at **n=100 per arm** — but **without Foundry**, with cheap
+Claude subagents answering every poll — across two use cases: `revenue_audit`
+(a safety-first case) and `escrow_trade` (a cost-first case). These are the
+tables that correspond, arm-for-arm, to the §2 finance table.
+
+**`revenue_audit`, n=100** (safety axis)
+
+| arm | GCR | CGC | Disasters | Cost-to-goal |
+|---|---|---|---|---|
+| A: Intent only | 99% | 1% | 0 | 900 |
+| B: Global text | 100% | 5% | **95** | 330 |
+| C-min: Local contract | 31% | 1% | 0 | 7481 |
+| C+spec: Local + gate | 98% | 98% | 0 | 928 |
+| C+min: Local + gate | 100% | 100% | 0 | 900 |
+| STJP: Local + gate + scheduler | 100% | 100% | 0 | **300** |
+
+**`escrow_trade`, n=100** (cost axis)
+
+| arm | GCR | CGC | Disasters | Cost-to-goal |
+|---|---|---|---|---|
+| A: Intent only | 83% | 70% | 26 | 3349 |
+| B: Global text | 82% | 73% | 35 | 3512 |
+| C-min: Local contract | 100% | 75% | 49 | 2708 |
+| C+spec: Local + gate | 79% | 79% | 0 | 3448 |
+| C+min: Local + gate | 82% | 82% | 0 | 2990 |
+| STJP: Local + gate + scheduler | 97% | 97% | 0 | **721** |
+
+The **shape** matches §2: STJP is the only arm that is simultaneously safe
+(0 disasters, top CGC) and cheapest (lowest cost-to-goal). The observe arms
+(A/B/C-min) carry real, non-zero disaster/failure rates that only surfaced at
+n=100.
+
+### Why this is *not* laid out in the exact same format as §2
+
+Two columns from the §2 finance table **cannot be reproduced here**, and this
+is an honest limitation, not an oversight:
+
+1. **Cost-to-goal is in *calls*, not *tokens* — and the numbers are raw counts,
+   not thousands.** These n=100 runs are the **no-Foundry** reproduction, and
+   without Foundry, tokens are never metered. So the unit is **LLM agent-calls**
+   (one whole model invocation), counted as `total calls ÷ GCR-fraction`. STJP's
+   `300` above means **300 calls**, *not* 300k and *not* 13.3k tokens — it is a
+   **different unit** from §2's `13.3k tokens` and is **not comparable in
+   magnitude** (one call is worth hundreds-to-thousands of tokens). What *is*
+   comparable is the **ratio**: STJP is ~3× cheaper than the field in
+   `revenue_audit` and ~4× in `escrow_trade`, the same "STJP is cheapest by a
+   wide margin" story §2 tells in tokens (13.3k vs 120k). The token figures live
+   only in Part 1's live-model Foundry run — which was itself only n=10.
+2. **There is no `Seconds/trial` column.** `batch_report.py` leaves
+   `avg_seconds_per_trial = None` on purpose. Wall-clock is meaningless for
+   these runs: a trial "starts" when it is first polled and "ends" when it
+   reaches the goal, but the trials were played across many dispatch waves with
+   hours-long gaps between rounds. That elapsed time is an artifact of the
+   subagent **harness scheduling**, not of agent thinking time, so publishing it
+   would actively mislead a reader into thinking STJP is slow.
+
+So the ladder is faithfully reproduced on **GCR / CGC / Disasters / Cost-to-goal**
+— with cost in **calls** instead of **tokens**, and with **no seconds** column —
+because those are the only two measurements Foundry provided that a
+tokens-unmetered, wave-scheduled subagent harness cannot honestly reproduce.
+
+Full tables, per-arm findings, and the integrity log for these runs:
+`experiments/reports/n100/LADDER_NOFOUNDRY.md` (master), with per-case detail in
+`ladder_revenue_audit_n100/README.md` and `ladder_escrow_n100/README.md`.
+
+---
+
+## 11. What Part 2 proves, in one paragraph
 
 The safety checker catches broken rulebooks (95%) and never cries wolf (0%
 false alarms). The gate stops a hostile agent on every illegal route, and the
@@ -676,7 +749,7 @@ hardware we don't have here, with real anchor points already in place.
 
 ---
 
-## 11. Where the supporting data lives
+## 12. Where the supporting data lives
 
 Every number in Part 2 is reproducible from files in the repository:
 
@@ -691,6 +764,7 @@ Every number in Part 2 is reproducible from files in the repository:
 | E7 portability (59/59) | `experiments/reports/n100/e7/cross_runtime.json` | `python experiments/scripts/cross_runtime.py` |
 | Full pipeline stress | `experiments/reports/n100/stress/integration_stress.json` | `python experiments/scripts/integration_stress.py 100` |
 | Interaction trials | `experiments/reports/n100/subagent/summary.json` | `python experiments/subagent_trials/run_n100.py --trials 100` |
+| Arm-ladder n=100 (§10, no Foundry) | `experiments/reports/n100/ladder_revenue_audit_n100/`, `ladder_escrow_n100/` | `python experiments/subagent_trials/aggregate_ladder.py --root <root> --case <case> --out <out>` |
 | **Full technical write-up** | `experiments/reports/n100/REPORT_N100.md` | — |
 
 The design rationale for each experiment (the deeper "why") is in
@@ -699,7 +773,7 @@ The design rationale for each experiment (the deeper "why") is in
 
 ---
 
-## 12. What to read next
+## 13. What to read next
 
 - **To understand how this benchmark is designed:** Read `3_BENCHMARK_DESIGN_EXPLAINED.md`
 - **To learn about testing strategies:** Read `2_TESTING_STRATEGIES.md`
