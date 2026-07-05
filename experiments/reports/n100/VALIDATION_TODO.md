@@ -2,15 +2,28 @@
 
 *Written 2026-07-05, after integrating the n=100 suite into paper v4. Ordered by priority. Each item: why, how, effort, and what changes in the paper when done. The "error audit" section lists the places where I suspect the current numbers could be wrong — check those BEFORE running anything new, because they're cheap and they feed the paper's integrity story either way.*
 
-> **Status (2026-07-05):** P-1 error audit executed and its material finding
-> fixed — see [`P1_AUDIT_FINDINGS.md`](P1_AUDIT_FINDINGS.md). Items 1, 2, 3, 5, 6
-> resolved (all four suspected spots correct-as-reported). Item 4 (mutant
-> classification) reproduced; per-mutant adjudication still open. The one new
-> material finding — 22 non-terminal trials (18 an abandoned escrow C+spec
-> block) — was **fixed** by driving them to completion with haiku players:
-> escrow C+spec 79→97%, C+min 82→83%, STJP 97→98%; revenue A 99→100%, C-min
-> 31→32%. Dataset is now 100% terminal. Remaining: P0/P0b/E3 need live mid-tier
-> API access (blocked in this environment); item 4 adjudication.
+> **Status (2026-07-05) — most of the plan is done:**
+> - **P-1: complete.** All 5 suspected spots correct-as-reported; item 4
+>   adjudicated (**4 genuine checker gaps** + 7 valid → detection 82.5%→92.9%,
+>   a new named limitation); A/B violation-type histograms done. See
+>   [`P1_AUDIT_FINDINGS.md`](P1_AUDIT_FINDINGS.md) +
+>   [`e1/branch_asymmetry_adjudication.md`](e1/branch_asymmetry_adjudication.md).
+> - **Material fix: complete.** 22 non-terminal trials driven to completion →
+>   escrow C+spec 79→97%, C+min 82→83%, STJP 97→98%; revenue A 99→100%, C-min
+>   31→32%. Dataset 100% terminal.
+> - **P0b: complete.** B + C+min on revenue_audit re-run with **sonnet**
+>   (mid-tier): B 0/30 races (vs haiku 95/100), C+min 10/10 clean. See
+>   [`P0B_MIDTIER_SONNET.md`](P0B_MIDTIER_SONNET.md).
+> - **E3: core done (in-environment).** 2-tier Claude capability curve
+>   (haiku→sonnet) across A/B/C+min: unenforced safety *and* cleanliness are
+>   capability-dependent; the gate arm is capability-independent. See
+>   [`E3_CAPABILITY_SWEEP.md`](E3_CAPABILITY_SWEEP.md).
+> - **Genuinely blocked (external access), documented not faked:** E3's
+>   **non-OpenAI vendor** tier + opus 3rd tier (optional); **P2** —
+>   token-metered E6 (needs a metered endpoint), three-harness E7 (LangGraph/
+>   skill-runtime adapters — a build task, deferrable), LLM-half of E5 (needs
+>   the 100-intent expert golds), n=30 live finance ladder (needs Foundry +
+>   finance case wired into the no-Foundry engine).
 
 ---
 

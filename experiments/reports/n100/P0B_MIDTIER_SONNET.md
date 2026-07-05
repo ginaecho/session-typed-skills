@@ -48,8 +48,11 @@ neither racing nor idling.
 ## Honest scope
 
 - Mid-tier here is **Claude sonnet** (the in-environment stronger tier), not the
-  plan's idealised gpt-4o; and the control arm **C+min** with sonnet is the
-  next step (the gate makes it safe by construction regardless — low marginal
-  information, run for completeness).
+  plan's idealised gpt-4o.
+- **Control arm C+min (sonnet, n=10): done** — 10/10 clean, **0 gate rejections,
+  0 disasters, 100% CGC**, identical to haiku C+min. Enforcement is
+  model-independent, as expected. This closes P0b (B + C+min). The full
+  two-tier capability grid is in
+  [`E3_CAPABILITY_SWEEP.md`](E3_CAPABILITY_SWEEP.md).
 - Data: `.trial_state/p0b_sonnet/revenue_audit/global_text__trial_000..029/`
   (gitignored scratch); this report is the durable artifact.
