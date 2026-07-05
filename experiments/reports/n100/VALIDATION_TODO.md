@@ -14,10 +14,16 @@
 > - **P0b: complete.** B + C+min on revenue_audit re-run with **sonnet**
 >   (mid-tier): B 0/30 races (vs haiku 95/100), C+min 10/10 clean. See
 >   [`P0B_MIDTIER_SONNET.md`](P0B_MIDTIER_SONNET.md).
-> - **E3: core done (in-environment).** 2-tier Claude capability curve
->   (haiku→sonnet) across A/B/C+min: unenforced safety *and* cleanliness are
->   capability-dependent; the gate arm is capability-independent. See
->   [`E3_CAPABILITY_SWEEP.md`](E3_CAPABILITY_SWEEP.md).
+> - **E3: done in-environment (3 Claude tiers, both cases).** Capability curve
+>   **haiku→sonnet→opus** on revenue_audit and **haiku→sonnet** on escrow_trade
+>   (n=10/arm for the new tiers, every trial verified from `state.json`,
+>   `malformed=0`): unenforced safety *and* cleanliness are capability-dependent
+>   and **plateau at sonnet** (opus confirms); the gate/scheduler arms are
+>   capability-independent (0 disasters at every tier) and STJP holds its 4× cost
+>   edge. Only the **non-Claude vendor** point remains (external access). See
+>   [`E3_CAPABILITY_SWEEP.md`](E3_CAPABILITY_SWEEP.md) +
+>   [`e3/opus_revenue.json`](e3/opus_revenue.json),
+>   [`e3/sonnet_escrow.json`](e3/sonnet_escrow.json).
 > - **E7 three-harness: now done.** A LangGraph adapter
 >   (`experiments/harness_adapters/langgraph_ladder.py`) runs every case/arm as
 >   a StateGraph; the native STJP monitor agrees **14/14** (clean → 0

@@ -1,0 +1,43 @@
+{
+  "tier": "opus",
+  "role_model": "claude-opus (roles)",
+  "case": "revenue_audit",
+  "n_per_arm": 10,
+  "method": "one subagent per trial, per-poll genuine role reasoning, verified from state.json",
+  "generated": "2026-07-05",
+  "rows": [
+    {
+      "arm": "intent",
+      "n": 10,
+      "GCR_pct": 100.0,
+      "CGC_pct": 100.0,
+      "disasters": 0,
+      "monitor_violations": 0,
+      "malformed": 0,
+      "avg_calls_per_trial": 9.0,
+      "cost_to_goal_calls": 90.0
+    },
+    {
+      "arm": "global_text",
+      "n": 10,
+      "GCR_pct": 100.0,
+      "CGC_pct": 100.0,
+      "disasters": 0,
+      "monitor_violations": 0,
+      "malformed": 0,
+      "avg_calls_per_trial": 9.0,
+      "cost_to_goal_calls": 90.0
+    },
+    {
+      "arm": "min_gate",
+      "n": 10,
+      "GCR_pct": 100.0,
+      "CGC_pct": 100.0,
+      "disasters": 0,
+      "monitor_violations": 0,
+      "malformed": 0,
+      "avg_calls_per_trial": 9.0,
+      "cost_to_goal_calls": 90.0
+    }
+  ]
+}

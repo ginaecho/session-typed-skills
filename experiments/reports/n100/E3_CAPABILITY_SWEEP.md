@@ -3,27 +3,58 @@
 *2026-07-05. `VALIDATION_TODO.md` §P0 asks for a capability curve: how does each
 arm behave as the model gets stronger? The plan idealised OpenAI/non-OpenAI
 tiers, which this environment can't reach. This runs the **in-environment
-capability axis — the Claude tier ladder haiku → sonnet** — on `revenue_audit`
-for the three decisive arms (A intent, B global-text, C+min gate). Opus
-orchestrated; tiered subagents played the roles, one mind per trial, per-poll
-reasoning, no scripts. Every sonnet trial verified from `state.json`
-(`malformed=0`, no stray scripts).*
+capability axis — the Claude tier ladder haiku → sonnet → opus** — across
+**both** cases: `revenue_audit` (safety axis, all three tiers) and
+`escrow_trade` (cost axis, haiku → sonnet). Opus orchestrated; tiered subagents
+played the roles, one mind per trial, per-poll reasoning, no scripts. Every
+sonnet and opus trial verified from `state.json` (`malformed=0`, no stray
+scripts; the opus tier and escrow sweep were added 2026-07-05, n=10/arm).*
 
-## The curve (revenue_audit)
+## The curve (revenue_audit) — now three Claude tiers
 
-| arm | metric | **haiku** (weak, n=100) | **sonnet** (strong, n=10–30) |
-|---|---|---|---|
-| A: Intent only | disasters | 0 | 0 |
-| A: Intent only | **CGC (clean)** | **2%** | **100%** |
-| A: Intent only | duplicate sends/trial | ~2.9 | **0** |
-| B: Global text | **disasters** | **95** | **0** |
-| B: Global text | **CGC (clean)** | **5%** | **100%** |
-| B: Global text | Filed @ round 1 (race) | 95/100 | **0/30** |
-| C+min: local+gate | disasters | 0 | 0 |
-| C+min: local+gate | **CGC (clean)** | **100%** | **100%** |
+| arm | metric | **haiku** (weak, n=100) | **sonnet** (mid, n=10–30) | **opus** (strong, n=10) |
+|---|---|---|---|---|
+| A: Intent only | disasters | 0 | 0 | **0** |
+| A: Intent only | **CGC (clean)** | **2%** | **100%** | **100%** |
+| A: Intent only | duplicate sends/trial | ~2.9 | 0 | **0** |
+| B: Global text | **disasters** | **95** | **0** | **0** |
+| B: Global text | **CGC (clean)** | **5%** | **100%** | **100%** |
+| B: Global text | Filed @ round 1 (race) | 95/100 | 0/30 | **0/10** |
+| C+min: local+gate | disasters | 0 | 0 | **0** |
+| C+min: local+gate | **CGC (clean)** | **100%** | **100%** | **100%** |
 
 (GCR is ~100% everywhere; the signal is in **CGC** = reached goal *and* zero
-violations, and in **disasters**.)
+violations, and in **disasters**.) The opus column (n=10/arm, opus roles,
+one-mind-per-trial, every trial verified from `state.json`, `malformed=0`) is
+the third tier: it **confirms the strong-model plateau** — B stays at 0
+disasters, A stays at 100% CGC with 0 duplicate sends, every B trial serialises
+`r1 Revenue → r2 Approval → r3 Filed`. Data:
+[`e3/opus_revenue.json`](e3/opus_revenue.json).
+
+## The curve (escrow_trade) — capability mirrors revenue (NEW)
+
+The escrow capability curve was previously "expected to mirror" revenue but
+unrun. Now measured: haiku n=100 (the main ladder) vs **sonnet n=10** (A, B,
+C+min, STJP; sonnet roles, verified from `state.json`, `malformed=0`).
+
+| arm | metric | **haiku** (weak, n=100) | **sonnet** (strong, n=10) |
+|---|---|---|---|
+| A: Intent only | **disasters** | **26** | **0** |
+| A: Intent only | **CGC (clean)** | **70%** | **100%** |
+| B: Global text | **disasters** | **35** | **0** |
+| B: Global text | **CGC (clean)** | **73%** | **100%** |
+| C+min: local+gate | disasters | 0 | 0 |
+| C+min: local+gate | **CGC (clean)** | **83%** | **100%** |
+| STJP: +scheduler | disasters | 0 | 0 |
+| STJP: +scheduler | **CGC (clean)** | **98%** | **100%** |
+| STJP: +scheduler | calls/trial (cost) | 7.0 | **7.0** |
+
+Same shape as revenue: the **observe arms' safety is capability-dependent**
+(escrow A/B disasters 26/35 → **0** at sonnet, every trial settling only *after*
+`ConfirmReceipt`), while the **gate/scheduler arms are capability-independent**
+(0 disasters at both tiers) and **STJP holds its 4× cost edge** (7 calls/trial
+vs 28 for the observe arms, one poll per delivered message). Data:
+[`e3/sonnet_escrow.json`](e3/sonnet_escrow.json).
 
 ## Three findings
 
@@ -63,15 +94,18 @@ need enforcement." The honest reading is the opposite and is the paper's point:
 
 ## Honest scope / what's *not* here
 
-- **Tiers:** two points (haiku, sonnet). A third Claude tier (opus) would test
-  whether the strong-model plateau holds; it is expected to match sonnet
-  (0 disasters) and was left unrun to bound cost — the two points already
-  establish the direction.
-- **Vendor diversity:** the plan's **non-OpenAI frontier** point (which also
+- **Tiers:** now **three** Claude points (haiku, sonnet, opus) on revenue_audit —
+  the strong-model plateau is measured, not assumed. Done.
+- **Task:** now **both** cases — revenue_audit (safety axis, 3 tiers) *and*
+  escrow_trade (cost axis, haiku→sonnet). The escrow curve mirrors revenue, as
+  predicted. Done.
+- **Vendor diversity:** the plan's **non-Claude frontier** point (which also
   answers the "one vendor" worry) needs an external model this environment
-  lacks — **still pending**, not faked.
-- **Task:** revenue_audit only (the safety-axis case). escrow is the cost axis;
-  the capability curve there is expected to mirror this (weak-model races/stalls
-  vanish with capability; gate arms unchanged).
-- Data: `.trial_state/p0b_sonnet/revenue_audit/{intent,global_text,min_gate}__trial_*`
-  (gitignored scratch). This report is the durable artifact.
+  lacks — **still pending**, not faked. This is the one remaining E3 gap, and it
+  is an access limitation, not a design one.
+- Data (gitignored scratch; the durable artifacts are the JSON below + this
+  report): `.trial_state/e3_opus/revenue_audit/*` (opus tier),
+  `.trial_state/e3_sonnet_escrow/escrow_trade/*` (escrow sweep),
+  `.trial_state/p0b_sonnet/revenue_audit/*` (original sonnet tier).
+  Durable: [`e3/opus_revenue.json`](e3/opus_revenue.json),
+  [`e3/sonnet_escrow.json`](e3/sonnet_escrow.json).

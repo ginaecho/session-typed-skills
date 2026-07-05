@@ -429,7 +429,7 @@ Here is the whole run at a glance. Each row is explained in full below.
 | Instruments | Are our *measuring tools* themselves correct? | 40 / 40 hand-checked cases correct | (same, fixed set) |
 | E1 | Does the safety checker actually catch broken rulebooks? | catches **95%**, wrongly rejects **0%** | 95.6% over 30 protocols |
 | E2 | Can a hostile agent sneak secrets past the gate? | blocked **0 → 42 → 92 → 100%** as we add layers | same (12 attacks) |
-| E3 | Does the benefit hold for weak *and* strong models? | **still pending** (needs 2+ models) | 2 real data points |
+| E3 | Does the benefit hold for weak *and* strong models? | **3 Claude tiers measured** (haiku→sonnet→opus, both cases); non-Claude vendor still pending | 2 real data points |
 | E4 | How many runs-in-a-row will it survive? | confidence floor jumps **17.6×** vs n=10 | the reason we did n=100 |
 | E5 | Does English→rulebook translation keep the meaning? | **300 / 300** comparisons correct | 90 / 90 |
 | E6 | Does it stay cheap as the team grows from 2 to 10? | savings grow **9× → 17×** | same (structural) |
@@ -516,7 +516,7 @@ weak point is far stronger evidence than a suspicious "we block everything."
 
 ---
 
-### E3 — "does the benefit hold for weak and strong models?" (still pending)
+### E3 — "does the benefit hold for weak and strong models?" (measured across 3 Claude tiers)
 
 **What it tests.** The same task across AI models of different strengths, to
 see whether the safety system matters more for weaker models.
@@ -524,15 +524,32 @@ see whether the safety system matters more for weaker models.
 **Why we designed it this way.** This is worry #2 ("you used one model"). We
 expect a strong model to mostly behave itself even without a gate, so the
 gate's *added* value looks small — but on a weaker model, the gate should
-prevent many more disasters. The point is to show the benefit as a *predicted
-curve* across model strength, not a single dot.
+prevent many more disasters. The point is to show the benefit as a *curve*
+across model strength, not a single dot.
 
-**What impact it has.** **Still pending** — it needs at least two different AI
-model families and a paid cloud account, which this environment doesn't have.
-We do have two real anchor points already: a weaker model had 4 disasters and
-gained a lot from enforcement; a stronger model had far more disasters on the
-unguarded setting but gained nothing from enforcement once guarded. The full
-curve is left honestly unfinished rather than invented.
+**What impact it has.** **Now a measured curve across three Claude tiers —
+haiku → sonnet → opus — on both tasks.** The story is clean and consistent:
+
+- **Without the gate, safety tracks model strength.** On the revenue task the
+  global-text arm goes from **95 disasters (haiku) → 0 (sonnet) → 0 (opus)**; on
+  the escrow task the unguided arm goes from **26–35 disasters (haiku) → 0
+  (sonnet)**. A stronger model reasons about ordering and stops racing — but you
+  are betting safety on capability.
+- **With the gate, safety is flat at 0 disasters on every tier** — it does not
+  depend on model strength at all. That invariance is the whole point: you don't
+  get to assume the strongest model in production (cost, latency, fallback), and
+  even strong models have a bad-day tail. The gate makes that tail exactly zero.
+- **Cleanliness also climbs with capability** (the intent-only arm goes from 2%
+  to 100% "clean" as duplicate-send waste vanishes), and **STJP keeps its ~4×
+  cost edge at every tier** (7 vs 28 calls on escrow).
+
+The one piece still genuinely pending is a **non-Claude vendor** point (to kill
+the "one vendor family" worry) — that needs an external model this environment
+can't reach, and is left honestly unrun rather than invented. Full tables:
+[`E3_CAPABILITY_SWEEP.md`](../experiments/reports/n100/E3_CAPABILITY_SWEEP.md),
+with machine-readable data in
+[`e3/opus_revenue.json`](../experiments/reports/n100/e3/opus_revenue.json) and
+[`e3/sonnet_escrow.json`](../experiments/reports/n100/e3/sonnet_escrow.json).
 
 ---
 
