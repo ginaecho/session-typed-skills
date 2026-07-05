@@ -123,11 +123,14 @@ Confirms the shape: global-text grows ~quadratically, STJP grows ~linearly.
 - 100/100 deadlocked (0% success)
 - All deadlocked in round 2 (structural: Buyer waits for DeliverGoods, Seller
   waits for Payment)
-- Total agent calls: 1600 (4 roles × 4 max_rounds × 100 trials)
+- Total agent calls: 800 (4 roles × 2 rounds-to-deadlock × 100 trials)
 
 **STJP arm (validated contract + gate + scheduler):**
 - 100/100 succeeded (100% success)
-- Average agent calls per trial: 7.0 (optimal for a 7-message protocol)
+- Average agent calls per trial: 7.0 (optimal for a 7-message protocol) — the
+  scheduler polls ONLY the enabled sender, so STJP spends *fewer* calls (700)
+  than the failing unchecked arm (800) while it is the one that actually
+  finishes
 - Gate rejections: 0 (contract-followers never send off-protocol)
 - Monitor violations: 0
 - Critic findings: 0
@@ -135,6 +138,14 @@ Confirms the shape: global-text grows ~quadratically, STJP grows ~linearly.
 The STJP infrastructure (EFSM scheduler + structural gate + per-role monitor +
 cross-message Critic) works correctly at scale with zero false positives or
 missed violations.
+
+**Cost in dollars (estimate).** These trials were counted in calls (no token
+metering). Priced at ≈ **$0.00125 per lean haiku call** (~1k in + ~50 out at
+Haiku 4.5's $1/$5 per 1M): the STJP arm delivered all 100 settlements for
+**≈ $0.88** total (700 calls), versus **≈ $1.00** (800 calls) that the unchecked
+arm burned to deadlock 100/100 without finishing one — STJP is cheaper *and* the
+only one that succeeds. Full six-arm dollar breakdown and method:
+[`COST_ESTIMATE.md`](COST_ESTIMATE.md#per-arm-cost-to-goal-in-dollars-the--column-in-the-ladder-tables).
 
 ## Where the data lives
 
@@ -167,7 +178,7 @@ experiments/reports/n100/
    sequence policies or the E5 equivalence scorer would catch intent drift if
    the swap matters.
 
-3. **E7 only tested 59/100 protocols** �� the other 41 don't produce meaningful
+3. **E7 only tested 59/100 protocols** — the other 41 don't produce meaningful
    canonical traces (choice-only shapes with no linear prefix). The portability
    claim holds over all testable protocols.
 

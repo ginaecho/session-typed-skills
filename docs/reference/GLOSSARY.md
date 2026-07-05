@@ -85,8 +85,13 @@ graded by consequence (this answers the fair objection that "different ≠ wrong
   decide whether each message is allowed.
 - **Runtime monitor** — a small plain-Python program (not an AI agent) that sits
   beside each agent and checks every message against that agent's state machine.
+  It is the system's **active enforcer**, and it runs in one of two modes:
+  *observe* mode records a violation but lets the message through, while
+  *enforce* mode rejects a disallowed message before delivery. The same
+  component in both modes — there is no separate enforcer.
 - **The gate** — the monitor run in *enforcing* mode: it rejects a wrong message
-  before delivery instead of merely recording it.
+  before delivery instead of merely recording it. "Gate" is the engine-code name
+  for the monitor's enforce mode, not a second component.
 - **Choice guard** — a rule attached to a decision point saying which branch the
   data requires (e.g. "if revenue is over $50,000 you must take the audit
   branch"). Checked by the monitor against values it has already seen.
