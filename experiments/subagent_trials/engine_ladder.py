@@ -59,8 +59,48 @@ from stjp_core.critic.policies import parse_policy_text           # noqa: E402
 from stjp_core.critic.critic import run_runtime_critic            # noqa: E402
 from stjp_core.compiler.refinement_checker import (               # noqa: E402
     parse_refn_text, parse_session_ledger)
+from stjp_core.compiler.check_subtype import anticipable          # noqa: E402
 
 from cases import CASES, INTENT, ROLE_DESCRIPTIONS                # noqa: E402
+
+
+# ── Prototype 2: tolerant-gate anticipation over the engine's dict-EFSMs ──────
+
+def _efsm_view(state, role):
+    """Adapt the engine's JSON EFSM dump to the check_subtype EFSM interface."""
+    from stjp_core.compiler.efsm_parser import EFSM, Transition
+    d = state["efsms"][role]
+    e = EFSM(role=role, protocol_name=state.get("case", ""))
+    e.initial_state = d["initial"]
+    e.accepting_states = set(d["accepting"])
+    for (src, dr, peer, label, ty, tgt) in d["transitions"]:
+        e.transitions.append(Transition(source=src, target=tgt, direction=dr,
+                                         peer=peer, label=label, payload_type=ty))
+        e.states.add(src); e.states.add(tgt)
+    return e
+
+
+def _anticipate_target(state, role, cur, to, label):
+    """If (to!label) is a safe anticipation at `cur`, return the send's target
+    state and the list of (peer,label) receives skipped to reach it; else None."""
+    efsm = _efsm_view(state, role)
+    if not anticipable(efsm, cur, to, label):
+        return None
+    # forward search over receives to the state where the send is enabled
+    from collections import deque
+    q = deque([(cur, [])])
+    seen = set()
+    while q:
+        st, skipped = q.popleft()
+        if st in seen:
+            continue
+        seen.add(st)
+        for t in state["efsms"][role]["transitions"]:
+            if t[0] == st and t[1] == "send" and t[2] == to and t[3] == label:
+                return t[5], skipped
+            if t[0] == st and t[1] == "receive":
+                q.append((t[5], skipped + [(t[2], t[3])]))
+    return None
 
 
 # ── Prototype 1: stateful-ledger helpers (budget_run / E8) ───────────────────
@@ -194,6 +234,7 @@ def cmd_init(args) -> int:
         "enforce": ARMS[args.arm]["enforce"],
         "schedule": ARMS[args.arm]["schedule"],
         "ledger_mode": getattr(args, "ledger", "off"),   # off | observe | gate (Prototype 1)
+        "tolerance": getattr(args, "tolerance", "off"),   # off | anticipate (Prototype 2)
         "refn_text": refn_text,
         "base_prompts": base_prompts,
         "roles": case["roles"],
@@ -333,6 +374,14 @@ def _parse_reply(raw):
 
 
 def _advance(state, trial, role, direction, peer, label):
+    # Prototype 2: if this role anticipated a send past this receive, the receive
+    # is a deferred obligation — consume it without moving the (already-advanced)
+    # cursor.
+    if direction == "receive":
+        deferred = trial.get("_deferred", {}).get(role)
+        if deferred and (peer, label) in deferred:
+            deferred.remove((peer, label))
+            return True
     cur = trial["role_states"][role]
     for t in state["efsms"][role]["transitions"]:
         if t[0] == cur and t[1] == direction and t[2] == peer and t[3] == label:
@@ -380,9 +429,31 @@ def cmd_submit(args) -> int:
                 ok = any(t[0] == cur and t[1] == "send" and t[2] == to and t[3] == label
                          for t in state["efsms"][role]["transitions"])
                 if not ok:
-                    trial["rejections"].append(
-                        {"round": state["round"], "role": role, "to": to,
-                         "label": label, "expected": _expected_at(state, role, cur)})
+                    # Prototype 2 tolerant gate: admit a SAFE anticipation (the
+                    # send is enabled on every branch reachable by completing the
+                    # pending receives). The skipped receives become deferred
+                    # obligations so the sender consumes them when they arrive.
+                    anticipated = None
+                    if state.get("tolerance") == "anticipate":
+                        anticipated = _anticipate_target(state, role, cur, to, label)
+                    if anticipated is None:
+                        trial["rejections"].append(
+                            {"round": state["round"], "role": role, "to": to,
+                             "label": label, "expected": _expected_at(state, role, cur)})
+                        continue
+                    tgt, skipped = anticipated
+                    trial["role_states"][role] = tgt
+                    trial.setdefault("_deferred", {}).setdefault(role, [])
+                    trial["_deferred"][role].extend(skipped)
+                    trial.setdefault("anticipations", []).append(
+                        {"round": state["round"], "role": role, "to": to, "label": label})
+                    # deliver the anticipated send (advance the receiver too)
+                    _advance(state, trial, to, "receive", role, label)
+                    trial["trace"].append(
+                        {"round": state["round"], "sender": role, "receiver": to,
+                         "label": label, "payload": str(action.get("payload", ""))[:80],
+                         "delivered": True, "anticipated": True})
+                    delivered += 1
                     continue
                 # per-message payload guard (the shipped per-request limit) —
                 # part of every E8 arm; applies in enforce arms.
@@ -551,6 +622,8 @@ def main() -> int:
     p.add_argument("--dir", required=True)
     p.add_argument("--ledger", choices=["off", "observe", "gate"], default="off",
                    help="Prototype 1 stateful-invariant mode (E8)")
+    p.add_argument("--tolerance", choices=["off", "anticipate"], default="off",
+                   help="Prototype 2 tolerant-gate anticipation (E9)")
     p = sub.add_parser("next"); p.add_argument("--dir", required=True)
     p = sub.add_parser("submit")
     p.add_argument("--dir", required=True)
