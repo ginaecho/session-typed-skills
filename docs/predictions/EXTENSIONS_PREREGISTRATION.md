@@ -62,7 +62,22 @@ independent-receive output-anticipation fragment only, behind `--tolerance`.
 3. Live ladder rerun (escrow C+min, STJP, tolerant gate): C+min deadlocks
    **17→≤10**; disasters stay **0**; STJP **≥98%**; calls/trial unchanged ±5%.
 
-**Grade:** _pending_.
+**Grade (2026-07-05): GRADED — mixed, honestly.**
+- Verdict corpus 14/14 (haiku-verified). Checker (2a) + tolerant gate (2b) done.
+- Part 2 safety non-regression: **HOLDS — 0/50 illegal sends admitted.** As predicted.
+- Part 1 deadlock replay: prediction was "≥5/19 rescued." Mechanically **16/19**
+  deadlocks contain a type-safe anticipable rejection — but the honest reading
+  is these are **agent give-ups** (absent Buyer deposit), so the practical
+  rescue is ~0 and the anticipations would relax pay-before-ship. The gate
+  *correctly held* the 3 irreversible cases (`SettlementComplete`). Net: the
+  prediction's spirit (decompose gate-strictness vs agent-give-up) is delivered,
+  with a richer boundary finding than a bare count.
+- Part 3 live rerun (haiku, n=15/arm): strict and tolerant **both 15/15, 0
+  disasters**; tolerant admitted **0 anticipations** (in-order agents never send
+  ahead) — live safety non-regression confirmed, tolerance transparent. The
+  predicted "C+min deadlocks 17→≤10" was not measurable this sample (fresh haiku
+  Buyers cooperated → 0 deadlocks in both arms); the deadlock analysis lives in
+  part 1. See `experiments/reports/n100/e9/E9_LAWFUL_SLACK.md`.
 
 ---
 

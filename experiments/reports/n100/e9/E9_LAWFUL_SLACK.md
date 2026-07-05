@@ -74,7 +74,38 @@ precise boundary, and STJP's safety-critical steps sit outside it.**
 
 ## E9 part 3 — live tolerant-gate rerun (haiku roles, n=15/arm)
 
-<!-- LIVE_RESULTS -->
+Escrow `min_gate` driven by haiku subagents, strict gate vs tolerant gate, every
+trial verified from `state.json` (`malformed=0`):
+
+| arm | success | deadlocks | disasters | anticipations admitted |
+|---|---|---|---|---|
+| strict gate (`--tolerance off`) | 15/15 | 0 | **0** | — |
+| tolerant gate (`--tolerance anticipate`) | 15/15 | 0 | **0** | **0** |
+
+**The tolerant gate is transparent and safe.** With agents acting in contract
+order, every send is *strictly* legal when made, so the tolerant gate never
+needs to admit an anticipation — outcomes are identical to strict (15/15, 0
+disasters), confirming **live safety non-regression**: turning tolerance on
+costs nothing and changes nothing under normal play. The anticipation
+*mechanism* is exercised where it actually applies:
+
+- **Engine smoke:** a Carrier polled ahead-of-turn *anticipates* `DeliverGoods`
+  before receiving `ShipGoods`; the tolerant gate admits it (safe on all
+  branches), the deferred receive is consumed when it arrives, and the session
+  reaches goal with **0 disasters**.
+- **Deterministic replay (part 1):** 16/19 rejected sends are anticipable, and
+  the mandatory illegal-send control admits **0/50** — the fragment widens
+  acceptance only to safe reorderings, never to illegal sends.
+
+*Honest note:* an earlier tolerant run deadlocked 15/15 — but that was a **driver
+bug** (the subagent misread the "Allowed action(s)" line and made every role
+wait), reproducing the agent-give-up mode with **0 anticipations and 0
+disasters**. It is reported here for transparency (verified from `state.json`),
+not as a tolerance result; the rerun above with a corrected driver is the clean
+comparison. This also empirically re-confirms the part-1 finding: tolerance does
+not rescue agent-give-up deadlocks (no send is even attempted to anticipate).
+
+Data: `experiments/reports/n100/e9/e9_live_summary.json`.
 
 ## Paper insertion
 
