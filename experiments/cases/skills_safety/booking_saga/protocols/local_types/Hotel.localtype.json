@@ -1,0 +1,35 @@
+{
+  "role": "Hotel",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Traveler",
+      "label": "RequestBooking",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Payment",
+      "label": "RoomHeld",
+      "payload": "String"
+    },
+    {
+      "kind": "recv",
+      "peer": "Payment",
+      "label": "PaymentCaptured",
+      "payload": "Double"
+    },
+    {
+      "kind": "send",
+      "peer": "Traveler",
+      "label": "BookingConfirmed",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\booking_saga\\skills_revised\\Hotel.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

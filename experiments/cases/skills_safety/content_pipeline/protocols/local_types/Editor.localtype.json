@@ -1,0 +1,29 @@
+{
+  "role": "Editor",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Writer",
+      "label": "SubmitDraft",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Publisher",
+      "label": "Approve",
+      "payload": "String"
+    },
+    {
+      "kind": "recv",
+      "peer": "Publisher",
+      "label": "Published",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\content_pipeline\\skills_revised\\Editor.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

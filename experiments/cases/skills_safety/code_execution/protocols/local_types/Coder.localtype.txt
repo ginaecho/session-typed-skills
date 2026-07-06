@@ -1,0 +1,4 @@
+local protocol Protocol at Coder {
+    Reviewer!SubmitCode(String);
+    Executor?ResultReturned(String);
+}

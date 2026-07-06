@@ -60,6 +60,44 @@ _EDGE_RE = re.compile(
 # Regex for node declarations: "10" [ label="10: " ];
 _NODE_RE = re.compile(r'"(\d+)"\s*\[')
 
+# nuscr (--fsm) emits the SAME edge-label convention ("Peer!Label(Type)" /
+# "Peer?Label(Type)") but with UNQUOTED node ids and a trailing comma inside
+# the bracket, e.g.:  0 -> 1 [label="Seller!Order(String)", ];
+# and bare node declarations like:  0;
+_NUSCR_EDGE_RE = re.compile(
+    r'(\d+)\s*->\s*(\d+)\s*\[\s*label="(\w+)([!?])(\w+)\(([^)]*)\)"\s*,?\s*\]'
+)
+_NUSCR_NODE_RE = re.compile(r'^\s*(\d+)\s*;\s*$', re.MULTILINE)
+
+
+def parse_nuscr_fsm_dot(dot_text: str, role: str, protocol_name: str = "") -> EFSM:
+    """Parse nuscr's ``--fsm`` Graphviz dot output into an EFSM.
+
+    Same shape as :func:`parse_fsm_dot` but tolerant of nuscr's unquoted node
+    ids and trailing comma in edge attribute lists.
+    """
+    efsm = EFSM(role=role, protocol_name=protocol_name)
+
+    for m in _NUSCR_NODE_RE.finditer(dot_text):
+        efsm.states.add(m.group(1))
+
+    sources: set[str] = set()
+    for m in _NUSCR_EDGE_RE.finditer(dot_text):
+        src, tgt, peer, direction_char, label, payload = m.groups()
+        direction = "send" if direction_char == "!" else "receive"
+        efsm.transitions.append(Transition(
+            source=src, target=tgt, direction=direction,
+            peer=peer, label=label, payload_type=payload.strip(),
+        ))
+        efsm.states.add(src)
+        efsm.states.add(tgt)
+        sources.add(src)
+
+    if sources:
+        efsm.initial_state = min(sources, key=int)
+    efsm.accepting_states = efsm.states - sources
+    return efsm
+
 
 def parse_fsm_dot(dot_text: str, role: str, protocol_name: str = "") -> EFSM:
     """Parse Scribble's Graphviz dot output into an EFSM."""

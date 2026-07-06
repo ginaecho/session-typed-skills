@@ -1,0 +1,4 @@
+local protocol Protocol at Traveler {
+    Hotel!RequestBooking(String);
+    Hotel?BookingConfirmed(String);
+}

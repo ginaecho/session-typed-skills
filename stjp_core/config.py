@@ -23,3 +23,25 @@ SCRIBBLE_PATH = REPO_ROOT / "scribble-java" / "scribble-dist" / "target"
 # Java for running the Scribble compiler. Honour a real JAVA_HOME from the
 # environment if set; otherwise fall back to a JDK present on this machine.
 JAVA_HOME = os.environ.get("JAVA_HOME") or r"C:\Program Files\Java\jdk-17.0.18"
+
+# ---------------------------------------------------------------------------
+# Protocol compiler backend selection
+# ---------------------------------------------------------------------------
+# STJP can drive two protocol compilers behind a common interface
+# (compiler/compiler_iface.py):
+#   - "scribble" (default): the vendored scribble-java (org.scribble.cli).
+#   - "nuscr": the coinductive nuscr fork (phou/nuscr_coinduction), invoked via
+#     Docker. nuscr is NOT Scribble-compatible and supports only a fragment of
+#     the protocols scribble-java accepts, but it can COINDUCTIVELY project some
+#     recursive protocols that stock projection rejects.
+COMPILER_BACKEND = os.environ.get("STJP_COMPILER_BACKEND", "scribble")
+
+# nuscr (coinductive fork) — vendored checkout + Docker image built from
+# tools/nuscr/Dockerfile. See docs/reference/NUSCR_AND_SKILL_SAFETY_PLAN.md.
+NUSCR_DIR = REPO_ROOT / "nuscr-coinduction"
+NUSCR_DOCKER_IMAGE = os.environ.get("STJP_NUSCR_IMAGE", "nuscr-coind:latest")
+# Projection mode: "inductive-full" (default nuscr), "coinductive-full"
+# (knowledge-set coinductive projection with full receive merge), or
+# "coinductive-plain". Coinductive modes project recursive receive-merges that
+# the inductive mode leaves as a bare rec.
+NUSCR_PROJECTION_MODE = os.environ.get("STJP_NUSCR_MODE", "coinductive-full")

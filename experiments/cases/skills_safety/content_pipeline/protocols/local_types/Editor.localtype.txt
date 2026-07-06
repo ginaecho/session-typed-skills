@@ -1,0 +1,5 @@
+local protocol Protocol at Editor {
+    Writer?SubmitDraft(String);
+    Publisher!Approve(String);
+    Publisher?Published(String);
+}

@@ -1,0 +1,3 @@
+local protocol Protocol at Researcher {
+    Writer!ResearchBrief(String);
+}

@@ -1,0 +1,3 @@
+local protocol Protocol at Triage {
+    SeatBooking!AssignFlight(String);
+}

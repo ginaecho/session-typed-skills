@@ -1,0 +1,23 @@
+{
+  "role": "Traveler",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "send",
+      "peer": "Hotel",
+      "label": "RequestBooking",
+      "payload": "String"
+    },
+    {
+      "kind": "recv",
+      "peer": "Hotel",
+      "label": "BookingConfirmed",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\booking_saga\\skills_revised\\Traveler.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

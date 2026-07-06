@@ -1,6 +1,18 @@
 # Implementation Plan — nuscr backend + "unsafe skills" demo
 
-Date: 2026-07-06. Status: proposed (not yet started).
+Date: 2026-07-06. Status: in progress.
+
+> Progress (2026-07-06): Phase 1.1–1.4 DONE. nuscr coinductive fork builds as
+> Docker image `nuscr-coind:latest`; `stjp_core/compiler/` now has a
+> `ProtocolCompiler` interface (`compiler_iface.py`) with `get_compiler()`
+> selecting `scribble` (default) or `nuscr`, a `.scr`→`.nuscr` adapter
+> (`nuscr_syntax.py`), a Docker-backed `NuscrCompiler` (`nuscr_compiler.py`), and
+> a nuscr FSM-DOT parser (`efsm_parser.parse_nuscr_fsm_dot`). Tests in
+> `tests/test_nuscr_backend.py` pass, including Docker-backed validate/project and
+> **coinductive projection** of a recursive protocol. Finding: nuscr supports only
+> a *fragment* — the finance protocol is rejected ("Non tail-recursive protocol not
+> implemented"), so the harness default stays `scribble` (Phase 1.5). Skills-safety
+> Phase 2.1–2.2 DONE (5 cases with before-evidence).
 
 This plan covers two deliverables the user asked for:
 

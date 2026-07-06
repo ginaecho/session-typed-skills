@@ -1,0 +1,23 @@
+{
+  "role": "Writer",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Researcher",
+      "label": "ResearchBrief",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Editor",
+      "label": "SubmitDraft",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\content_pipeline\\skills_revised\\Writer.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

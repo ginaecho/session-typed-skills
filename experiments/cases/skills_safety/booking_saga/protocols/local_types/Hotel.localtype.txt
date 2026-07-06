@@ -1,0 +1,6 @@
+local protocol Protocol at Hotel {
+    Traveler?RequestBooking(String);
+    Payment!RoomHeld(String);
+    Payment?PaymentCaptured(Double);
+    Traveler!BookingConfirmed(String);
+}

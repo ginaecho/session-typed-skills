@@ -1,0 +1,23 @@
+{
+  "role": "Coder",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "send",
+      "peer": "Reviewer",
+      "label": "SubmitCode",
+      "payload": "String"
+    },
+    {
+      "kind": "recv",
+      "peer": "Executor",
+      "label": "ResultReturned",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\code_execution\\skills_revised\\Coder.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

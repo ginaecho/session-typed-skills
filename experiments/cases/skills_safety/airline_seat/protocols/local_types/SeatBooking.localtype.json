@@ -1,0 +1,29 @@
+{
+  "role": "SeatBooking",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Triage",
+      "label": "AssignFlight",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "FlightSystem",
+      "label": "UpdateSeat",
+      "payload": "String"
+    },
+    {
+      "kind": "recv",
+      "peer": "FlightSystem",
+      "label": "SeatConfirmed",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\airline_seat\\skills_revised\\SeatBooking.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}

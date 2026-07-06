@@ -1,0 +1,5 @@
+local protocol Protocol at SeatBooking {
+    Triage?AssignFlight(String);
+    FlightSystem!UpdateSeat(String);
+    FlightSystem?SeatConfirmed(String);
+}

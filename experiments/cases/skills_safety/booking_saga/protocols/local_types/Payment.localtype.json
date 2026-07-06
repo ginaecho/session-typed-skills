@@ -1,0 +1,23 @@
+{
+  "role": "Payment",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Hotel",
+      "label": "RoomHeld",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Hotel",
+      "label": "PaymentCaptured",
+      "payload": "Double"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\booking_saga\\skills_revised\\Payment.md",
+  "confidence": "high",
+  "notes": [
+    "compacted from fenced localtype block"
+  ]
+}
