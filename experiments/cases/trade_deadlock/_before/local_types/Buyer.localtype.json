@@ -1,0 +1,23 @@
+{
+  "role": "Buyer",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Seller",
+      "label": "DeliverGoods",
+      "payload": ""
+    },
+    {
+      "kind": "send",
+      "peer": "Seller",
+      "label": "Payment",
+      "payload": "Double"
+    }
+  ],
+  "source_file": "experiments\\cases\\trade_deadlock\\unchecked_skills\\Buyer.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

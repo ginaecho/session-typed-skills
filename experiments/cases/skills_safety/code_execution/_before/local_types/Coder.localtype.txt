@@ -1,0 +1,3 @@
+local protocol Protocol at Coder {
+    Executor!SubmitCode(String);
+}

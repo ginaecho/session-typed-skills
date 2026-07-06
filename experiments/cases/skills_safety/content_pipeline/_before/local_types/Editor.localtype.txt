@@ -1,0 +1,9 @@
+local protocol Protocol at Editor {
+    Writer?Draft(String);
+    Writer!Feedback(String);
+    choice {
+        Publisher!Approve();
+    } or {
+        Writer?UpdatedDraft(String);
+    }
+}

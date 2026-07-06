@@ -1,0 +1,4 @@
+local protocol Protocol at Escrow {
+    Buyer?Payment();
+    Buyer!SettlementComplete();
+}

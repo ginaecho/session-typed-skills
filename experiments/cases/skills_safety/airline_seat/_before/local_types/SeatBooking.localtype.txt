@@ -1,0 +1,12 @@
+local protocol Protocol at SeatBooking {
+    Customer!RequestConfirmationNumber();
+    Customer?ProvideConfirmationNumber(String);
+    Customer!RequestSeatNumber();
+    Customer?ProvideSeatNumber(String);
+    FlightSystem!UpdateSeat(String);
+    choice {
+        Customer?UnrelatedQuestion(String);
+        Triage!Transfer(String);
+    } or {
+    }
+}

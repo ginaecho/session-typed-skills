@@ -1,0 +1,23 @@
+{
+  "role": "Reviewer",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Coder",
+      "label": "SubmitCode",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Executor",
+      "label": "Approve",
+      "payload": "Bool"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\code_execution\\skills_original\\Reviewer.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

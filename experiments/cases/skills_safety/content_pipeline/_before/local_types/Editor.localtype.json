@@ -1,0 +1,44 @@
+{
+  "role": "Editor",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Writer",
+      "label": "Draft",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Writer",
+      "label": "Feedback",
+      "payload": "String"
+    },
+    {
+      "kind": "choice",
+      "branches": [
+        [
+          {
+            "kind": "send",
+            "peer": "Publisher",
+            "label": "Approve",
+            "payload": ""
+          }
+        ],
+        [
+          {
+            "kind": "recv",
+            "peer": "Writer",
+            "label": "UpdatedDraft",
+            "payload": "String"
+          }
+        ]
+      ]
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\content_pipeline\\skills_original\\Editor.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

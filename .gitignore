@@ -11,6 +11,9 @@
 # scribble-java (full Java compiler - not project code)
 scribble-java/
 
+# nuscr coinductive fork (vendored OCaml toolchain - built via Docker, not project code)
+nuscr-coinduction/
+
 # Runtime-generated experiment outputs
 experiments/logs/
 experiments/cases/*/runs/

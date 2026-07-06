@@ -1,0 +1,47 @@
+[trace] OpenAI instrumentation not wired: No module named 'opentelemetry.instrumentation.openai_v2'
+[trace] tracing enabled -> IngestionEndpoint=https://germanywestcentral-1.in.applicationinsights.azure.com/
+[compactor] 4 local type(s): Editor, Publisher, Researcher, Writer
+
+local protocol Protocol at Editor {
+    Writer?Draft(String);
+    Writer!Feedback(String);
+    choice {
+        Publisher!Approve();
+    } or {
+        Writer?UpdatedDraft(String);
+    }
+}
+
+local protocol Protocol at Publisher {
+    CrewAI?Article(String);
+    CrewAI!Published();
+}
+
+local protocol Protocol at Researcher {
+    Writer!ResearchBrief(String);
+}
+
+local protocol Protocol at Writer {
+    Researcher?Brief(String);
+    Publisher!SubmitDraft(String);
+}
+[compat] [ERROR] Publisher receives from unknown role 'CrewAI' (label Article) ù no skill/local type provided for that role
+[compat] [ERROR] Publisher sends to unknown role 'CrewAI' (label Published) ù no skill/local type provided for that role
+[compat] [ERROR] Editor sends Feedback(String) to Writer, but Writer's local type never receives Feedback from Editor
+[compat] [ERROR] Editor sends Approve() to Publisher, but Publisher's local type never receives Approve from Editor
+[compat] [ERROR] Researcher sends ResearchBrief(String) to Writer, but Writer's local type never receives ResearchBrief from Researcher
+[compat] [ERROR] Writer sends SubmitDraft(String) to Publisher, but Publisher's local type never receives SubmitDraft from Writer
+[compat] [ERROR] Editor waits to receive Draft from Writer, but Writer's local type never sends it ù Editor would wait forever
+[compat] [ERROR] Editor waits to receive UpdatedDraft from Writer, but Writer's local type never sends it ù Editor would wait forever
+[compat] [ERROR] Writer waits to receive Brief from Researcher, but Researcher's local type never sends it ù Writer would wait forever
+
+[compactor] FAILED: local types are not multiparty-compatible:
+  Publisher receives from unknown role 'CrewAI' (label Article) ù no skill/local type provided for that role
+  Publisher sends to unknown role 'CrewAI' (label Published) ù no skill/local type provided for that role
+  Editor sends Feedback(String) to Writer, but Writer's local type never receives Feedback from Editor
+  Editor sends Approve() to Publisher, but Publisher's local type never receives Approve from Editor
+  Researcher sends ResearchBrief(String) to Writer, but Writer's local type never receives ResearchBrief from Researcher
+  Writer sends SubmitDraft(String) to Publisher, but Publisher's local type never receives SubmitDraft from Writer
+  Editor waits to receive Draft from Writer, but Writer's local type never sends it ù Editor would wait forever
+  Editor waits to receive UpdatedDraft from Writer, but Writer's local type never sends it ù Editor would wait forever
+  Writer waits to receive Brief from Researcher, but Researcher's local type never sends it ù Writer would wait forever

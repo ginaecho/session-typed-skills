@@ -1,0 +1,4 @@
+local protocol Protocol at Publisher {
+    CrewAI?Article(String);
+    CrewAI!Published();
+}

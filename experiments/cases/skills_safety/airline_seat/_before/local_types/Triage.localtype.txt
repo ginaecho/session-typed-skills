@@ -1,0 +1,4 @@
+local protocol Protocol at Triage {
+    Customer?RequestChangeSeat();
+    SeatBooking!AssignFlight(String);
+}

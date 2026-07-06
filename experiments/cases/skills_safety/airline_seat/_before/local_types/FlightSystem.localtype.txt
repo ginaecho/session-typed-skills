@@ -1,0 +1,4 @@
+local protocol Protocol at FlightSystem {
+    SeatBooking?UpdateSeat(String);
+    SeatBooking!SeatConfirmed();
+}

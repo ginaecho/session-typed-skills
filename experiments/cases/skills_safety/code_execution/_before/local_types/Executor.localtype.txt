@@ -1,0 +1,4 @@
+local protocol Protocol at Executor {
+    Coder?CodeReceived(String);
+    Coder!ResultReturned(String);
+}

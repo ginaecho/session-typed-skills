@@ -1,0 +1,4 @@
+local protocol Protocol at Payment {
+    Hotel?RoomHeld(Bool);
+    Hotel!PaymentCaptured();
+}

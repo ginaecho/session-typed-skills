@@ -1,0 +1,17 @@
+{
+  "role": "Coder",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "send",
+      "peer": "Executor",
+      "label": "SubmitCode",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\code_execution\\skills_original\\Coder.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

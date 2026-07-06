@@ -57,7 +57,8 @@ CASES_ROOT = REPO_ROOT / "experiments" / "cases"
 def check_azure_config():
     """Check if Azure OpenAI is configured in .env"""
     from dotenv import load_dotenv
-    env_path = Path(__file__).parent / ".env"
+    # Canonical .env lives at stjp_core/.env (this file is stjp_core/apps/).
+    env_path = Path(__file__).parent.parent / ".env"
     load_dotenv(env_path)
     
     if not os.environ.get("AZURE_OPENAI_ENDPOINT"):

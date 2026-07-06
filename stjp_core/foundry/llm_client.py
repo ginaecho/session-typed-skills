@@ -24,8 +24,8 @@ from dotenv import load_dotenv
 from openai import AzureOpenAI
 from stjp_core.foundry.az_credential import AzCliCredential, make_token_provider
 
-# Load .env file from the same directory as this script
-env_path = Path(__file__).parent / ".env"
+# Canonical .env lives at stjp_core/.env (this file is stjp_core/foundry/).
+env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(env_path)
 
 # Get Azure OpenAI config from .env

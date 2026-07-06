@@ -9,7 +9,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).parent / ".env")
+# Canonical .env lives at stjp_core/.env (this file is stjp_core/foundry/).
+load_dotenv(Path(__file__).parent.parent / ".env")
 from stjp_core.foundry.az_credential import AzCliCredential
 
 

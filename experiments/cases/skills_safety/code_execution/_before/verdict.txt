@@ -1,0 +1,29 @@
+[trace] OpenAI instrumentation not wired: No module named 'opentelemetry.instrumentation.openai_v2'
+[trace] tracing enabled -> IngestionEndpoint=https://germanywestcentral-1.in.applicationinsights.azure.com/
+[compactor] 3 local type(s): Coder, Executor, Reviewer
+
+local protocol Protocol at Coder {
+    Executor!SubmitCode(String);
+}
+
+local protocol Protocol at Executor {
+    Coder?CodeReceived(String);
+    Coder!ResultReturned(String);
+}
+
+local protocol Protocol at Reviewer {
+    Coder?SubmitCode(String);
+    Executor!Approve(Bool);
+}
+[compat] [ERROR] Coder sends SubmitCode(String) to Executor, but Executor's local type never receives SubmitCode from Coder
+[compat] [ERROR] Executor sends ResultReturned(String) to Coder, but Coder's local type never receives ResultReturned from Executor
+[compat] [ERROR] Reviewer sends Approve(Bool) to Executor, but Executor's local type never receives Approve from Reviewer
+[compat] [ERROR] Executor waits to receive CodeReceived from Coder, but Coder's local type never sends it ù Executor would wait forever
+[compat] [ERROR] Reviewer waits to receive SubmitCode from Coder, but Coder's local type never sends it ù Reviewer would wait forever
+
+[compactor] FAILED: local types are not multiparty-compatible:
+  Coder sends SubmitCode(String) to Executor, but Executor's local type never receives SubmitCode from Coder
+  Executor sends ResultReturned(String) to Coder, but Coder's local type never receives ResultReturned from Executor
+  Reviewer sends Approve(Bool) to Executor, but Executor's local type never receives Approve from Reviewer
+  Executor waits to receive CodeReceived from Coder, but Coder's local type never sends it ù Executor would wait forever
+  Reviewer waits to receive SubmitCode from Coder, but Coder's local type never sends it ù Reviewer would wait forever

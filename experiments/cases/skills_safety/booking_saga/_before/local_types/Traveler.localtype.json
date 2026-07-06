@@ -1,0 +1,23 @@
+{
+  "role": "Traveler",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "send",
+      "peer": "Hotel",
+      "label": "RequestBooking",
+      "payload": ""
+    },
+    {
+      "kind": "recv",
+      "peer": "Hotel",
+      "label": "FinalBookingConfirmation",
+      "payload": ""
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\booking_saga\\skills_original\\Traveler.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

@@ -1,0 +1,4 @@
+local protocol Protocol at Writer {
+    Researcher?Brief(String);
+    Publisher!SubmitDraft(String);
+}

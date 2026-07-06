@@ -1,0 +1,62 @@
+{
+  "role": "SeatBooking",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "send",
+      "peer": "Customer",
+      "label": "RequestConfirmationNumber",
+      "payload": ""
+    },
+    {
+      "kind": "recv",
+      "peer": "Customer",
+      "label": "ProvideConfirmationNumber",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Customer",
+      "label": "RequestSeatNumber",
+      "payload": ""
+    },
+    {
+      "kind": "recv",
+      "peer": "Customer",
+      "label": "ProvideSeatNumber",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "FlightSystem",
+      "label": "UpdateSeat",
+      "payload": "String"
+    },
+    {
+      "kind": "choice",
+      "branches": [
+        [
+          {
+            "kind": "recv",
+            "peer": "Customer",
+            "label": "UnrelatedQuestion",
+            "payload": "String"
+          },
+          {
+            "kind": "send",
+            "peer": "Triage",
+            "label": "Transfer",
+            "payload": "String"
+          }
+        ],
+        []
+      ]
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\airline_seat\\skills_original\\SeatBooking.md",
+  "confidence": "high",
+  "notes": [
+    "The routine specifies the flow clearly, including branching for unrelated questions.",
+    "compacted by LLM"
+  ]
+}

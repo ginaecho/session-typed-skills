@@ -1,0 +1,23 @@
+{
+  "role": "Publisher",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "CrewAI",
+      "label": "Article",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "CrewAI",
+      "label": "Published",
+      "payload": ""
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\content_pipeline\\skills_original\\Publisher.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

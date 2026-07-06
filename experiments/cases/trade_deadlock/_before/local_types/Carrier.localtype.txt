@@ -1,0 +1,4 @@
+local protocol Protocol at Carrier {
+    Seller?ShipGoods();
+    Buyer!DeliverGoods();
+}

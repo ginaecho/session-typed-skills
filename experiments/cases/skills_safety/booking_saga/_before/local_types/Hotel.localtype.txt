@@ -1,0 +1,4 @@
+local protocol Protocol at Hotel {
+    Payment?PaymentCaptured();
+    Traveler!BookingConfirmed();
+}

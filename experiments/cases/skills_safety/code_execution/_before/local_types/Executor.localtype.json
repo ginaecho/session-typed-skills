@@ -1,0 +1,23 @@
+{
+  "role": "Executor",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Coder",
+      "label": "CodeReceived",
+      "payload": "String"
+    },
+    {
+      "kind": "send",
+      "peer": "Coder",
+      "label": "ResultReturned",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\code_execution\\skills_original\\Executor.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

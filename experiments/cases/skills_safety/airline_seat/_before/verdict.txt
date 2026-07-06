@@ -1,0 +1,46 @@
+[trace] OpenAI instrumentation not wired: No module named 'opentelemetry.instrumentation.openai_v2'
+[trace] tracing enabled -> IngestionEndpoint=https://germanywestcentral-1.in.applicationinsights.azure.com/
+[compactor] 3 local type(s): FlightSystem, SeatBooking, Triage
+
+local protocol Protocol at FlightSystem {
+    SeatBooking?UpdateSeat(String);
+    SeatBooking!SeatConfirmed();
+}
+
+local protocol Protocol at SeatBooking {
+    Customer!RequestConfirmationNumber();
+    Customer?ProvideConfirmationNumber(String);
+    Customer!RequestSeatNumber();
+    Customer?ProvideSeatNumber(String);
+    FlightSystem!UpdateSeat(String);
+    choice {
+        Customer?UnrelatedQuestion(String);
+        Triage!Transfer(String);
+    } or {
+    }
+}
+
+local protocol Protocol at Triage {
+    Customer?RequestChangeSeat();
+    SeatBooking!AssignFlight(String);
+}
+[compat] [ERROR] SeatBooking sends to unknown role 'Customer' (label RequestConfirmationNumber) ù no skill/local type provided for that role
+[compat] [ERROR] SeatBooking receives from unknown role 'Customer' (label ProvideConfirmationNumber) ù no skill/local type provided for that role
+[compat] [ERROR] SeatBooking sends to unknown role 'Customer' (label RequestSeatNumber) ù no skill/local type provided for that role
+[compat] [ERROR] SeatBooking receives from unknown role 'Customer' (label ProvideSeatNumber) ù no skill/local type provided for that role
+[compat] [ERROR] SeatBooking receives from unknown role 'Customer' (label UnrelatedQuestion) ù no skill/local type provided for that role
+[compat] [ERROR] Triage receives from unknown role 'Customer' (label RequestChangeSeat) ù no skill/local type provided for that role
+[compat] [ERROR] FlightSystem sends SeatConfirmed() to SeatBooking, but SeatBooking's local type never receives SeatConfirmed from FlightSystem
+[compat] [ERROR] SeatBooking sends Transfer(String) to Triage, but Triage's local type never receives Transfer from SeatBooking
+[compat] [ERROR] Triage sends AssignFlight(String) to SeatBooking, but SeatBooking's local type never receives AssignFlight from Triage
+
+[compactor] FAILED: local types are not multiparty-compatible:
+  SeatBooking sends to unknown role 'Customer' (label RequestConfirmationNumber) ù no skill/local type provided for that role
+  SeatBooking receives from unknown role 'Customer' (label ProvideConfirmationNumber) ù no skill/local type provided for that role
+  SeatBooking sends to unknown role 'Customer' (label RequestSeatNumber) ù no skill/local type provided for that role
+  SeatBooking receives from unknown role 'Customer' (label ProvideSeatNumber) ù no skill/local type provided for that role
+  SeatBooking receives from unknown role 'Customer' (label UnrelatedQuestion) ù no skill/local type provided for that role
+  Triage receives from unknown role 'Customer' (label RequestChangeSeat) ù no skill/local type provided for that role
+  FlightSystem sends SeatConfirmed() to SeatBooking, but SeatBooking's local type never receives SeatConfirmed from FlightSystem
+  SeatBooking sends Transfer(String) to Triage, but Triage's local type never receives Transfer from SeatBooking
+  Triage sends AssignFlight(String) to SeatBooking, but SeatBooking's local type never receives AssignFlight from Triage

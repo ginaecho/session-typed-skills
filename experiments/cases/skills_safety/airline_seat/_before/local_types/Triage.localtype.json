@@ -1,0 +1,23 @@
+{
+  "role": "Triage",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Customer",
+      "label": "RequestChangeSeat",
+      "payload": ""
+    },
+    {
+      "kind": "send",
+      "peer": "SeatBooking",
+      "label": "AssignFlight",
+      "payload": "String"
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\airline_seat\\skills_original\\Triage.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

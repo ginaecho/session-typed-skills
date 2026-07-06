@@ -1,0 +1,23 @@
+{
+  "role": "Carrier",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Seller",
+      "label": "ShipGoods",
+      "payload": ""
+    },
+    {
+      "kind": "send",
+      "peer": "Buyer",
+      "label": "DeliverGoods",
+      "payload": ""
+    }
+  ],
+  "source_file": "experiments\\cases\\trade_deadlock\\unchecked_skills\\Carrier.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

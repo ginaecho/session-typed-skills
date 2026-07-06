@@ -1,0 +1,23 @@
+{
+  "role": "Payment",
+  "protocol_name": "Protocol",
+  "flow": [
+    {
+      "kind": "recv",
+      "peer": "Hotel",
+      "label": "RoomHeld",
+      "payload": "Bool"
+    },
+    {
+      "kind": "send",
+      "peer": "Hotel",
+      "label": "PaymentCaptured",
+      "payload": ""
+    }
+  ],
+  "source_file": "experiments\\cases\\skills_safety\\booking_saga\\skills_original\\Payment.md",
+  "confidence": "high",
+  "notes": [
+    "compacted by LLM"
+  ]
+}

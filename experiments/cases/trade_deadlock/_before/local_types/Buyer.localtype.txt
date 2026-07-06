@@ -1,0 +1,4 @@
+local protocol Protocol at Buyer {
+    Seller?DeliverGoods();
+    Seller!Payment(Double);
+}

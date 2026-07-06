@@ -1,0 +1,28 @@
+[trace] OpenAI instrumentation not wired: No module named 'opentelemetry.instrumentation.openai_v2'
+[trace] tracing enabled -> IngestionEndpoint=https://germanywestcentral-1.in.applicationinsights.azure.com/
+[compactor] 3 local type(s): Hotel, Payment, Traveler
+
+local protocol Protocol at Hotel {
+    Payment?PaymentCaptured();
+    Traveler!BookingConfirmed();
+}
+
+local protocol Protocol at Payment {
+    Hotel?RoomHeld(Bool);
+    Hotel!PaymentCaptured();
+}
+
+local protocol Protocol at Traveler {
+    Hotel!RequestBooking();
+    Hotel?FinalBookingConfirmation();
+}
+[compat] [ERROR] Hotel sends BookingConfirmed() to Traveler, but Traveler's local type never receives BookingConfirmed from Hotel
+[compat] [ERROR] Traveler sends RequestBooking() to Hotel, but Hotel's local type never receives RequestBooking from Traveler
+[compat] [ERROR] Payment waits to receive RoomHeld from Hotel, but Hotel's local type never sends it ù Payment would wait forever
+[compat] [ERROR] Traveler waits to receive FinalBookingConfirmation from Hotel, but Hotel's local type never sends it ù Traveler would wait forever
+
+[compactor] FAILED: local types are not multiparty-compatible:
+  Hotel sends BookingConfirmed() to Traveler, but Traveler's local type never receives BookingConfirmed from Hotel
+  Traveler sends RequestBooking() to Hotel, but Hotel's local type never receives RequestBooking from Traveler
+  Payment waits to receive RoomHeld from Hotel, but Hotel's local type never sends it ù Payment would wait forever
+  Traveler waits to receive FinalBookingConfirmation from Hotel, but Hotel's local type never sends it ù Traveler would wait forever
