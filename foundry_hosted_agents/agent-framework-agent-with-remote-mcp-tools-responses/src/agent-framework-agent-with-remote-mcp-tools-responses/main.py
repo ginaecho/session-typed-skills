@@ -29,26 +29,40 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # STJP-validated per-role instructions (booking_saga). Order enforced by the
 # validated global protocol: RequestBooking -> RoomHeld -> PaymentCaptured ->
-# BookingConfirmed. No role waits on a message the protocol never lets it reach.
+# BookingConfirmed. Each role EXECUTES its step and emits one concrete protocol
+# message carrying the details the next role needs, so the group trace shows a
+# real Traveler -> Hotel -> Payment -> Hotel(confirm) interaction (not three
+# independent clarifying replies).
 # ---------------------------------------------------------------------------
 TRAVELER = (
-    "You are the Traveler in a hotel booking. Start by requesting a booking "
-    "(state the stay you want). Then wait for the final booking confirmation "
-    "and acknowledge it. Keep messages short."
+    "You are the Traveler booking a hotel. Do NOT ask questions — if any detail "
+    "is missing, INVENT reasonable ones (hotel name, city, specific check-in and "
+    "check-out dates, and a max budget in USD). Output exactly one line:\n"
+    "  RequestBooking: <hotel>, <city>, <check-in>-<check-out>, budget $<amount>\n"
+    "Then stop."
 )
 HOTEL = (
-    "You are the Hotel reservation service. When the Traveler requests a "
-    "booking, FIRST hold the room and tell the Payment service the room is held "
-    "(RoomHeld). After Payment confirms the charge is captured, confirm the "
-    "booking back to the Traveler (BookingConfirmed). Never confirm before "
-    "payment is captured, and never ask Payment to charge before the room is "
-    "held. Keep messages short."
+    "You are the Hotel reservation service. You just received a RequestBooking "
+    "from the Traveler. HOLD the room first (never wait for payment). Carry the "
+    "same hotel/city/dates forward and set a concrete nightly price within budget. "
+    "Do NOT ask questions. Output exactly one line:\n"
+    "  RoomHeld: <hotel>, <city>, <check-in>-<check-out>, room <type>, total $<amount>"
+    " -> Payment please capture $<amount>\n"
+    "Then stop."
 )
 PAYMENT = (
-    "You are the Payment service. Capture the charge ONLY after the Hotel tells "
-    "you the room is held (RoomHeld), then report PaymentCaptured with the "
-    "amount back to the Hotel. Never charge for a room that was not held. Keep "
-    "messages short."
+    "You are the Payment service. You just received RoomHeld from the Hotel. "
+    "Because the room is already held, capture the exact amount stated. Do NOT ask "
+    "questions. Output exactly one line:\n"
+    "  PaymentCaptured: $<amount> for <hotel> <check-in>-<check-out>, txn <id>\n"
+    "Then stop."
+)
+CONFIRM = (
+    "You are the Hotel finalizing the booking. You just received PaymentCaptured. "
+    "Confirm the booking back to the Traveler, echoing hotel and dates. Do NOT ask "
+    "questions. Output exactly one line:\n"
+    "  BookingConfirmed: <hotel>, <check-in>-<check-out>, confirmation <code>\n"
+    "Then stop."
 )
 
 
@@ -60,19 +74,21 @@ def main():
     )
 
     traveler = Agent(client, TRAVELER, name="Traveler",
-                     description="Requests the booking and receives confirmation")
+                     description="Requests the booking with concrete details")
     hotel = Agent(client, HOTEL, name="Hotel",
-                  description="Holds and confirms the room")
+                  description="Holds the room and asks Payment to capture")
     payment = Agent(client, PAYMENT, name="Payment",
                     description="Captures the charge after the room is held")
+    confirm = Agent(client, CONFIRM, name="HotelConfirm",
+                    description="Confirms the booking to the Traveler after payment")
 
     # Sequential group in validated protocol order. add_chain wires
-    # Traveler -> Hotel -> Payment as one workflow; the run is a single grouped
-    # interaction (not three separate hosted agents).
+    # Traveler -> Hotel -> Payment -> HotelConfirm as one workflow; the run is a
+    # single grouped interaction where each role's concrete message feeds the next.
     workflow = (
         WorkflowBuilder(start_executor=traveler, name="stjp-booking-saga",
                         description="STJP booking-saga role group (validated)")
-        .add_chain([traveler, hotel, payment])
+        .add_chain([traveler, hotel, payment, confirm])
         .build()
     )
 
@@ -80,7 +96,7 @@ def main():
         workflow,
         name="stjp-booking-saga-group",
         description="STJP booking_saga hosted as one grouped workflow "
-                    "(Traveler + Hotel + Payment) following the validated protocol.",
+                    "(Traveler + Hotel + Payment + confirm) following the validated protocol.",
     )
 
     server = ResponsesHostServer(group)
