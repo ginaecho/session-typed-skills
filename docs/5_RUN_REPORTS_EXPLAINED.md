@@ -237,7 +237,9 @@ running unvalidated/unenforced skills*, but a different harness could soften
 them. (2) One isolated decision per (role, round) is replicated across the 100
 trials of a cell (the cases are deterministic given the role view), so n=100
 tightens the Wilson interval rather than adding behavioural variety. Full
-numbers, per-case reports and traces:
+numbers, per-case reports and the committed **raw per-trial traces**
+(`.../reports/ss2026_n100_sonnet/traces/`, with `VERIFY.md` showing how to
+re-derive every metric from `state.json`):
 [`results/RESULT_8_SKILL_SAFETY.md`](results/RESULT_8_SKILL_SAFETY.md) and
 `experiments/subagent_trials/reports/ss2026_n100_sonnet/`. How to run the
 nuscribble backend that drove it:

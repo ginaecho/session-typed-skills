@@ -210,7 +210,12 @@ STJP arm is immune because the scheduler only ever offers a role its single
 enabled move.
 
 **Raw data (committed):** `experiments/subagent_trials/reports/ss2026_n100_sonnet/`
-(per-run `*.report.json` + `AGGREGATE.json` with Wilson CIs + `README.md`).
-Full traces under the gitignored `runs/ss2026_n100_sonnet/`.
+(per-run `*.report.json` + `AGGREGATE.json` with Wilson CIs + `README.md`), and
+the **full per-trial traces** under
+`experiments/subagent_trials/reports/ss2026_n100_sonnet/traces/` — one
+`state.json` per (case, arm) with every trial's ordered message log and
+terminal status, plus the `replies_round*.json` decision ledger. `traces/VERIFY.md`
+shows how to re-derive every metric with `engine.py report` straight from the
+committed `state.json` (matches the reported numbers exactly).
 How to run the nuscr backend:
 [`reference/NUSCR_CLOUD_INSTALL.md`](../reference/NUSCR_CLOUD_INSTALL.md).

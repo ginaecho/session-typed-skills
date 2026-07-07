@@ -23,8 +23,13 @@ Committed evidence for the n=100 run described in
 - `<case>_<arm>.report.json` — per-run metrics (GCR, CGC, disasters, token
   estimates, agent calls, monitor/gate verdicts).
 
-Full per-trial traces (`state.json`, per-round batches) live under the
-gitignored `experiments/subagent_trials/runs/ss2026_n100_sonnet/`.
+Full per-trial traces are committed under `traces/` — one `state.json` per
+(case, arm) (every trial's ordered message log + terminal status) plus the
+`replies_round*.json` decision ledger and the `.scr` protocol. `traces/VERIFY.md`
+shows how to re-derive every metric straight from `state.json` with
+`engine.py report` (no network, no round-prompt files needed). The bulky
+per-round prompt files and the transient scratch buffers were deliberately
+left out — see `traces/VERIFY.md` for exactly what and why.
 
 ## Headline (arm-level, n=400 each)
 
