@@ -16,6 +16,8 @@ Clean, organized guides to the Session-Typed Judge Panel (STJP) — the system f
 - **Understanding why safety matters?** → See `6_USE_CASE_DEADLOCK_SAFETY.md`
 - **Running the nuscr / nuscribble compiler backend?** → See `reference/NUSCR_CLOUD_INSTALL.md` (install routes + `STJP_COMPILER_BACKEND=nuscr`)
 - **Verifying the results from the raw traces?** → See `reference/HOW_TO_USE_TRACES.md` (re-derive every metric; read a trace by eye)
+- **Real Anthropic + GitHub Copilot skills, run by two different models?** → See [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)
+- **Which developer use cases fit STJP (interview format)?** → See [`FABLE5_INTERVIEW_DEV_USE_CASES.md`](FABLE5_INTERVIEW_DEV_USE_CASES.md)
 
 ---
 
@@ -176,6 +178,7 @@ glance:
 | RESULT_6 | deterministic | n=100 | scribble | "test the testers": mutation / adversarial gate / pass^k / fidelity | checker 95.6%/0% FP, gate 0→100% |
 | RESULT_7 | mixed | n=100 | scribble | everything above re-run at 100× the trials (reliability) | Wilson CI narrows, pass^10 17.6× |
 | RESULT_8 | Haiku **&** Sonnet | n=10 **&** n=100 | scribble **&** **nuscr** | **real public skills**: unchecked vs contract-as-text vs STJP | STJP only arm at 100%/100%/0 disasters, and cheapest |
+| RESULT_9 | Haiku **vs** Sonnet (same grid twice) | n=10 × 12 runs | scribble | **real Anthropic + GitHub Copilot skills**: the same 3-setting ladder run once per model | no-plan failures flip BY MODEL (each fails a different team 0/10); STJP 40/40 identical on both, 3× cheaper |
 
 The single load-bearing comparison in all of them is **"validate + enforce"
 (STJP) vs "don't"** — RESULT_8 is the strongest form because the skills are
@@ -212,6 +215,7 @@ real open-source code and the roles are strong models deciding in isolation.
 - `results/RESULT_6_BENCHMARK_HARDENING.md` — **Benchmark Plan v2** (test the testers + mutation testing + adversarial gate + pass^k + translation fidelity + roles/portability): verdict corpus 40/40, checker 95.6% detection/0% FP, gate exfiltration ladder 0→41.7→91.7→100%, pass^10 CI story, equivalence scorer 100%. Design in `reference/BENCHMARK_PLAN_V2.md`.
 - `results/RESULT_7_N100_SCALE.md` — **n=100 scale run** (all deterministic benchmarks): Wilson CI narrows from [72,100]% to [96.3,100]%; pass^10@floor jumps 0.039→0.686 (17.6×); integration stress 2105/2110; 100-protocol mutation corpus 95.1%/0% FP; subagent trials 0/100 unchecked vs 100/100 STJP; equivalence scorer 300/300.
 - `results/RESULT_8_SKILL_SAFETY.md` — **Real public skills, unvalidated vs STJP** (4 cases from openai-agents/crewAI/autogen/langgraph, cloud run, both compilers live in-sandbox — scribble-java master + coinductive nuscr, `reference/NUSCR_CLOUD_INSTALL.md`). *n=10, Haiku-class subagents:* original skills 0% GCR (40/40 stall or deadlock, ∞ cost); contract-as-text 100% GCR but 50% CGC with 20 duplicate-irreversible-act disasters (double charges/seat-writes); full STJP 100%/100%, 0 disasters, −45% tokens and 3.5 vs 10+ agent calls/trial. **Addendum — n=100, Sonnet subagents, strict per-role isolation, nuscr backend (1,200 trials):** STJP still 100%/100%/0 and 2.4–2.9× cheaper (Wilson CI excludes both other arms); the weak arms fail *differently* under a stronger model (200 disasters for contract-as-text, a booking livelock), so unvalidated skills' runtime success is model-dependent — but the design-time compiler rejection of all four `unchecked` protocols is model-independent.
+- [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md) — **Real Anthropic + GitHub Copilot skills, the same experiment run on two models** (2 teams built from anthropics/skills and github/awesome-copilot files x 3 settings x n=10, once with Haiku subagents and once with Sonnet subagents; written fully jargon-free, every term explained in place). Headline: with no coordination plan, *which* team fails is model-dependent — Haiku failed the code-change team 0/10, Sonnet failed the announcement team 0/10, on identical skills; with full STJP both models were flawless and indistinguishable (40/40, 0 rule-breaking messages, exactly 4 AI calls/trial, ~1.8k tokens = 3x cheaper than no-plan, 2.4x cheaper than plan-as-text). Evidence: `experiments/subagent_trials/reports/ss2026_new_skills/`.
 
 Earlier run reports, kept here for history (technical, not rewritten):
 
