@@ -12,7 +12,24 @@ binary, `STJP_NUSCR_BIN`) — see
 Four cases of **real agent skills from trusted public repos** (OpenAI Agents
 SDK, CrewAI examples, AutoGen, LangGraph — MIT-licensed, benign; provenance in
 each case's `SOURCES.md`). Three arms per case, n=10 trials per arm, 120
-trials total, every role played by an independent Haiku-class subagent:
+trials total, every role played by an independent Haiku-class subagent.
+
+Terms used in the tables (see [`../7_ARMS_EXPLAINED.md`](../7_ARMS_EXPLAINED.md)
+for the settings themselves):
+
+- **arm** = one experiment setting (one configuration of what the agents get
+  and what machinery is on); **n=10** = each arm was run 10 times.
+- **GCR** = goal-completion rate: % of trials where the team's deliverable
+  actually went out.
+- **CGC** = completed-with-guarantees rate: % of trials that completed AND
+  never broke the case's safety rule along the way.
+- **Disasters** = count of irreversible actions done out of order or twice
+  (double charge, double seat-write, publish-before-review).
+- **Cost-to-goal** = tokens per trial ÷ completion rate — what one *successful*
+  delivery really costs once failures are paid for; ∞ when nothing succeeds.
+  (A **token** ≈ 4 characters of AI-read/written text, the billing unit.)
+- **Agent calls/trial** = how many times any team member had to be asked to
+  think (each ask costs money, even if the answer is "wait").
 
 | arm | GCR | CGC | Disasters | Cost-to-goal | Agent calls/trial |
 |---|---:|---:|---:|---:|---:|
