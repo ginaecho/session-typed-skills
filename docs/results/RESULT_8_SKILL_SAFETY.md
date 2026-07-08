@@ -169,7 +169,7 @@ compare within this block, not across model tiers.
   benchmark suite.
 - The trade_deadlock (anthropics-skills escrow pair) case ran earlier on
   gpt-4o through Foundry hosted agents — 0% vs 100%, −44% tokens
-  ([IMPLEMENTATION_2026-07-06.md](../IMPLEMENTATION_2026-07-06.md)) — and on
+  (the 2026-07-06 entry in [the diary](../diary/DIARY.md)) — and on
   Claude subagents at n=100 in
   [RESULT_7_N100_SCALE.md](RESULT_7_N100_SCALE.md) (0/100 vs 100/100).
 
