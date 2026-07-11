@@ -1,0 +1,24 @@
+{
+  "funnel": {
+    "counts": {
+      "compactor_survived": 0,
+      "compatibility_survived": 0,
+      "harvested": 609,
+      "intent_gold": 594,
+      "licensed": 605,
+      "synthesis_survived": 0,
+      "team_license_ok": 13,
+      "teamed": 53,
+      "validator_passed": 0
+    },
+    "drop_reasons": {
+      "compactor_survived: free-form prose has no fenced localtype block or STJP heading format; deterministic (--no-llm) compaction cannot proceed": 13,
+      "licensed: license 'LicenseRef-restrictive-source-available' not on the permissive allowlist": 4
+    }
+  },
+  "n_artifacts_harvested": 609,
+  "n_dirs_skipped_too_large": 12,
+  "n_records_emitted": 0,
+  "n_teams": 13,
+  "n_unteamed": 556
+}
