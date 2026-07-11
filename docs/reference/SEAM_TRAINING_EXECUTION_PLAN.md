@@ -74,6 +74,25 @@ That gives GCD in *both* eval and GRPO rollouts with zero custom decoding
 code. API-model baselines (Sonnet/Opus) cannot be grammar-constrained; they
 get parse-reject-retry instead, and we report that asymmetry explicitly.
 
+**Real toolchain mandate (hard rule).** "Validates" in this program means
+the REAL Scribble-java CLI (`org.scribble.cli.CommandLine` via
+`stjp_core/compiler/validator.py::ScribbleValidator`), never a Python-only
+approximation. One-command install for any checkout/worktree:
+`bash tools/setup_scribble_cloud.sh` (builds the ginaecho/scribble-java fork
+with Maven once under /workspace, wires the checkout, installs the nuscr
+coinductive-fork binary, and smoke-tests gold-pass + corrupt-reject).
+Verified 2026-07-11: 30/30 `_corpus` protocols pass real validation; a
+corrupted control is rejected with a genuine parser error. Every harness
+entry point must fail loudly if the toolchain is absent — a silent fallback
+to a weaker checker would poison every reward and every reported number.
+nuscr remains the opt-in second backend (`STJP_NUSCR_BIN=/workspace/bin/
+nuscr`); it accepts only a fragment (11/30 corpus; non-tail-recursive
+protocols rejected by design — a tool limitation, not protocol invalidity),
+so it is a cross-check and projection engine, not the validity oracle.
+Throughput note for bulk data building: each validation is a JVM spawn
+(~0.5–1s); D1-scale runs must parallelize with a worker pool and cache
+verdicts by protocol-text hash.
+
 **Training stack.** TRL (`SFTTrainer`, `GRPOTrainer`) + PEFT LoRA + vLLM
 rollouts. Single-node, rented GPU (Modal or RunPod; image pinned by a
 `pyproject`/lockfile committed to the repo). No custom trainer code — the
