@@ -1,0 +1,94 @@
+{
+  "airline_seat": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "auction": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "banking": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "booking_saga": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "clinical_enrollment": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "code_execution": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "code_review": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "content_pipeline": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "doc_pipeline": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "finance": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "finance_nested": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "intel_report": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "iterative_polling": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "nested_retry": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "pr_merge": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "rag": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "report_pipeline": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "report_pipeline_large": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "retry_loop": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "trade_deadlock": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "trade_settlement": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "travel": {
+    "valid": true,
+    "validator_msg": ""
+  },
+  "travel_saga": {
+    "valid": true,
+    "validator_msg": ""
+  }
+}
