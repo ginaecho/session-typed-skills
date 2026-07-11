@@ -14,6 +14,7 @@ Clean, organized guides to the Session-Typed Judge Panel (STJP) — a system tha
 - **Creating your own use case?** → Follow `4_HOW_TO_CREATE_USE_CASES.md` step by step
 - **Reading the benchmark results?** → Start with `6_RUN_REPORTS_EXPLAINED.md`
 - **Understanding why safety matters?** → See `7_USE_CASE_DEADLOCK_SAFETY.md`
+- **How does intent → protocol drafting get machine-learned?** → See `8_INTENT_TO_PROTOCOL_TRAINING.md`
 - **What do the results prove, in one page?** → Start with [`results/README.md`](results/README.md) (purpose, what it detects, and the takeaway of every report)
 - **What exactly is an "arm" / a "setting"?** → See [`5_ARMS_EXPLAINED.md`](5_ARMS_EXPLAINED.md) (every configuration drawn as one flow line, plus which test cases fit STJP)
 - **Real Anthropic + GitHub Copilot skills, run by two different models?** → See [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)
@@ -151,6 +152,35 @@ What you'll learn:
 
 ---
 
+### Section 8: Intent → Protocol Training — `8_INTENT_TO_PROTOCOL_TRAINING.md`
+
+How the LLM-drafts / validator-rejects / human-endorses loop at the front of
+STJP (turning a plain-English request into a Scribble-checked protocol) gets
+machine-learned — and what you can run today.
+
+What you'll learn:
+- Why that loop is trainable (grammar + validator + equivalence scorer =
+  free, deterministic rewards) and why validity alone isn't enough
+  (faithfulness — does the protocol mean what the user meant?)
+- The two instruments: the verifier stack (validity) and the memoryless
+  judge panel (faithfulness) — the three judge classes, why they share no
+  memory, and a live catch (the `trade_deadlock` case) explained in plain
+  language
+- What's built today, component by component, each with its one-command
+  usage and the report backing it: toolchain setup, grammar-constrained
+  decoding, data builders, the eval harness, the judge panel, and the
+  real-skills miner (including its honest 609→0 funnel finding)
+- What's still pending, and where the executable plan and preregistered
+  gates live
+
+**Read time:** 15 minutes
+
+**Why this matters:** every other guide assumes a protocol already exists;
+this is where the protocol comes from, and how that step stops depending on
+a human doing it by hand.
+
+---
+
 ## 📁 File reference
 
 ### Main documents (read these)
@@ -164,6 +194,7 @@ What you'll learn:
 | `5_ARMS_EXPLAINED.md` | **The settings ("arms").** Every benchmark configuration as one flow line; the case-fit table. |
 | `6_RUN_REPORTS_EXPLAINED.md` | **Results.** How do I read benchmark results? What do the numbers mean? |
 | `7_USE_CASE_DEADLOCK_SAFETY.md` | **Safety cases.** Why do protocols matter? Real examples. |
+| `8_INTENT_TO_PROTOCOL_TRAINING.md` | **Training the front door.** How does intent → protocol drafting get machine-learned? What exists today, and how do I run it? |
 
 ### `reference/` — technical deep-dives (current, for researchers)
 
@@ -179,6 +210,10 @@ What you'll learn:
 - `reference/GAP_CLOSED.md` — Refinement call-site closure record (referenced by `experiments/README.md` and `stjp_core/README.md`)
 - `reference/NUSCR_CLOUD_INSTALL.md` — **How to run the coinductive nuscr ("nuscribble") backend** in the cloud env: Docker route, CI-artifact native-binary route, building scribble-java from source, the `STJP_COMPILER_BACKEND=nuscr` / `STJP_NUSCR_BIN` env vars, and the 2017-Maven-release pitfall
 - `reference/HOW_TO_USE_TRACES.md` — **Verify the results yourself from the committed raw traces**: what each trace file contains, how to read one message by eye, and how to re-derive every headline metric
+- `reference/SEAM_AUTOTRAINING_PLAN.md` — Strategy proposal for training the intent → protocol seam: the validity ladder, the memoryless faithfulness judge panel, and the corpus-generation design — summarized in `8_INTENT_TO_PROTOCOL_TRAINING.md`
+- `reference/SEAM_TRAINING_EXECUTION_PLAN.md` — The **executable** version: exact stacks, data formats, hyperparameters, judge-isolation mechanics, worker task cards, and every preregistered go/no-go gate (§8)
+- `reference/GPU_TRAINING_RUNBOOK.md` — How to actually run the GPU fine-tuning (SFT) and reinforcement-learning (GRPO) phases once the data and eval harness are in place
+- `reference/reports/seam/` — Worker reports behind the seam-training numbers (eval harness, grammar/GCD, data builders, judge panel, real-skills miner) and the first live faithfulness-panel run (`PANEL_SMOKE_2026-07-11.md`)
 
 ### `results/` — the evidence behind the guides (current, plain English)
 
