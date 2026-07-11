@@ -83,9 +83,10 @@ highest-leverage experiment left: it converts a declared limitation into a
 result.** Report validity@1 and validity@k with k ∈ {1, 5, 10, 25}.
 
 **A3. Back-translation for training data (SFT).**
-We already own the data generator: the 100-protocol corpus (`experiments/
-cases/_corpus`) plus the mutation operators (`integration_stress.py`,
-`s2_mutation`) produce unlimited *valid* protocols; an LLM back-translates
+We already own the data generator: the protocol corpus (30 skeletons in
+`experiments/cases/_corpus` + 19 named-case protocols) plus the mutation
+operators (`integration_stress.py`, `s2_mutation`) produce unlimited
+*valid* protocols; an LLM back-translates
 each into a natural-language intent; that yields (intent, gold-protocol)
 pairs for free, scored end-to-end by the E5 equivalence checker. Fine-tune a
 small translator; the scorer *is* the eval. This is the standard
@@ -185,7 +186,8 @@ separate golds from near-miss mutants is not entitled to be a reward signal
 
 ### 4.1 Synthetic split (generator-owned; training)
 
-- Base: 100-protocol corpus × mutation operators → unlimited valid
+- Base: protocol corpus (30 skeletons + 19 case protocols) × mutation
+  operators → unlimited valid
   protocols; grow structural diversity along measured axes (roles, branch
   depth, recursion, guards) and by composition via `compiler/incremental.py`
   (child sub-protocol insertion) — compositional cases exceed what anyone
