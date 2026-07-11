@@ -46,7 +46,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 SCRIPTS_DIR = REPO_ROOT / "experiments" / "scripts"
-for p in (REPO_ROOT, SCRIPTS_DIR):
+for p in (REPO_ROOT, SCRIPTS_DIR, HERE):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
