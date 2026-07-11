@@ -77,3 +77,31 @@ def test_make_refn_parses(tmp_path):
     refn = d1.make_refn(text, 1.0, random.Random(1))
     assert refn is not None
     assert "require:" in refn
+
+
+def test_recursive_operator_reachable_in_pattern_and_under_30pct():
+    """W15: the mixed operator pattern must include `recursive` (the
+    single deterministic `retry` sweep cell is not enough — see
+    docs/reference/reports/seam/W3_data_builders.md's ~9-family finding)
+    and stay under the §3 structural-diversity floor's 30% cap on a
+    single-topology share."""
+    assert "recursive" in d1._PATTERN
+    share = d1._PATTERN.count("recursive") / len(d1._PATTERN)
+    assert share < 0.30
+
+
+def test_mixed_build_yields_recursive_records(tmp_path):
+    """End-to-end: a mixed d1_expand.build() run (not the standalone
+    recursion_gen.build()) must actually surface `recursive`-operator
+    records with has_recursion=True through the SAME pipeline sweep/
+    compose/crossover go through (signature dedupe, DatasetRecord shape,
+    checkpointing)."""
+    records, stats = d1.build(target=30, max_candidates=100, seed=1, workers=4,
+                              curve_every=200,
+                              cache_path=tmp_path / "sig_cache.json")
+    assert stats["operator_breakdown"].get("recursive", 0) > 0
+    rec_recs = [r for r in records if r.gen["operator"] == "recursive"]
+    assert rec_recs
+    for r in rec_recs:
+        assert r.gen["has_recursion"] is True
+        assert r.family.startswith("efsmv1:")

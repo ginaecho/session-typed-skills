@@ -1,0 +1,205 @@
+{
+  "target": 200,
+  "max_candidates": 800,
+  "seed": 1,
+  "workers": 4,
+  "candidates_attempted": 208,
+  "uniques_found": 200,
+  "validator_rejected": 0,
+  "signature_duplicates": 8,
+  "operator_not_applicable": 0,
+  "elapsed_seconds": 301.1,
+  "candidates_per_second": 0.691,
+  "shape_breakdown": {
+    "linear": 108,
+    "branching": 30,
+    "multiway": 62
+  },
+  "reject_reason_sample": {},
+  "saturation_curve": [
+    {
+      "candidates": 1,
+      "uniques": 1,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 1.8
+    },
+    {
+      "candidates": 2,
+      "uniques": 2,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 2.0
+    },
+    {
+      "candidates": 3,
+      "uniques": 3,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 3.2
+    },
+    {
+      "candidates": 40,
+      "uniques": 40,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 63.7
+    },
+    {
+      "candidates": 41,
+      "uniques": 41,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 63.8
+    },
+    {
+      "candidates": 42,
+      "uniques": 42,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 66.3
+    },
+    {
+      "candidates": 43,
+      "uniques": 43,
+      "rejected": 0,
+      "duplicates": 0,
+      "not_applicable": 0,
+      "elapsed_s": 66.3
+    },
+    {
+      "candidates": 80,
+      "uniques": 77,
+      "rejected": 0,
+      "duplicates": 3,
+      "not_applicable": 0,
+      "elapsed_s": 117.4
+    },
+    {
+      "candidates": 81,
+      "uniques": 78,
+      "rejected": 0,
+      "duplicates": 3,
+      "not_applicable": 0,
+      "elapsed_s": 117.5
+    },
+    {
+      "candidates": 82,
+      "uniques": 79,
+      "rejected": 0,
+      "duplicates": 3,
+      "not_applicable": 0,
+      "elapsed_s": 119.2
+    },
+    {
+      "candidates": 83,
+      "uniques": 80,
+      "rejected": 0,
+      "duplicates": 3,
+      "not_applicable": 0,
+      "elapsed_s": 121.5
+    },
+    {
+      "candidates": 120,
+      "uniques": 116,
+      "rejected": 0,
+      "duplicates": 4,
+      "not_applicable": 0,
+      "elapsed_s": 168.4
+    },
+    {
+      "candidates": 121,
+      "uniques": 117,
+      "rejected": 0,
+      "duplicates": 4,
+      "not_applicable": 0,
+      "elapsed_s": 169.0
+    },
+    {
+      "candidates": 122,
+      "uniques": 118,
+      "rejected": 0,
+      "duplicates": 4,
+      "not_applicable": 0,
+      "elapsed_s": 170.6
+    },
+    {
+      "candidates": 123,
+      "uniques": 119,
+      "rejected": 0,
+      "duplicates": 4,
+      "not_applicable": 0,
+      "elapsed_s": 173.4
+    },
+    {
+      "candidates": 160,
+      "uniques": 153,
+      "rejected": 0,
+      "duplicates": 7,
+      "not_applicable": 0,
+      "elapsed_s": 224.4
+    },
+    {
+      "candidates": 161,
+      "uniques": 154,
+      "rejected": 0,
+      "duplicates": 7,
+      "not_applicable": 0,
+      "elapsed_s": 229.3
+    },
+    {
+      "candidates": 162,
+      "uniques": 155,
+      "rejected": 0,
+      "duplicates": 7,
+      "not_applicable": 0,
+      "elapsed_s": 230.4
+    },
+    {
+      "candidates": 163,
+      "uniques": 156,
+      "rejected": 0,
+      "duplicates": 7,
+      "not_applicable": 0,
+      "elapsed_s": 233.6
+    },
+    {
+      "candidates": 200,
+      "uniques": 192,
+      "rejected": 0,
+      "duplicates": 8,
+      "not_applicable": 0,
+      "elapsed_s": 284.7
+    },
+    {
+      "candidates": 201,
+      "uniques": 193,
+      "rejected": 0,
+      "duplicates": 8,
+      "not_applicable": 0,
+      "elapsed_s": 287.0
+    },
+    {
+      "candidates": 202,
+      "uniques": 194,
+      "rejected": 0,
+      "duplicates": 8,
+      "not_applicable": 0,
+      "elapsed_s": 288.4
+    },
+    {
+      "candidates": 203,
+      "uniques": 195,
+      "rejected": 0,
+      "duplicates": 8,
+      "not_applicable": 0,
+      "elapsed_s": 288.8
+    }
+  ]
+}

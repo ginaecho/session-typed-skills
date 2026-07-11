@@ -14,6 +14,15 @@ committed (multi-MB); they are reproducible with the exact commands in
 | `d3_yields.json` | per-operator repair yield table + run stats | `d3_repair.py` |
 | `sig_verify_report.json` | signature-vs-E5-checker agreement | `signature.py --verify` |
 | `splits/` | family split registry + strat table + leakage-check output | `splitter.py` / `leakage_check.py` |
+| `d1_recursive.jsonl` | DatasetRecord (all 200, under the 200-cap) | `recursion_gen.py` (W15) |
+| `d1_recursive.stats.json` | shape/role/loop-position breakdown + saturation curve | `recursion_gen.py` (W15) |
+| `recursion_sig_verify_report.json` | signature-vs-E5-checker agreement, recursive population only | `signature.py::verify_against_checker` on `d1_recursive.jsonl` |
 
 Records in the sample files carry their final `split` assignment (the
 splitter ran over the FULL builds; these are the first N records of each).
+`d1_recursive.jsonl` is `split="unassigned"` — it is the standalone
+recursion-focused build (see `docs/reference/reports/seam/W15_recursion_gen.md`),
+not yet folded through `splitter.py`; the `recursive` operator IS wired into
+`d1_expand.py`'s mixed build (see `d1_expand.py::_PATTERN`), so a fresh full
+D1 run of `d1_dataset.jsonl` naturally includes and splits recursive
+families going forward.

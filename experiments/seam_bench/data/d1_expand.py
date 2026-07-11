@@ -1,7 +1,7 @@
 """d1_expand.py — D1: grow the protocol set from the seeds toward >=5,000
 unique valid protocols (SEAM_TRAINING_EXECUTION_PLAN.md §3/§9, W3).
 
-Three families of operators, all deterministic given --seed:
+Four families of operators, all deterministic given --seed:
 
   sweep    parameter sweeps over role count (2-6), branch width, recursion
            on/off, and guard density, across five shape generators (four
@@ -18,6 +18,16 @@ Three families of operators, all deterministic given --seed:
            messages from one ProtocolGenerator-shaped candidate into
            another of the SAME role count (so role names line up), then
            let the validator decide.
+  recursive  W15: randomized recursive-protocol generator (recursion_gen.py
+           ::gen_recursive) — the `sweep` grid's `retry` cell is a SINGLE
+           near-deterministic shape that saturates at ~9 unique families
+           (docs/reference/reports/seam/W3_data_builders.md); this operator
+           varies loop body shape (linear/branching/multiway), loop
+           position (prefix vs immediate), controller role, branch order,
+           peripheral (non-looping) roles, and sequential double-loops
+           across 2-5 roles, so recursion becomes a well-populated
+           topology class instead of one deterministic shape. See
+           recursion_gen.py's module docstring for the full design.
 
 EVERY candidate is fed to the real Scribble validator
 (stjp_core/compiler/validator.py, via common.validate_text) before being
@@ -65,6 +75,7 @@ from common import (validate_text, roles_of, module_stem, has_recursion, # noqa:
                     role_count, depth_bucket, all_seeds, DatasetRecord,
                     write_jsonl, write_sample, assert_toolchain)
 from signature import SignatureCache                                     # noqa: E402
+from recursion_gen import gen_recursive                                  # noqa: E402
 
 TYPES = ["String", "Double", "Int", "Bool"]
 _JAVA = {"String": "java.lang.String", "Double": "java.lang.Double",
@@ -172,13 +183,19 @@ _SWEEP_GRID = [
 
 
 def _sweep_ordinal(idx: int) -> int:
-    """Map a global task index (sweep tasks occupy idx % 9 in 0..4, see
-    _PATTERN) to a DENSE sweep counter 0,1,2,... Indexing the grid with the
-    raw global idx aliases against the grid stride (gcd(9, |grid|) > 1) and
+    """Map a global task index (sweep tasks occupy the FIRST
+    _SWEEP_SLOTS_PER_CYCLE slots of every _PATTERN period, see _PATTERN) to
+    a DENSE sweep counter 0,1,2,... Indexing the grid with the raw global
+    idx aliases against the grid stride (gcd(period, |grid|) > 1) and
     silently makes whole grid regions unreachable — the first full build
-    produced ZERO recursion protocols because every `retry` cell fell in the
-    unreachable residue class. Dense numbering visits every cell."""
-    return (idx // 9) * 5 + (idx % 9)
+    produced ZERO recursion protocols because every `retry` cell fell in
+    the unreachable residue class (period was hardcoded to 9). Dense
+    numbering visits every cell. Derived from len(_PATTERN)/sweep-count
+    rather than hardcoded literals so adding non-sweep operator slots (e.g.
+    W15's `recursive`) to _PATTERN can never reintroduce this bug — see
+    test_sweep_grid_fully_reachable."""
+    period = len(_PATTERN)
+    return (idx // period) * _SWEEP_SLOTS_PER_CYCLE + (idx % period)
 
 
 def gen_sweep(idx: int, seed: int):
@@ -310,7 +327,16 @@ def gen_crossover(idx: int, seed: int):
 
 # ── per-task worker: generate + validate + sign, all off the main thread ─
 
-_PATTERN = ["sweep"] * 5 + ["compose"] * 2 + ["crossover"] * 2
+# NOTE: "sweep" must stay the FIRST _SWEEP_SLOTS_PER_CYCLE entries of
+# _PATTERN — _sweep_ordinal()'s dense-numbering trick assumes sweep tasks
+# occupy a contiguous prefix of every period. The 3 "recursive" slots give
+# W15's randomized recursive generator a real, non-negligible share of
+# every D1 build (recursion was previously reachable only via the single
+# `retry` cell inside the sweep grid) while keeping it under the §3
+# "none exceeding 30% of families" floor on a mixed build.
+_SWEEP_SLOTS_PER_CYCLE = 5
+_PATTERN = (["sweep"] * _SWEEP_SLOTS_PER_CYCLE + ["compose"] * 2
+           + ["crossover"] * 2 + ["recursive"] * 3)
 
 
 def _run_task(idx: int, seed: int, seeds: list, sig_cache: SignatureCache) -> dict:
@@ -321,6 +347,8 @@ def _run_task(idx: int, seed: int, seeds: list, sig_cache: SignatureCache) -> di
             r = gen_sweep(idx, seed)
         elif kind == "compose":
             r = gen_compose(idx, seed, seeds, wd)
+        elif kind == "recursive":
+            r = gen_recursive(idx, seed)
         else:
             r = gen_crossover(idx, seed)
         if r is None:
@@ -364,6 +392,24 @@ def build(target: int, max_candidates: int, seed: int, workers: int,
 
     idx = 0
     last_ckpt = time.time()
+    # BUGFIX (found while wiring in the W15 `recursive` operator — it made
+    # this reliably reproducible instead of a rare flake): as_completed()
+    # returns futures in THREAD-COMPLETION order, which is an OS-scheduling
+    # race, not a function of (seed, idx) — mixing operator kinds with
+    # different per-candidate latency (recursive candidates validate a
+    # bigger/nestier text than a small sweep candidate) made two same-seed
+    # build() calls commit results in different orders often enough that
+    # test_build_is_deterministic_given_seed failed ~75% of runs. The old
+    # code appended straight from completion order, so record order (and
+    # therefore families discovered before an early `target` cutoff) was
+    # not actually deterministic given the seed, only "usually" so by luck
+    # of near-uniform task latency. Fix: buffer completed results by idx
+    # and only COMMIT (append to records / seen_sigs / counters) once every
+    # lower idx has already been committed — full concurrency is preserved
+    # (workers still race to finish), only the order results are folded
+    # into the deterministic output is fixed to submission order.
+    pending: dict[int, dict] = {}
+    next_commit = 0
     with ThreadPoolExecutor(max_workers=workers) as pool:
         inflight = {}
         while len(records) < target and (attempted < max_candidates or inflight):
@@ -378,9 +424,12 @@ def build(target: int, max_candidates: int, seed: int, workers: int,
                 done_set.add(fut)
                 break  # process one at a time to keep the loop responsive
             for fut in done_set:
-                inflight.pop(fut)
+                task_idx = inflight.pop(fut)
+                pending[task_idx] = fut.result()
+            while next_commit in pending and len(records) < target:
+                res = pending.pop(next_commit)
+                next_commit += 1
                 attempted += 1
-                res = fut.result()
                 op_counts[res["kind"]] = op_counts.get(res["kind"], 0) + 1
                 if not res["ok"]:
                     if res["reason"] == "operator_not_applicable":
