@@ -73,6 +73,9 @@ google-api-core==2.30.3
 google-auth==2.51.0
 googleapis-common-protos==1.75.0
 jsonpath-ng==1.8.0
+# lark: pure-Python parser for the Scribble surface grammar + GCD adapter
+# (stjp_core/compiler/scribble_grammar.lark, gcd_adapter.py). No CVEs, no deps.
+lark==1.2.2
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 mcp==1.27.0

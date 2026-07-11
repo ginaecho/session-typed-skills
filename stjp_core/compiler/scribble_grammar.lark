@@ -1,0 +1,93 @@
+// =====================================================================
+// scribble_grammar.lark
+//
+// Lark grammar for the Scribble (.scr) global-protocol SURFACE SYNTAX that
+// this repository actually emits and accepts. Source of truth:
+//   - stjp_core/compiler/nuscr_syntax.py  (the module/data preamble + the
+//     Label(Type) from A to B / choice / recursion core)
+//   - stjp_core/compiler/protocol_parser.py  (the regexes the repo uses to
+//     read protocols back)
+//   - the real corpus: experiments/cases/_corpus/*.scr and every
+//     experiments/cases/*/protocols/**/*.scr (valid, llm_drafts, unsafe).
+//
+// This grammar drives TRAINING-TIME grammar-constrained decoding, so the
+// governing principle is TIGHT IS RIGHT: overgeneration (accepting shapes the
+// repo never emits) is worse than undergeneration. Every production below
+// corresponds to a construct observed in the corpus; there are no speculative
+// extensions to "full Scribble".
+//
+// -----------------------------------------------------------------------
+// KNOWN SIMPLIFICATIONS (deliberate departures from full Scribble / nuscr):
+//
+//  1. Message payloads carry AT MOST ONE bare sort identifier, e.g. `M(Int)`
+//     or the empty `M()`. Full Scribble multi-field payloads `M(Int,String)`,
+//     annotated payloads `M(amt: Int)`, and delegation/session payloads are
+//     NOT accepted -- the repo emits none, and protocol_parser's message regex
+//     `(\w+)\(([^)]*)\) from (\w+) to (\w+);` reads a single payload field.
+//  2. `data` type declarations are restricted to the exact Java-import form
+//     the repo emits: `data <java> "..." from "..." as Name;`. No `type`,
+//     `sig`, or other Scribble data forms.
+//  3. No `par { } and { }` parallel composition -- the corpus contains none.
+//  4. `do` protocol calls take ROLE-NAME arguments only (`do P(A, B);`); no
+//     message or value arguments.
+//  5. `choice` requires at least two branches (one or more `or` blocks), as
+//     every corpus choice does.
+//  6. Module names may be dotted (`pipeline.FinancePipeline`); protocol
+//     names, role names, message labels, and payload sorts are simple
+//     identifiers.
+//  7. The `.refn` refinement guard sidecar is intentionally OUT OF SCOPE: its
+//     on-disk format is an ad-hoc line-oriented parser (regex + str.split in
+//     refinement_checker.py, not a formal grammar) whose predicates are
+//     arbitrary sandboxed Python expressions. A tight formal grammar for it
+//     would either massively overgenerate (arbitrary Python) or duplicate an
+//     ad-hoc parser; see docs/reference/reports/seam/W2_grammar_gcd.md.
+//  8. Comments (`//` line comments) are accepted ANYWHERE and ignored. The
+//     corpus uses only `//`; no `/* */` block comments appear. Note: the
+//     GBNF form emitted for xgrammar decoding OMITS comments on purpose (a
+//     comment channel is a persuasion-smuggling risk at training time and the
+//     canonical pretty-printer is comment-free) -- see gcd_adapter.py.
+// =====================================================================
+
+start: module_decl data_decl* protocol_decl+
+
+module_decl: "module" dotted_name ";"
+
+data_decl: "data" JAVA_TAG ESCAPED_STRING "from" ESCAPED_STRING "as" NAME ";"
+
+protocol_decl: AUX? "global" "protocol" NAME "(" role_params ")" "{" interaction* "}"
+
+role_params: role_param ("," role_param)*
+role_param: "role" NAME
+
+interaction: message
+           | choice
+           | recursion
+           | continue_stmt
+           | do_stmt
+
+message: NAME "(" payload? ")" "from" NAME "to" NAME ";"
+payload: NAME
+
+choice: "choice" "at" NAME block ("or" block)+
+block: "{" interaction* "}"
+
+recursion: "rec" NAME block
+
+continue_stmt: "continue" NAME ";"
+
+do_stmt: "do" NAME "(" NAME ("," NAME)* ")" ";"
+
+dotted_name: NAME ("." NAME)*
+
+AUX: "aux"
+JAVA_TAG: /<\s*java\s*>/
+
+NAME: /[A-Za-z_][A-Za-z0-9_]*/
+
+%import common.ESCAPED_STRING
+%import common.WS
+
+COMMENT: /\/\/[^\n]*/
+
+%ignore WS
+%ignore COMMENT

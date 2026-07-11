@@ -22,6 +22,10 @@ pydantic-settings==2.10.1
 # Parsing and validation
 annotated-types==0.7.0
 attrs==26.1.0
+# lark: pure-Python parser (no transitive deps, no known CVEs) backing the
+# Scribble surface grammar + grammar-constrained-decoding adapter
+# (stjp_core/compiler/scribble_grammar.lark, gcd_adapter.py).
+lark==1.2.2
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 referencing==0.37.0
