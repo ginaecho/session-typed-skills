@@ -273,9 +273,24 @@ mechanism has five layers; all five are enforced by the orchestrator
 (deterministic Python, `experiments/scripts/judge_panel.py`), not by
 convention:
 
-**5.1 Process isolation.** A verdict is one stateless SDK call: fresh
-context, no tools, no files, no session id, `max_tokens` bounded, JSON
-schema forced. There is no judge "agent" that could accumulate state; there
+**5.0 Seat transports (v2.3).** Two interchangeable transports behind one
+seat interface: (a) **subscription-subagent transport** — seats are
+session subagents with schema-forced structured output; fresh context
+per spawn, payload-only prompt, no inter-seat visibility; billed to the
+session subscription, no API key. Validated live 2026-07-11
+(PANEL_SMOKE report: 14 seats, canary rejected at 0.99, J-back caught a
+forward-seat confirmation bias on trade_deadlock). Default for all
+interactive/phase-gate judging: calibration sweeps, mined-item judging,
+escalation seats, and T0 drafting baselines. Instruction-level no-tools
+rule plus transcript tool-use audit (tool_uses must be 0 per verdict).
+(b) **API-key transport** (the SDK path below) — REQUIRED only where
+judging runs headless off-session: the T2/T3 GPU reward path and any
+external harness. The key is therefore a T2-gate prerequisite, not a
+day-one blocker.
+
+**5.1 Process isolation.** A verdict is one stateless call (either
+transport): fresh context, no tools, no files, no session id,
+`max_tokens` bounded, JSON schema forced. There is no judge "agent" that could accumulate state; there
 is nothing to share because nothing persists. Verdicts are cached keyed by
 `(class, model, temp, prompt_hash, payload_hash)` — reproducible reruns,
 and a cache hit is by construction identical isolation.
