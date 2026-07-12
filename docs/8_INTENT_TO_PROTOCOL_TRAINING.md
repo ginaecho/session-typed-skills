@@ -218,17 +218,25 @@ those recoveries all come from this project's own worked examples; the teams
 built from unmodified upstream GitHub files recover zero. So the finding
 holds: ordinary skill authors do not write down interaction structure even
 when a disciplined reader looks hard for it. One caveat the follow-up
-itself exposed: the harvester groups files into "teams" without first
-checking the task actually needs multi-party coordination — and 6 of the
-13 turned out not to (4 single-agent tool documents, 2 grouping mistakes).
-So the strongest real-world evidence is just two teams whose tasks clearly
-do involve several interacting parties (pull-request review-and-merge, a
-document pipeline) but whose texts contain no cross-role language; a
-"does this task need coordination?" filter is the next miner improvement.
-The human-read baseline is
+itself exposed — the harvester grouped files into "teams" without first
+checking the task actually needs multiple interacting parties — became the
+next experiment: that filter now exists
+(`experiments/seam_bench/mining/coordination_filter.py`) and the harvest
+was re-run at scale. Across seven public sources (923 permissively
+licensed artifacts, 110 candidate teams), the filter finds **29 teams
+whose tasks genuinely require coordination**, every verdict backed by
+quotes from the source text. On those 29: the mechanical extraction path
+still recovers zero; careful evidence-only reading (16 of 29 assessed)
+recovers a checker-valid protocol for 7 and finds real role conflicts in
+3. The clearest pattern is *where* coordination gets written down when it
+is written at all: per-agent skill files across three catalogs state it
+in only 2–7% of groupings, while orchestration configuration files state
+it almost whenever present. Two honesty notes: this measures what authors
+*write*, not what deployed systems *need*; and the mined test items (five
+so far) are still too few to stand alone. The human-read baseline is
 packaged (`experiments/seam_bench/mining/human_read/PACKET.md`) and pending.
-See `docs/reference/reports/seam/W8_miner.md` and `W16_llm_read_extraction.md`
-for the full funnels.
+See `docs/reference/reports/seam/W8_miner.md`, `W16_llm_read_extraction.md`,
+and `W17_coordination_scale_up.md` for the full funnels.
 
 ---
 

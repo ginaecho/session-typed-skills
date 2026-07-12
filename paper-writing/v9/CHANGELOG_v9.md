@@ -256,3 +256,16 @@ prose, including two title-level fixes deferred by the earlier pass:
   because this count uses a different, unfiltered method; both agree the
   file is balanced with escaped braces `\{`/`\}` skipped); final nesting
   depth 0. No new packages introduced.
+
+## Update 2026-07-12 — mining evidence scaled from n=2 to n=29
+
+The task-level coordination filter the previous update named as required
+has been built and run (report W17_coordination_scale_up.md): 923
+artifacts from seven permissively licensed sources, 110 candidate teams,
+29 judged coordination-requiring with verbatim evidence per verdict.
+Rewrote the §8 mining passage and instruments-table row to the scaled
+numbers, including the sharpened regularity (per-agent artifacts state
+coordination in 2–7% of groupings; orchestration configs state it almost
+whenever present) and the two scope notes (written vs needed; five mined
+test items still insufficient alone). Guide 8 synced. Balance re-checked
+39/39.
