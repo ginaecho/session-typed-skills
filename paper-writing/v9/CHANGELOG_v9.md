@@ -1,10 +1,12 @@
 # STJP paper v9 — changes from v8
 
 v9 = v8 plus a carefully positioned treatment of the "user intent → global
-protocol" trainable-seam system: v8's §7 *promised* the seam is trainable; v9
-shows the training program *realized* as system + instruments + preregistration,
-with the GPU numbers pending and wired to a results template so they drop in
-without restructuring. v8's submission shape and every v8 claim are preserved.
+protocol" trainable-seam system (the "seam" is the translation step from
+plain-language intent to formal protocol): v8's §7 *promised* the seam is
+trainable; v9 shows the training program *realized* as system + instruments
++ preregistration, with the GPU numbers pending and connected to a results
+template so they drop in without restructuring. v8's submission shape and
+every v8 claim are preserved.
 
 ## Positioning decision (rationale first)
 1. NEW SECTION, not an in-place paragraph expansion. The v8 "The seam is
@@ -50,8 +52,9 @@ without restructuring. v8's submission shape and every v8 claim are preserved.
    - Corpus (W3): 671 EFSM-deduped families (bounded run; ≥5k reachable),
      signature-vs-checker 200/200 agreement, 860 repair tuples + 1,746
      calibration near-misses, family splits leakage-check GREEN (599/76/76).
-   - Panel (W6 / PANEL_SMOKE): 14 seats live; swapped-pair canary rejected at
-     0.99; the trade_deadlock case — both forward seats accepted (0.88/0.82)
+   - Panel (W6 / PANEL_SMOKE): 14 seats live; swapped-pair canary (a planted
+     check item with a known correct answer) rejected at 0.99; the
+     trade_deadlock case — both forward seats accepted (0.88/0.82)
      while the blind back-translation seat scored 0.25 (protocol-repairs-the-
      intent phenomenon), a shared forward-seat confirmation bias the class
      structure caught.
@@ -83,7 +86,7 @@ without restructuring. v8's submission shape and every v8 claim are preserved.
 9. `TEMPLATE_HOWTO.md` — maps every macro → the exact eval-harness output field
    (experiments/seam_bench/eval metrics / the phase-gate reports) that fills it,
    plus the one-line fill idiom and the pending-cell discipline.
-10. E5 pending cells WIRED to macros (anchor: Table `tab:transfid`): the three
+10. E5 pending cells CONNECTED to macros (anchor: Table `tab:transfid`): the three
     v8 hardcoded "pending" rows (First draft passes validator / Repair rounds to
     validity / Guard sidecar co-emission) now read \seamEfiveFirstDraft /
     \seamEfiveRepairRounds / \seamEfiveGuardCoemit, so the E5 table and the §8
@@ -114,7 +117,9 @@ without restructuring. v8's submission shape and every v8 claim are preserved.
     - Autoformalization lineage: sennrich16 (back-translation), autoform
       (Lean quality + cycle-consistency + miniF2F pass@k methodology).
     - Judge-panel lineage: poll24 (PoLL juries), kohli26 (nine-judges /
-      effective-votes), ropoll26 (robust geometric-median aggregation).
+      effective-votes), ropoll26 (robust geometric-median aggregation --
+      geometric median: a way to combine scores that resists being dragged
+      off by one extreme judge).
     - GCD format-tax: formattax26, crane25 (basis for the H1 two-sided test).
     - Novelty near-miss: liu25netproto (NL→network-protocol I/O grammars).
     ZipperGen (bollig26) reused from v8 as the other near-miss.
@@ -133,6 +138,50 @@ without restructuring. v8's submission shape and every v8 claim are preserved.
       v8, harmless under numbered natbib).
     - Macros: all 26 \seam* macros referenced in main.tex are defined in
       seam_results.tex; \pending and \seamfill defined once.
+
+## 2026-07-12 — claim rescoping and terminology pass
+
+17. **Rescoped the real-skills mining claim (§8.3, `tab:seam-instruments`).**
+    The prose and table row previously said the 0/13 compaction survival rate
+    was "because independently authored skills do not carry the coordination
+    structure a global type requires" and called that "the paper's thesis
+    observed in the wild." That is stronger than what W8 measured: W8
+    (`docs/reference/reports/seam/W8_miner.md` §4, §6) shows the 0/13 result
+    together with two controls — a synthetic team with an explicit
+    interaction structure passes the identical pipeline, and the four mined
+    `skills_safety` teams that had already been through an earlier,
+    LLM-assisted compaction still fail multiparty compatibility as
+    originals — which locates the failure in the inputs, not the pipeline,
+    but does not establish that the coordination structure is *absent* from
+    the mined skills (only that it is not stated in a machine-recoverable
+    convention). Replaced the prose paragraph and the table row with the
+    scoped version and added the explicit next step (an LLM-assisted
+    compaction run with a human-read baseline) that would be needed before
+    any `test-real` claim rests on mined data. Rationale: the paper should
+    not claim more than its own controls support; the scoped version is the
+    honest read of W8's own numbers. Same rescoping applied to
+    `docs/8_INTENT_TO_PROTOCOL_TRAINING.md` (§"The miner's honest finding")
+    and to this paper's own `README.txt`, which stated the same unscoped
+    claim in the v9 change summary.
+18. **Plain-language terminology pass** across `main.tex`,
+    `paper-writing/v9/README.txt`, and this changelog (and, as a project-wide
+    sweep, the `docs/` and `experiments/seam_bench/judge/human_audit/`
+    prose), per the new "Plain-language writing rule" in the top-level
+    `AGENT.md`: every term of art gets a one-clause plain-language gloss on
+    first use per document (e.g. "canary" → "a planted check item with a
+    known correct answer"; "seam" → "the translation step from
+    plain-language intent to formal protocol"; "geometric median" → "a
+    robust way to combine scores so one extreme judge cannot drag the
+    result"; "escrow" → "a neutral third party that holds funds until both
+    sides deliver"), and "wired"/"wire" is replaced with "connect"/
+    "connected" throughout prose. No code, identifiers, JSON fields, test
+    names, or LaTeX macro names were touched — only prose. Rationale: the
+    project owner flagged unglossed insider shorthand as a readability
+    problem; this pass fixes it without changing any measured claim.
+19. **LaTeX discipline check after edits 17–18:** `\begin`/`\end` count
+    39/39, matched per environment (no mismatches); brace count 1074/1074
+    (open/close, escaped braces and verbatim-style spans excluded) —
+    balanced. No new packages introduced.
 
 ## Build (unchanged from v8)
 `make` → pdflatex ×2 → main.pdf (main.tex \input{seam_results.tex}); `make docx`

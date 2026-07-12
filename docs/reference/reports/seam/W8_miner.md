@@ -182,7 +182,8 @@ compactor doing exactly what it says on the tin. Confirmed by two
 cross-checks:
 
 1. **The pipeline's downstream half is provably sound.** A synthetic
-   4-role escrow-trade team WITH fenced `localtype` blocks (the same
+   4-role escrow-trade team (escrow: a neutral third party that holds funds
+   until both sides deliver) WITH fenced `localtype` blocks (the same
    fixture `stjp_core/tests/test_skill_compactor.py` uses) runs the
    identical `formalize_team` code path end-to-end to a REAL-Scribble-
    validated `DatasetRecord`

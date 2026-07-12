@@ -65,7 +65,8 @@ Joins `labels.jsonl` with `packet_key.jsonl` and prints:
 - per-stratum agreement (your fit/no-fit vs. the packet's design
   expectation, for gold / easy_negative / hard_negative separately),
 - intra-rater consistency on the ~20 repeat items (the §6 "per-seat
-  self-consistency ≥ 0.8 on duplicate canaries" check, applied to you),
+  self-consistency ≥ 0.8 on duplicate canaries" check — canaries are planted
+  check items with a known correct answer — applied to you),
 - the §6 Wilson 95% lower-bound gate over the 200 non-repeat items, with a
   PASS/FAIL line against the 0.80 threshold,
 - the full §6 gate checklist, with `N/A (panel-side)` for the two lines

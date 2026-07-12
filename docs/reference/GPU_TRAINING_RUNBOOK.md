@@ -36,7 +36,7 @@ this runbook as the scaffold they fill in, not the other way around.
 | component | path | verified state |
 |---|---|---|
 | Real Scribble validator | `stjp_core/compiler/validator.py::ScribbleValidator` | 30/30 corpus pass, corrupt rejected (2026-07-11) |
-| Toolchain installer | `tools/setup_scribble_cloud.sh` | idempotent, wires Maven build + nuscr binary per worktree |
+| Toolchain installer | `tools/setup_scribble_cloud.sh` | idempotent, connects Maven build + nuscr binary per worktree |
 | E5 bisimulation checker | `experiments/scripts/efsm_equiv.py::protocols_equivalent` | wrapped by `experiments/seam_bench/eval/validity.py::bisim_equivalent` |
 | Lark grammar + GBNF mirror (GCD) | `stjp_core/compiler/scribble_grammar.lark`, `stjp_core/compiler/gcd_adapter.py` | 100% corpus round-trip, 1000/1000 sampled strings parse (W2) |
 | Eval harness (metric block, splits, report gen) | `experiments/seam_bench/eval/` (`schema.py`, `metrics.py`, `validity.py`, `report_gen.py`, `smoke.py`) | 86 tests pass; smoke reproduces on 30-corpus set |
@@ -297,7 +297,7 @@ itself is manual, on the owner's own machine.
 6. Monitor via `az ml job stream --name <job-name> ...` or the Studio UI
    (**ml.azure.com → Jobs**). Spot preemption means the training script
    must checkpoint (TRL's `Trainer.save_state`/`resumable` checkpointing —
-   already standard, just confirm `--resume_from_checkpoint` is wired in
+   already standard, just confirm `--resume_from_checkpoint` is connected in
    the launch script) since a spot NC A100 v4 node can be reclaimed
    mid-run.
 

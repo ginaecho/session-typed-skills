@@ -1,7 +1,8 @@
 # Auto-Training the Translation Seam — plan & strategy proposal
 
-**Scope.** The S1→S2 seam (natural-language intent → Scribble-validated global
-protocol G) is today an LLM-drafts / validator-rejects / human-endorses loop.
+**Scope.** The S1→S2 seam (the translation step from plain-language intent
+to formal protocol; here, natural-language intent → Scribble-validated
+global protocol G) is today an LLM-drafts / validator-rejects / human-endorses loop.
 This document proposes how to make that seam **self-improving**: (A) a
 verifiable-reward training program for *validity* (does Scribble accept G?),
 (B) an automated instrument for *faithfulness* (does G describe what the user

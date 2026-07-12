@@ -341,6 +341,34 @@ def load_case(case_id: str) -> Case:
     return Case(**config)
 ```
 
+### 5. Plain-language writing rule (docs, reports, replies)
+
+Applies to prose in docs, reports, READMEs, changelogs, and chat replies — not to code, identifiers, function names, JSON fields, or test names.
+
+**Do:**
+- Define every term of art on first use in a doc, in one plain clause, right where the term first appears.
+- Write for a capable developer who is **not** a compiler/PL researcher. If a plain phrase says the same thing, use it instead of insider shorthand.
+- If a metaphor or codename was invented mid-project (a nickname for a mechanism, a project-internal label), it must never appear in a doc without its definition — even if it feels "obvious" to the team by now.
+- Once a term is glossed the first time in a document, later uses in that same document may use the short form freely.
+
+**Don't:**
+- Don't assume the reader already knows project slang from Slack, standups, or earlier docs.
+- Don't drop a term of art into a heading, table cell, or bullet with no adjacent gloss anywhere in the doc.
+
+**Known offenders and how to gloss or replace them:**
+
+| Term | Plain phrase / gloss |
+|---|---|
+| canary | a planted check item with a known correct answer |
+| AST re-emission | re-printing the protocol from its parsed structure, so comments and hidden text are dropped |
+| pillar | (avoid; name the actual thing it refers to instead) |
+| wire / wired | connect |
+| seam | the translation step from plain-language intent to formal protocol (define on first use in *any* doc) |
+| escrow | a neutral third party that holds funds until both sides deliver |
+| geometric median | a robust way to combine scores so one extreme judge cannot drag the result |
+
+**Example:** first use in a doc — "a planted check item with a known correct answer (a *canary*)"; every later use in that doc may just say "canary."
+
 ---
 
 ## 🧪 Testing Your Changes

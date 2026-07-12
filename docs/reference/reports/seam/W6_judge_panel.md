@@ -16,7 +16,7 @@ classes.py    run_j_fwd, run_j_back (+reconstruct_intent/compare_intents), run_j
 aggregate.py  verify_evidence, weiszfeld/geometric_median_score, aggregate_panel, write_escalation_record  (§5.3, §5.5)
 canaries.py   swapped-pair / gold-vs-mutant / duplicate-self-consistency / rationale-overlap / effective-votes  (§5.5)
 cache.py      VerdictCache: disk-backed (class, model, temp, prompt_hash, payload_hash) -> JSON  (§5.1)
-run_panel.py  judge_case(): wires one (intent, G) case through the full panel + aggregation; CLI entry for the
+run_panel.py  judge_case(): connects one (intent, G) case through the full panel + aggregation; CLI entry for the
               conditional real-API smoke test
 ```
 
@@ -29,9 +29,11 @@ object, bounded `max_tokens`, JSON-schema-forced output (`output_config.format`)
 state between calls. Verified directly in `tests/test_seats.py::test_call_structured_is_one_stateless_call_no_tools_no_session`.
 
 **5.2 Payload sanitization.** `payloads.sanitize_protocol` strips comments *before* any parsing (not via a regex
-pass over raw text at the end), then re-emits the canonical text by walking the recursive AST that
-`stjp_core.critic.protocol_paths.parse_global_ast` produces (`GMessage`/`GChoice`/unrolled-`rec` nodes) — never by
-taking a substring of the original source. Comments therefore cannot survive by construction, not by a stripping
+pass over raw text at the end), then re-prints the protocol from its parsed structure (AST re-emission: it walks the
+recursive abstract syntax tree, the parser's structured representation of the protocol, that
+`stjp_core.critic.protocol_paths.parse_global_ast` produces (`GMessage`/`GChoice`/unrolled-`rec` nodes), and re-emits
+canonical text from that structure) — never by taking a substring of the original source, so comments and any
+hidden text are dropped rather than merely masked. Comments therefore cannot survive by construction, not by a stripping
 heuristic that could be fooled. Verified with seven adversarial fixtures in `tests/test_payloads.py` that plant
 `IGNORE PREVIOUS INSTRUCTIONS`-style text inside line comments, block comments, the role-declaration parens
 (the specific hole in `stjp_core.compiler.protocol_parser`'s raw-text regexes, which this module deliberately does
@@ -63,12 +65,14 @@ confirms the discard path catches this even though the comparator's own free tex
 
 **5.5 Collusion/degeneration audits.** `canaries.py` implements the full battery against an injected (mockable)
 judge function, so it runs in CI with zero network calls: swapped pairs, gold-vs-mutant separation
-(`naive_behavior_changing_mutation` — a light textual sender/receiver swap for canary purposes only, explicitly
-**not** a substitute for D3's real mutation operators), duplicate-probe self-consistency, and the pairwise 5-gram
+(`naive_behavior_changing_mutation` — a light textual sender/receiver swap for canary (a planted check item with a
+known correct answer) purposes only, explicitly **not** a substitute for D3's real mutation operators),
+duplicate-probe self-consistency, and the pairwise 5-gram
 Jaccard rationale-overlap alarm (`ngram_jaccard`/`rationale_overlap_alarm` — checks free-text *rationale*
 verbatim-overlap, not vote agreement, matching the plan's "honest judges may agree; they should not agree
 verbatim"). Aggregation lives entirely in `aggregate.py`: `weiszfeld` (Weiszfeld's algorithm, dependency-free,
-generalized to arbitrary dimension though used at D=1 here) computes the geometric median of per-seat calibrated
+generalized to arbitrary dimension though used at D=1 here) computes the geometric median (a robust way to combine
+scores so one extreme judge cannot drag the result) of per-seat calibrated
 scores; J-probe failures veto the panel outright regardless of vote share (`aggregate_panel`); abstentions route to
 `escalation_reasons` with dissent attached rather than being silently dropped; the escalation rule fires on
 aggregate ∈ [0.4, 0.6], a probe-vote conflict (probe fails while the panel's score says accept, or vice versa), or
@@ -78,7 +82,7 @@ any abstention, and `write_escalation_record` appends a JSONL record for the hum
 
 The task card allowed shipping an interface-only stub if the critic machinery didn't expose what J-probe needs
 within reasonable effort. It did: `stjp_core.compiler.efsm_parser.get_efsm_from_scribble` cleanly builds a real
-per-role EFSM by shelling into the actual Scribble CLI, and this worktree already has the real toolchain wired
+per-role EFSM by shelling into the actual Scribble CLI, and this worktree already has the real toolchain connected
 (`bash tools/setup_scribble_cloud.sh`, gold-pass/corrupt-reject smoke both green here). So J-probe is **fully
 implemented**, not stubbed:
 
@@ -105,7 +109,7 @@ implemented**, not stubbed:
   `tests/test_classes.py::test_build_efsms_from_source_real_toolchain_worked_example` runs the actual Scribble CLI
   against `experiments/cases/_corpus/corpus_000.scr`, builds all four roles' real EFSMs, and evaluates a genuine
   `reachable` probe against the real transitions. It passed in this environment (see test output below). It is
-  `pytest.skip`-guarded on `SCRIBBLE_PATH.exists()` so CI environments without the toolchain wired skip it cleanly
+  `pytest.skip`-guarded on `SCRIBBLE_PATH.exists()` so CI environments without the toolchain connected skip it cleanly
   rather than failing; `run_panel.py::judge_case` also exercises the real toolchain end-to-end via
   `tests/test_run_panel.py` (mocked LLM client, real EFSM build).
 

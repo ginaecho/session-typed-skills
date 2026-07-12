@@ -9,7 +9,7 @@ Everything below ran against the REAL Scribble-java toolchain
 symlink), on a 4-core cloud sandbox. Every builder starts with a
 fail-loud preflight (`common.assert_toolchain`): a gold corpus protocol
 must validate AND a corrupted copy must be rejected with a parser error —
-a missing/mis-wired toolchain aborts the run instead of surfacing as
+a missing/mis-connected toolchain aborts the run instead of surfacing as
 silent 100% rejection or fake counterexamples.
 
 ## What exists

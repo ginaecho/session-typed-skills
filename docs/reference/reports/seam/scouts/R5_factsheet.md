@@ -1,4 +1,6 @@
 # Scout R5: Seam-Training Fact-Sheet
+(The "seam" is the translation step from plain-language intent to formal
+protocol.)
 **Retrieved 2026-07-11**
 
 ---

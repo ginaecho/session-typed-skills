@@ -1,6 +1,8 @@
 # R3 — Comparable Datasets & D5 Mining Targets
 
-Scout report for the seam-training program (`docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`
+Scout report for the seam-training program (the "seam" is the translation
+step from plain-language intent to formal protocol;
+`docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`
 §3 D5, §7). Date of research: 2026-07-11. All GitHub numbers below are from
 live `search_code`/`search_repositories` calls made today; web-search numbers
 are from paper abstracts/READMEs fetched today. Every count is an

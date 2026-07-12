@@ -1,6 +1,8 @@
 # Seam Training — execution plan (we are actually training this)
 
-Companion to `SEAM_AUTOTRAINING_PLAN.md` (the strategy). This document is the
+The "seam" here is the translation step from plain-language intent to
+formal protocol (S1→S2: natural-language intent → Scribble-validated global
+protocol). Companion to `SEAM_AUTOTRAINING_PLAN.md` (the strategy). This document is the
 **executable** version: exact stacks, data formats, hyperparameters, judge
 isolation mechanics, benchmarks, statistical gates, and ready-to-dispatch
 worker briefs. Design goal throughout: **minimum implementation friction** —
@@ -106,7 +108,7 @@ the REAL Scribble-java CLI (`org.scribble.cli.CommandLine` via
 `stjp_core/compiler/validator.py::ScribbleValidator`), never a Python-only
 approximation. One-command install for any checkout/worktree:
 `bash tools/setup_scribble_cloud.sh` (builds the ginaecho/scribble-java fork
-with Maven once under /workspace, wires the checkout, installs the nuscr
+with Maven once under /workspace, connects the checkout, installs the nuscr
 coinductive-fork binary, and smoke-tests gold-pass + corrupt-reject).
 Verified 2026-07-11: 30/30 `_corpus` protocols pass real validation; a
 corrupted control is rejected with a genuine parser error. Every harness
@@ -278,7 +280,8 @@ seat interface: (a) **subscription-subagent transport** — seats are
 session subagents with schema-forced structured output; fresh context
 per spawn, payload-only prompt, no inter-seat visibility; billed to the
 session subscription, no API key. Validated live 2026-07-11
-(PANEL_SMOKE report: 14 seats, canary rejected at 0.99, J-back caught a
+(PANEL_SMOKE report: 14 seats, canary (a planted check item with a known
+correct answer) rejected at 0.99, J-back caught a
 forward-seat confirmation bias on trade_deadlock). Default for all
 interactive/phase-gate judging: calibration sweeps, mined-item judging,
 escalation seats, and T0 drafting baselines. Instruction-level no-tools
@@ -365,10 +368,12 @@ votes anchored to the artifact instead of to plausible-sounding prose.
   self-consistency. Per-seat calibration curves are recomputed nightly
   from canaries alone; a drifting seat is removed from aggregation weight
   without touching any real verdict.
-- *Aggregation is code:* v2 (R1): **geometric-median aggregation** over
-  per-seat calibrated scores (arithmetic vote-share has unbounded bias
-  under a single biased judge; the geometric median is the tuning-free
-  robust fix), J-probe failures veto regardless of votes; abstentions
+- *Aggregation is code:* v2 (R1): **geometric-median aggregation** (the
+  geometric median is a robust way to combine scores so one extreme judge
+  cannot drag the result) over per-seat calibrated scores (arithmetic
+  vote-share has unbounded bias under a single biased judge; the geometric
+  median is the tuning-free robust fix), J-probe failures veto regardless
+  of votes; abstentions
   route to the human queue with the dissent attached. No LLM anywhere in
   aggregation. Additionally report **effective independent votes**
   (estimated from canary inter-seat correlation): scouting found a

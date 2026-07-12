@@ -43,7 +43,7 @@ nuscr smoke: binary runs  [OK]
 export STJP_NUSCR_BIN=/workspace/bin/nuscr   # for the opt-in nuscr backend
 ```
 
-(The /workspace shared build already existed; the script wired this
+(The /workspace shared build already existed; the script connected this
 checkout's `scribble-java/scribble-dist/target/lib` symlink and re-ran its
 gold-pass/corrupt-reject self-test.)
 

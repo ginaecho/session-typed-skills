@@ -1,5 +1,8 @@
 # R4 — Adversarial red-team of the Seam-Training plan
 
+(The "seam" is the translation step from plain-language intent to formal
+protocol.)
+
 Scope: `SEAM_TRAINING_EXECUTION_PLAN.md` (exec) + `SEAM_AUTOTRAINING_PLAN.md`
 (strategy), checked against repo reality (`stjp_core/compiler/`,
 `experiments/scripts/{gen_corpus,integration_stress,mutate_protocol,efsm_equiv}.py`,
@@ -91,5 +94,5 @@ Math: p̂=0.85, n=100 → Wilson 95% CI ≈ [0.758, 0.898]. To make the CI *lowe
 
 ## Findings the planner can fairly rebut (noted for completeness)
 - Pure T2 mode-collapse "regardless of intent" is partially blunted because T2 GRPO prompts come from the synthetic `train` split which *has* gold, so the bisim term does tie to intent — but B2 stands because that term is binary/sparse and brevity still wins the gradient.
-- Payload sanitization (§5.2, stripping comments/canonicalizing) is a genuinely strong anti-smuggling control; the collusion/canary battery (§5.5) is well-designed. The judge *isolation* story is solid — the weakness is *circularity of the calibration data* (M2), not the isolation mechanics.
+- Payload sanitization (§5.2, stripping comments/canonicalizing) is a genuinely strong anti-smuggling control; the collusion/canary battery (§5.5; canaries are planted check items with a known correct answer) is well-designed. The judge *isolation* story is solid — the weakness is *circularity of the calibration data* (M2), not the isolation mechanics.
 - Cost envelope (<$1k) is plausible for API+SFT; the risk is wall-clock/throughput (M4) and lost-state (M5), not dollars.

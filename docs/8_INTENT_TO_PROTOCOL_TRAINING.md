@@ -128,14 +128,16 @@ On 2026-07-11 this panel ran for real (`docs/reference/reports/seam/PANEL_SMOKE_
 over three known-good (intent, protocol) pairs plus one deliberately swapped
 pair, using 14 isolated judge calls.
 
-- **The swapped pair (canary):** intent from the banking case paired with
+- **The swapped pair (canary — a planted check item with a known correct
+  answer):** intent from the banking case paired with
   the protocol from the travel case. Both forward judges correctly said "no
   match" at 0.99 confidence — proof the panel isn't a rubber stamp.
 - **The interesting catch — `trade_deadlock`:** this case's intent literally
   describes a deadlock ("Buyer releases payment only after goods received;
   Seller releases goods only after payment" — each side waiting on the
   other, forever). The protocol on file doesn't implement that deadlock; it
-  implements a working escrow sequence that avoids it. Both forward judges,
+  implements a working escrow (a neutral third party that holds funds until
+  both sides deliver) sequence that avoids it. Both forward judges,
   seeing the intent and the protocol side by side, rated this **faithful**
   (0.88 and 0.82) — reading the escrow protocol as a reasonable way to
   satisfy the intent's spirit. The blind J-back judge, seeing **only the
@@ -163,7 +165,7 @@ in the wild.
 
 | component | what it does | one-command usage | evidence |
 |---|---|---|---|
-| **Toolchain setup** | Installs and wires the *real* Scribble-java compiler (never a Python approximation) plus the optional nuscr backend, and self-tests that it accepts a known-good protocol and rejects a corrupted one. | `bash tools/setup_scribble_cloud.sh` | 30/30 corpus protocols pass real validation; a corrupted control is rejected with a genuine parser error (`docs/reference/reports/seam/W1_eval_harness.md` §3) |
+| **Toolchain setup** | Installs and connects the *real* Scribble-java compiler (never a Python approximation) plus the optional nuscr backend, and self-tests that it accepts a known-good protocol and rejects a corrupted one. | `bash tools/setup_scribble_cloud.sh` | 30/30 corpus protocols pass real validation; a corrupted control is rejected with a genuine parser error (`docs/reference/reports/seam/W1_eval_harness.md` §3) |
 | **Grammar / grammar-constrained decoding (GCD)** | A formal grammar for Scribble's syntax (`stjp_core/compiler/scribble_grammar.lark`), plus an adapter that turns it into the format vLLM/xgrammar need to force a model's output to *always* be syntactically legal Scribble — deleting the "my draft didn't even parse" failure mode outright. | `python -m pytest stjp_core/tests/test_scribble_grammar.py` | 113/113 real corpus files round-trip; 1000/1000 randomly sampled protocols parse under both the grammar and the production parser; 15/15 corrupted negatives correctly rejected (`docs/reference/reports/seam/W2_grammar_gcd.md`) |
 | **Data builders** | Turns the ~50 hand-written seed protocols into thousands more (by sweeping parameters, composing sub-protocols, and crossing over fragments — every candidate re-validated, never hand-approved), writes plausible-sounding intents *for* those protocols so training pairs exist without a human writing either side, and builds "broken protocol + validator's own error message → fixed protocol" repair pairs from the mutation testing already used elsewhere in STJP. Splits everything by protocol family so no near-duplicate leaks across train/dev/test. | `python experiments/seam_bench/data/d1_expand.py --target 800 ...` (families) · `python experiments/seam_bench/data/d3_repair.py ...` (repair pairs) · `python experiments/seam_bench/data/splitter.py ...` + `leakage_check.py` (splits) | 671 unique valid families from one 22-minute bounded run; the family-equivalence signature agrees with the repo's real equivalence checker on 200/200 pairs; leakage check reports **GREEN** on a 599/76/76 train/dev/test-syn split (`docs/reference/reports/seam/W3_data_builders.md`) |
 | **Eval harness + metrics** | The standing scoreboard: validity, validity-under-GCD, equivalence-to-gold, repair rounds needed, tokens/dollars spent per accepted protocol, and the transfer gap between synthetic and real-world test items — all with proper statistics (bootstrap confidence intervals, not bare averages), plus a guard that logs every time a held-out test split is opened. | `python -m experiments.seam_bench.eval.smoke` | 86/86 tests pass; the smoke run validates all 30 real corpus protocols and correctly rejects all 60 corrupted copies of them (`docs/reference/reports/seam/W1_eval_harness.md`) |
@@ -191,18 +193,21 @@ The funnel doesn't die from a bug — it dies at one specific, well-understood
 step: STJP's protocol builder expects skill files written in one of two
 specific STJP-internal formats, and (unsurprisingly) **no file harvested
 from a public GitHub repo was ever written in either format**, because
-nobody outside this project has a reason to write one that way. Two
-independent cross-checks confirm this is structural, not a fluke of which
-13 teams got picked: a synthetic team built *with* the expected format sails
-through the identical code path to a validated protocol, and every one of
-STJP's own in-repo case studies that mines *real* skill descriptions shows
-the same failure shape even before this program existed. The useful
-takeaway isn't "the miner is broken" — it's a measured data point for the
-project's own thesis: hand-written, real-world coordination descriptions
-under-determine the formal structure a safe multi-agent protocol needs,
-even after automated compaction. See `docs/reference/reports/seam/W8_miner.md`
-§4 and §6 for the full funnel and the projected yield if a repair step were
-added.
+nobody outside this project has a reason to write one that way.
+
+Two controls locate the failure in the inputs rather than in the pipeline:
+a synthetic team built *with* the expected format sails through the
+identical code path to a validated protocol, and for the four mined
+`skills_safety` teams where an earlier, LLM-assisted compaction had already
+produced per-role types, the originals still fail multiparty compatibility.
+The useful takeaway isn't "the miner is broken" — it's a measured data
+point that independently authored skills do not state their coordination
+structure in any machine-recoverable convention. Whether that structure is
+absent altogether or merely implicit in prose is a preregistered follow-up
+(LLM-assisted compaction with a human-read baseline) that must run before
+any conclusion about real-world skills rests on mined data. See
+`docs/reference/reports/seam/W8_miner.md` §4 and §6 for the full funnel and
+the projected yield if a repair step were added.
 
 ---
 

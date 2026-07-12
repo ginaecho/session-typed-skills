@@ -1,5 +1,8 @@
 # Scout R1: Literature Sweep — Seam Training Program
 
+(The "seam" is the translation step from plain-language intent to formal
+protocol.)
+
 **Retrieved 2026-07-11.** Scope: does anything in the 2024–2026 literature CHANGE the
 design in `SEAM_TRAINING_EXECUTION_PLAN.md` / `SEAM_AUTOTRAINING_PLAN.md`, or its
 grounding table (execution plan §10)? Findings are ranked by impact. Each entry gives

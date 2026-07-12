@@ -1,6 +1,8 @@
 # Branch consolidation — intent→protocol training program (2026-07-11)
 
-Everything produced by the seam-training program now lives on ONE branch:
+Everything produced by the seam-training program (the "seam" is the
+translation step from plain-language intent to formal protocol) now lives
+on ONE branch:
 **`gc/user_intent_global_protocol_training`** (implementation, reports,
 audit + raw traces, docs guide 8, GPU runbook, paper v9, labeling tool).
 
