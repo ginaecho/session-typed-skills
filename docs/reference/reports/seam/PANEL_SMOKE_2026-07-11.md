@@ -1,8 +1,9 @@
 # Panel smoke — first real faithfulness run (2026-07-11)
 
-First live execution of the §5 faithfulness panel: 3 gold (intent, G)
-pairs from the named cases + 1 swapped-pair canary (a planted check item
-with a known correct answer), judged by 14
+First live execution of the §5 faithfulness panel — a smoke test (a quick
+end-to-end check) of the panel design: 3 gold (a known-correct reference
+answer) (intent, G) pairs from the named cases + 1 swapped-pair canary (a
+planted check item with a known correct answer), judged by 14
 stateless subscription-subagent seats (no API key — the seats are
 session subagents with schema-forced JSON verdicts). Seats per case:
 J-fwd (Opus 4.8, roles/flow rubric) + J-fwd (Sonnet 5,
