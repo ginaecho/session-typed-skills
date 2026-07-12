@@ -1,0 +1,15 @@
+{
+  "team_id": "explicit_ref:github/awesome-copilot:markdown+se-ux-ui-designer",
+  "evidence": {},
+  "excluded": {
+    "markdown": {
+      "category": "ambiguous",
+      "reason": "team_builder matched se-ux-ui-designer.md's own fenced-code-block language tag ('```markdown') as if it named the 'markdown' instructions role -- a regex artifact, not a reference to markdown.instructions.md."
+    },
+    "se-ux-ui-designer": {
+      "category": "ambiguous",
+      "reason": "same false-positive match; se-ux-ui-designer.md never discusses the markdown formatting-instructions file."
+    }
+  },
+  "notes": ""
+}

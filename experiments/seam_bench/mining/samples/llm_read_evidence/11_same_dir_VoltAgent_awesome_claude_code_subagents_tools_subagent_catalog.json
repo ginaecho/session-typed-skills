@@ -1,0 +1,23 @@
+{
+  "team_id": "same_dir:VoltAgent/awesome-claude-code-subagents:tools/subagent-catalog",
+  "evidence": {},
+  "excluded": {
+    "fetch": {
+      "category": "pure-solo-task",
+      "reason": "Independent user-invoked slash command; touches a shared cache FILE, never messages another command."
+    },
+    "invalidate": {
+      "category": "pure-solo-task",
+      "reason": "Independent user-invoked slash command over the same shared cache file; no agent-to-agent messaging."
+    },
+    "list": {
+      "category": "pure-solo-task",
+      "reason": "Independent user-invoked slash command; only cross-reference is a usage TIP pointing the human user at /search and /fetch, not a message to them."
+    },
+    "search": {
+      "category": "pure-solo-task",
+      "reason": "Independent user-invoked slash command; same shared-cache-file pattern, no messaging to fetch/list/invalidate."
+    }
+  },
+  "notes": "Same-directory grouping found 4 sibling slash-commands that share a cache file, not an interacting multi-agent team; this is exactly the failure mode R3 flagged for directory-shaped sources."
+}

@@ -1,0 +1,19 @@
+{
+  "team_id": "worked_example:doc_pipeline_upstream",
+  "evidence": {},
+  "excluded": {
+    "internal-comms": {
+      "category": "pure-solo-task",
+      "reason": "Real internal-comms/SKILL.md addresses the invoking user directly ('Identify the communication type from the request'); no other named skill/agent."
+    },
+    "brand-guidelines": {
+      "category": "pure-solo-task",
+      "reason": "Real brand-guidelines/SKILL.md is a standalone style-application reference; no named counterpart."
+    },
+    "doc-coauthoring": {
+      "category": "pure-solo-task",
+      "reason": "Real doc-coauthoring/SKILL.md invokes generic 'a sub-agent' for ambiguity checks -- no named team-role peer, and the sub-agent is not one of the 3 harvested files."
+    }
+  },
+  "notes": ""
+}

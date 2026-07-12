@@ -1,0 +1,50 @@
+{
+  "team_id": "worked_example:booking_saga",
+  "evidence": {
+    "Traveler": [
+      {
+        "edge": "Traveler->Hotel: RequestBooking",
+        "quote": "Request a hotel booking for the trip (send `RequestBooking` to the Hotel).",
+        "source_role": "Traveler"
+      },
+      {
+        "edge": "Hotel->Traveler: BookingConfirmed",
+        "quote": "Wait for the final booking confirmation.",
+        "source_role": "Traveler",
+        "note": "label BookingConfirmed supplied by Hotel's own text."
+      }
+    ],
+    "Hotel": [
+      {
+        "edge": "Traveler->Hotel: RequestBooking",
+        "quote": "Request a hotel booking for the trip (send `RequestBooking` to the Hotel).",
+        "source_role": "Traveler"
+      },
+      {
+        "edge": "Payment->Hotel: PaymentCaptured",
+        "quote": "wait until you receive `PaymentCaptured` from the Payment service.",
+        "source_role": "Hotel"
+      },
+      {
+        "edge": "Hotel->Traveler: BookingConfirmed",
+        "quote": "ONLY THEN confirm the booking (send `BookingConfirmed` to the Traveler).",
+        "source_role": "Hotel"
+      }
+    ],
+    "Payment": [
+      {
+        "edge": "Hotel->Payment: RoomHeld",
+        "quote": "wait until you receive `RoomHeld` from the Hotel service.",
+        "source_role": "Payment",
+        "note": "DELIBERATELY NOT mirrored in Hotel's block: Hotel.md never states it sends RoomHeld anywhere. This is not an omission on my part -- Hotel's text simply does not make that claim. Recording the asymmetry as-is is the point of this case."
+      },
+      {
+        "edge": "Payment->Hotel: PaymentCaptured",
+        "quote": "ONLY THEN capture the charge (send `PaymentCaptured` to the Hotel).",
+        "source_role": "Payment"
+      }
+    ]
+  },
+  "excluded": {},
+  "notes": "Hotel's block has no RoomHeld send by design -- Payment's local type waits for a message Hotel's own skill text never promises to send. Expected to fail multiparty compatibility, not synthesis/validator."
+}

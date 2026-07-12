@@ -1,0 +1,23 @@
+{
+  "team_id": "worked_example:doc_pipeline",
+  "evidence": {},
+  "excluded": {
+    "Requester": {
+      "category": "ambiguous",
+      "reason": "'Ask the writing team for the internal announcement' names a vague collective ('the writing team'), not a single team-role peer; 'send `DocRequest`' names no recipient."
+    },
+    "Writer": {
+      "category": "no-counterpart-named",
+      "reason": "'hand it off so it can go out (send `DraftComms`)' names no recipient."
+    },
+    "BrandReviewer": {
+      "category": "no-counterpart-named",
+      "reason": "'When content comes to you' names no sender; 'pass it along as brand-approved (send `BrandApproved`)' names no recipient."
+    },
+    "DocLead": {
+      "category": "no-counterpart-named",
+      "reason": "'distribute the finished document company-wide (send `DocShipped`)' names no recipient role (Requester is never named here even though Requester's own text expects to receive it)."
+    }
+  },
+  "notes": "Unlike pr_merge/content_pipeline/airline_seat/booking_saga, this worked example's paraphrase never names a directional peer for any send. 0/4 roles extractable."
+}

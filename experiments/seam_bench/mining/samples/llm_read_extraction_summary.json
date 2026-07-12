@@ -1,0 +1,351 @@
+[
+  {
+    "team_index": 0,
+    "team_id": "worked_example:pr_merge",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 4,
+    "n_roles_blocked": 2,
+    "coverage": 0.5,
+    "excluded": {
+      "CodeReviewer": {
+        "category": "no-counterpart-named",
+        "reason": "'pass it on with your verdict (send `ReviewPassed`)' names no recipient role."
+      },
+      "SecurityReviewer": {
+        "category": "no-counterpart-named",
+        "reason": "'report it as cleared (send `SecurityPassed`)' names no recipient role."
+      }
+    },
+    "notes": "",
+    "reduced_id": "pr_merge__reduced_Author_Merger",
+    "stage_reached": "validator_passed",
+    "ok": true,
+    "pipeline_error": "",
+    "synthesis_mode": "deterministic",
+    "protocol_text": "module 00_worked_example_pr_merge;\n\ndata <java> \"java.lang.String\" from \"rt.jar\" as String;\n\nglobal protocol Team0(role Author, role Merger) {\n    MergeDone(String) from Merger to Author;\n}\n"
+  },
+  {
+    "team_index": 1,
+    "team_id": "worked_example:content_pipeline",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 4,
+    "n_roles_blocked": 4,
+    "coverage": 1.0,
+    "excluded": {},
+    "notes": "Publisher's own 'send `Published`' is dropped: its target is 'the live site', not a named team role (no-counterpart-named).",
+    "reduced_id": "content_pipeline__full",
+    "stage_reached": "validator_passed",
+    "ok": true,
+    "pipeline_error": "",
+    "synthesis_mode": "deterministic",
+    "protocol_text": "module 01_worked_example_content_pipeline;\n\ndata <java> \"java.lang.String\" from \"rt.jar\" as String;\n\nglobal protocol Team1(role Editor, role Publisher, role Researcher, role Writer) {\n    ResearchBrief(String) from Researcher to Writer;\n    SubmitDraft(String) from Writer to Editor;\n    Approve(String) from Editor to Publisher;\n}\n"
+  },
+  {
+    "team_index": 2,
+    "team_id": "worked_example:airline_seat",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 3,
+    "n_roles_blocked": 3,
+    "coverage": 1.0,
+    "excluded": {},
+    "notes": "",
+    "reduced_id": "airline_seat__full",
+    "stage_reached": "validator_passed",
+    "ok": true,
+    "pipeline_error": "",
+    "synthesis_mode": "deterministic",
+    "protocol_text": "module 02_worked_example_airline_seat;\n\ndata <java> \"java.lang.String\" from \"rt.jar\" as String;\n\nglobal protocol Team2(role FlightSystem, role SeatBooking, role Triage) {\n    AssignFlight(String) from Triage to SeatBooking;\n    UpdateSeat(String) from SeatBooking to FlightSystem;\n    SeatConfirmed(String) from FlightSystem to SeatBooking;\n}\n"
+  },
+  {
+    "team_index": 3,
+    "team_id": "worked_example:booking_saga",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 3,
+    "n_roles_blocked": 3,
+    "coverage": 1.0,
+    "excluded": {},
+    "notes": "Hotel's block has no RoomHeld send by design -- Payment's local type waits for a message Hotel's own skill text never promises to send. Expected to fail multiparty compatibility, not synthesis/validator.",
+    "reduced_id": "booking_saga__full",
+    "stage_reached": "compatibility_failed",
+    "ok": false,
+    "pipeline_error": "local types are not multiparty-compatible:\n  Payment waits to receive RoomHeld from Hotel, but Hotel's local type never sends it \u2014 Payment would wait forever",
+    "synthesis_mode": "",
+    "protocol_text": ""
+  },
+  {
+    "team_index": 4,
+    "team_id": "worked_example:code_execution",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 3,
+    "n_roles_blocked": 2,
+    "coverage": 0.667,
+    "excluded": {
+      "Coder": {
+        "category": "no-counterpart-named",
+        "reason": "'submit it so it can be run (send `SubmitCode`)' names no recipient; Coder's role is only named as a *source* in Reviewer's text, never as a recipient of anything, so no LocalType action can be attributed to Coder without inventing one."
+      }
+    },
+    "notes": "",
+    "reduced_id": "code_execution__reduced_Reviewer_Executor",
+    "stage_reached": "compatibility_failed",
+    "ok": false,
+    "pipeline_error": "local types are not multiparty-compatible:\n  Reviewer receives from unknown role 'Coder' (label SubmitCode) \u2014 no skill/local type provided for that role",
+    "synthesis_mode": "",
+    "protocol_text": ""
+  },
+  {
+    "team_index": 5,
+    "team_id": "worked_example:doc_pipeline",
+    "source_repo": "in-repo:skills_safety",
+    "heuristic": "worked-example",
+    "n_roles_total": 4,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "Requester": {
+        "category": "ambiguous",
+        "reason": "'Ask the writing team for the internal announcement' names a vague collective ('the writing team'), not a single team-role peer; 'send `DocRequest`' names no recipient."
+      },
+      "Writer": {
+        "category": "no-counterpart-named",
+        "reason": "'hand it off so it can go out (send `DraftComms`)' names no recipient."
+      },
+      "BrandReviewer": {
+        "category": "no-counterpart-named",
+        "reason": "'When content comes to you' names no sender; 'pass it along as brand-approved (send `BrandApproved`)' names no recipient."
+      },
+      "DocLead": {
+        "category": "no-counterpart-named",
+        "reason": "'distribute the finished document company-wide (send `DocShipped`)' names no recipient role (Requester is never named here even though Requester's own text expects to receive it)."
+      }
+    },
+    "notes": "Unlike pr_merge/content_pipeline/airline_seat/booking_saga, this worked example's paraphrase never names a directional peer for any send. 0/4 roles extractable.",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 6,
+    "team_id": "worked_example:pr_merge_upstream",
+    "source_repo": "github/awesome-copilot",
+    "heuristic": "worked-example",
+    "n_roles_total": 4,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "address-comments": {
+        "category": "pure-solo-task",
+        "reason": "Real address-comments.agent.md never names another agent or role; describes one agent's own comment-fixing loop with the human user only."
+      },
+      "code-review-generic": {
+        "category": "pure-solo-task",
+        "reason": "Real code-review-generic.instructions.md is a solo severity-triage checklist ('Block merge' is a self-directed verdict label, not a message to a named Merger role)."
+      },
+      "se-security-reviewer": {
+        "category": "pure-solo-task",
+        "reason": "Real se-security-reviewer.agent.md is a solo OWASP-review checklist with no named counterpart."
+      },
+      "principal-software-engineer": {
+        "category": "pure-solo-task",
+        "reason": "Real principal-software-engineer.agent.md is a solo engineering-judgment guide with no named counterpart."
+      }
+    },
+    "notes": "The skills_safety worked example (team 0) got its send/receive vocabulary from the STJP author's paraphrase, not from these real upstream files -- none of the 4 real files name another team role at all.",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 7,
+    "team_id": "worked_example:doc_pipeline_upstream",
+    "source_repo": "anthropics/skills",
+    "heuristic": "worked-example",
+    "n_roles_total": 3,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "internal-comms": {
+        "category": "pure-solo-task",
+        "reason": "Real internal-comms/SKILL.md addresses the invoking user directly ('Identify the communication type from the request'); no other named skill/agent."
+      },
+      "brand-guidelines": {
+        "category": "pure-solo-task",
+        "reason": "Real brand-guidelines/SKILL.md is a standalone style-application reference; no named counterpart."
+      },
+      "doc-coauthoring": {
+        "category": "pure-solo-task",
+        "reason": "Real doc-coauthoring/SKILL.md invokes generic 'a sub-agent' for ambiguity checks -- no named team-role peer, and the sub-agent is not one of the 3 harvested files."
+      }
+    },
+    "notes": "",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 8,
+    "team_id": "explicit_ref:github/awesome-copilot:gem-implementer+r",
+    "source_repo": "github/awesome-copilot",
+    "heuristic": "explicit-reference",
+    "n_roles_total": 2,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "r": {
+        "category": "ambiguous",
+        "reason": "Team formation itself is a team_builder regex artifact: the only 'invoke the' match in gem-implementer.md is followed within 80 chars by the letter 'R' from 'TDD Cycle (Red -> Green -> R[efactor])', which the word-boundary regex for role name 'r' matched. No genuine cross-reference between the R style-guide and gem-implementer exists in either file's text."
+      },
+      "gem-implementer": {
+        "category": "ambiguous",
+        "reason": "Same false-positive match as 'r' -- gem-implementer.md never mentions an 'r' role/skill."
+      }
+    },
+    "notes": "",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 9,
+    "team_id": "explicit_ref:github/awesome-copilot:agent-safety+agents+debug+devbox-image-definition+gem-critic+gem-debugger+gem-documentation-writer+gem-orchestrator+gem-planner+gem-reviewer+gem-skill-creator+plan+planner+prd+prompt",
+    "source_repo": "github/awesome-copilot",
+    "heuristic": "explicit-reference",
+    "n_roles_total": 15,
+    "n_roles_blocked": 7,
+    "coverage": 0.467,
+    "excluded": {
+      "prompt": {
+        "category": "ambiguous",
+        "reason": "team_builder matched this file via a generic 'invoke the sub-agent' phrase in a different file (agents.md); prompt.md itself never names another team role."
+      },
+      "prd": {
+        "category": "no-counterpart-named",
+        "reason": "prd.md/prd.agent.md is a solo PRD-writing guide; no cross-reference found."
+      },
+      "planner": {
+        "category": "ambiguous",
+        "reason": "distinct from gem-planner; the only nearby match (devbox-image-definition.md's 'Customization YAML Generation Planner' tool) is an unrelated Azure DevBox tool, not this 'planner' agent."
+      },
+      "agent-safety": {
+        "category": "ambiguous",
+        "reason": "'When agents delegate to other agents, apply the most restrictive policy from either' is a generic security rule about delegation in general, not a specific edge naming another harvested role."
+      },
+      "devbox-image-definition": {
+        "category": "ambiguous",
+        "reason": "'Customization YAML Generation Planner' is a specific unrelated Azure DevBox tool name, not the 'planner' role in this team."
+      },
+      "gem-documentation-writer__unused": {
+        "category": "n/a",
+        "reason": "placeholder, not used"
+      },
+      "debug": {
+        "category": "no-counterpart-named",
+        "reason": "debug.md contains zero handoff-verb matches; solo debugging checklist."
+      },
+      "plan": {
+        "category": "no-counterpart-named",
+        "reason": "plan.md contains zero handoff-verb matches; solo planning checklist."
+      },
+      "agents": {
+        "category": "ambiguous",
+        "reason": "agents.md is a meta-guide on how to write agent definitions; its 'Hand off to the Implementer agent'/'Hand off to the Reviewer agent' lines are a generic worked EXAMPLE inside documentation prose, not agents.md's own behavior, and 'Implementer'/'Reviewer' do not match any role in this harvested team."
+      }
+    },
+    "notes": "team_builder's explicit-reference heuristic swept 15 awesome-copilot files into one 'team' via short/generic role-name collisions (regex false positives, same failure mode as team 8's 'r'). Within it, gem-orchestrator.agent.md is a genuine, hand-written multi-agent orchestration spec that explicitly names 6 of the other 14 files as delegation targets -- a real recoverable 7-role subset. The other 8 files were never actually part of a described team; excluded and reported as their own no-block artifacts, not folded into the reduced run's coverage denominator ambiguity.",
+    "reduced_id": "gem_team_subset__gem_orchestrator_and_6_workers",
+    "stage_reached": "synthesis_failed",
+    "ok": false,
+    "pipeline_error": "deterministic synthesis failed and no LLM fallback:\nsynthesis stuck \u2014 no enabled communication (would-be deadlock or out-of-fragment interleaving). Per-role state:\n  gem_critic: wait for Delegate(String) from gem_orchestrator\n  gem_debugger: wait for Delegate(String) from gem_orchestrator\n  gem_documentation_writer: wait for Delegate(String) from gem_orchestrator\n  gem_orchestrator: finished\n  gem_planner: finished\n  gem_reviewer: wait for Delegate(String) from gem_orchestrator\n  gem_skill_creator: wait for Delegate(String) from gem_orchestrator",
+    "synthesis_mode": "",
+    "protocol_text": ""
+  },
+  {
+    "team_index": 10,
+    "team_id": "explicit_ref:github/awesome-copilot:markdown+se-ux-ui-designer",
+    "source_repo": "github/awesome-copilot",
+    "heuristic": "explicit-reference",
+    "n_roles_total": 2,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "markdown": {
+        "category": "ambiguous",
+        "reason": "team_builder matched se-ux-ui-designer.md's own fenced-code-block language tag ('```markdown') as if it named the 'markdown' instructions role -- a regex artifact, not a reference to markdown.instructions.md."
+      },
+      "se-ux-ui-designer": {
+        "category": "ambiguous",
+        "reason": "same false-positive match; se-ux-ui-designer.md never discusses the markdown formatting-instructions file."
+      }
+    },
+    "notes": "",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 11,
+    "team_id": "same_dir:VoltAgent/awesome-claude-code-subagents:tools/subagent-catalog",
+    "source_repo": "VoltAgent/awesome-claude-code-subagents",
+    "heuristic": "same-directory",
+    "n_roles_total": 4,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "fetch": {
+        "category": "pure-solo-task",
+        "reason": "Independent user-invoked slash command; touches a shared cache FILE, never messages another command."
+      },
+      "invalidate": {
+        "category": "pure-solo-task",
+        "reason": "Independent user-invoked slash command over the same shared cache file; no agent-to-agent messaging."
+      },
+      "list": {
+        "category": "pure-solo-task",
+        "reason": "Independent user-invoked slash command; only cross-reference is a usage TIP pointing the human user at /search and /fetch, not a message to them."
+      },
+      "search": {
+        "category": "pure-solo-task",
+        "reason": "Independent user-invoked slash command; same shared-cache-file pattern, no messaging to fetch/list/invalidate."
+      }
+    },
+    "notes": "Same-directory grouping found 4 sibling slash-commands that share a cache file, not an interacting multi-agent team; this is exactly the failure mode R3 flagged for directory-shaped sources.",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  },
+  {
+    "team_index": 12,
+    "team_id": "same_dir:github/awesome-copilot:skills/quality-playbook/agents",
+    "source_repo": "github/awesome-copilot",
+    "heuristic": "same-directory",
+    "n_roles_total": 2,
+    "n_roles_blocked": 0,
+    "coverage": 0.0,
+    "excluded": {
+      "quality-playbook-claude": {
+        "category": "pure-solo-task",
+        "reason": "Self-describes as a single orchestrator ('your Claude Code session IS the orchestrator'). Its only cross-file relationship to quality-playbook.agent.md is that both are tool-specific variants of the same single-role skill (Claude Code vs. generic), not two interacting roles."
+      },
+      "quality-playbook": {
+        "category": "pure-solo-task",
+        "reason": "Same skill, generic-tool variant of quality-playbook-claude.agent.md; not a second interacting role."
+      }
+    },
+    "notes": "",
+    "reduced_id": null,
+    "stage_reached": "extraction",
+    "ok": false,
+    "pipeline_error": "fewer than 2 roles had evidence-backed blocks; deterministic compaction was not attempted for this team."
+  }
+]

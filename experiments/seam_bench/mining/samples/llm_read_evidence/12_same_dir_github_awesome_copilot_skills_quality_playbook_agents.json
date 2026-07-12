@@ -1,0 +1,15 @@
+{
+  "team_id": "same_dir:github/awesome-copilot:skills/quality-playbook/agents",
+  "evidence": {},
+  "excluded": {
+    "quality-playbook-claude": {
+      "category": "pure-solo-task",
+      "reason": "Self-describes as a single orchestrator ('your Claude Code session IS the orchestrator'). Its only cross-file relationship to quality-playbook.agent.md is that both are tool-specific variants of the same single-role skill (Claude Code vs. generic), not two interacting roles."
+    },
+    "quality-playbook": {
+      "category": "pure-solo-task",
+      "reason": "Same skill, generic-tool variant of quality-playbook-claude.agent.md; not a second interacting role."
+    }
+  },
+  "notes": ""
+}

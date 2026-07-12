@@ -1,0 +1,31 @@
+{
+  "team_id": "worked_example:pr_merge",
+  "evidence": {
+    "Author": [
+      {
+        "edge": "Merger->Author: MergeDone",
+        "quote": "merge it and confirm to the author (send `MergeDone`).",
+        "source_role": "Merger",
+        "note": "dual of Merger's explicit send; Author's own text ('You are done when your change has been merged') corroborates but does not itself name the message."
+      }
+    ],
+    "Merger": [
+      {
+        "edge": "Merger->Author: MergeDone",
+        "quote": "merge it and confirm to the author (send `MergeDone`).",
+        "source_role": "Merger"
+      }
+    ]
+  },
+  "excluded": {
+    "CodeReviewer": {
+      "category": "no-counterpart-named",
+      "reason": "'pass it on with your verdict (send `ReviewPassed`)' names no recipient role."
+    },
+    "SecurityReviewer": {
+      "category": "no-counterpart-named",
+      "reason": "'report it as cleared (send `SecurityPassed`)' names no recipient role."
+    }
+  },
+  "notes": ""
+}

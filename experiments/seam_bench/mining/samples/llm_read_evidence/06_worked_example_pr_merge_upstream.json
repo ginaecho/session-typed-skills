@@ -1,0 +1,23 @@
+{
+  "team_id": "worked_example:pr_merge_upstream",
+  "evidence": {},
+  "excluded": {
+    "address-comments": {
+      "category": "pure-solo-task",
+      "reason": "Real address-comments.agent.md never names another agent or role; describes one agent's own comment-fixing loop with the human user only."
+    },
+    "code-review-generic": {
+      "category": "pure-solo-task",
+      "reason": "Real code-review-generic.instructions.md is a solo severity-triage checklist ('Block merge' is a self-directed verdict label, not a message to a named Merger role)."
+    },
+    "se-security-reviewer": {
+      "category": "pure-solo-task",
+      "reason": "Real se-security-reviewer.agent.md is a solo OWASP-review checklist with no named counterpart."
+    },
+    "principal-software-engineer": {
+      "category": "pure-solo-task",
+      "reason": "Real principal-software-engineer.agent.md is a solo engineering-judgment guide with no named counterpart."
+    }
+  },
+  "notes": "The skills_safety worked example (team 0) got its send/receive vocabulary from the STJP author's paraphrase, not from these real upstream files -- none of the 4 real files name another team role at all."
+}

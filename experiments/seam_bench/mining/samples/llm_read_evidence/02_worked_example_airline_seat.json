@@ -1,0 +1,38 @@
+{
+  "team_id": "worked_example:airline_seat",
+  "evidence": {
+    "Triage": [
+      {
+        "edge": "Triage->SeatBooking: AssignFlight",
+        "quote": "you assign the flight for this booking (send `AssignFlight` with the flight number to Seat Booking).",
+        "source_role": "Triage"
+      }
+    ],
+    "SeatBooking": [
+      {
+        "edge": "Triage->SeatBooking: AssignFlight",
+        "quote": "you assign the flight for this booking (send `AssignFlight` with the flight number to Seat Booking).",
+        "source_role": "Triage"
+      },
+      {
+        "edge": "SeatBooking->FlightSystem: UpdateSeat",
+        "quote": "Use the update seat tool to update the seat on the flight (send `UpdateSeat` to the Flight System).",
+        "source_role": "SeatBooking"
+      },
+      {
+        "edge": "FlightSystem->SeatBooking: SeatConfirmed",
+        "quote": "You receive `UpdateSeat` from the Seat Booking agent and apply the seat change, then send `SeatConfirmed` back.",
+        "source_role": "FlightSystem"
+      }
+    ],
+    "FlightSystem": [
+      {
+        "edge": "SeatBooking->FlightSystem: UpdateSeat / FlightSystem->SeatBooking: SeatConfirmed",
+        "quote": "You receive `UpdateSeat` from the Seat Booking agent and apply the seat change, then send `SeatConfirmed` back.",
+        "source_role": "FlightSystem"
+      }
+    ]
+  },
+  "excluded": {},
+  "notes": ""
+}

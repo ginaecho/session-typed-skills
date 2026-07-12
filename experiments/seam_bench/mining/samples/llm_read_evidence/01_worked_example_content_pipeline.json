@@ -1,0 +1,47 @@
+{
+  "team_id": "worked_example:content_pipeline",
+  "evidence": {
+    "Researcher": [
+      {
+        "edge": "Researcher->Writer: ResearchBrief",
+        "quote": "Hand a concise research brief to the Writer (send `ResearchBrief` to Writer).",
+        "source_role": "Researcher"
+      }
+    ],
+    "Writer": [
+      {
+        "edge": "Researcher->Writer: ResearchBrief",
+        "quote": "Hand a concise research brief to the Writer (send `ResearchBrief` to Writer).",
+        "source_role": "Researcher"
+      },
+      {
+        "edge": "Writer->Editor: SubmitDraft",
+        "quote": "submit it so it can go out (send `SubmitDraft`).",
+        "source_role": "Writer",
+        "note": "Writer's own text does not name the recipient; peer supplied by Editor's text ('Review the Writer's draft')."
+      }
+    ],
+    "Editor": [
+      {
+        "edge": "Writer->Editor: SubmitDraft",
+        "quote": "Review the Writer's draft for accuracy, clarity, and compliance.",
+        "source_role": "Editor",
+        "note": "names Writer as source; clearly implies receipt, though the label 'SubmitDraft' is only named in Writer's own text."
+      },
+      {
+        "edge": "Editor->Publisher: Approve",
+        "quote": "approve it for publication (send `Approve` to the Publisher).",
+        "source_role": "Editor"
+      }
+    ],
+    "Publisher": [
+      {
+        "edge": "Editor->Publisher: Approve",
+        "quote": "approve it for publication (send `Approve` to the Publisher). / Publish as soon as you receive the article",
+        "source_role": "Editor + Publisher"
+      }
+    ]
+  },
+  "excluded": {},
+  "notes": "Publisher's own 'send `Published`' is dropped: its target is 'the live site', not a named team role (no-counterpart-named)."
+}

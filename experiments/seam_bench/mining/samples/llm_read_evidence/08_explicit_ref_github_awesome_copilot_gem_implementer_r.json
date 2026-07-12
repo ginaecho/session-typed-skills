@@ -1,0 +1,15 @@
+{
+  "team_id": "explicit_ref:github/awesome-copilot:gem-implementer+r",
+  "evidence": {},
+  "excluded": {
+    "r": {
+      "category": "ambiguous",
+      "reason": "Team formation itself is a team_builder regex artifact: the only 'invoke the' match in gem-implementer.md is followed within 80 chars by the letter 'R' from 'TDD Cycle (Red -> Green -> R[efactor])', which the word-boundary regex for role name 'r' matched. No genuine cross-reference between the R style-guide and gem-implementer exists in either file's text."
+    },
+    "gem-implementer": {
+      "category": "ambiguous",
+      "reason": "Same false-positive match as 'r' -- gem-implementer.md never mentions an 'r' role/skill."
+    }
+  },
+  "notes": ""
+}

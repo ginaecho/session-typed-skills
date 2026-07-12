@@ -1,0 +1,124 @@
+{
+  "team_id": "explicit_ref:github/awesome-copilot:agent-safety+agents+debug+devbox-image-definition+gem-critic+gem-debugger+gem-documentation-writer+gem-orchestrator+gem-planner+gem-reviewer+gem-skill-creator+plan+planner+prd+prompt",
+  "evidence": {
+    "gem-orchestrator": [
+      {
+        "edge": "gem-orchestrator->gem-planner: Delegate",
+        "quote": "Delegate to `gem-planner` with `task_clarifications`, relevant context, `memory_seed`, and `config_snapshot`.",
+        "source_role": "gem-orchestrator"
+      },
+      {
+        "edge": "gem-orchestrator->gem-reviewer: Delegate",
+        "quote": "Delegate to `gem-reviewer(plan)`.",
+        "source_role": "gem-orchestrator"
+      },
+      {
+        "edge": "gem-orchestrator->gem-debugger: Delegate",
+        "quote": "first delegate to `gem-debugger` for diagnosis (wave 1)",
+        "source_role": "gem-orchestrator"
+      },
+      {
+        "edge": "gem-orchestrator->gem-documentation-writer: Delegate",
+        "quote": "delegate to `gem-documentation-writer` -> PRD",
+        "source_role": "gem-orchestrator"
+      },
+      {
+        "edge": "gem-orchestrator->gem-skill-creator: Delegate",
+        "quote": "delegate to `gem-skill-creator` -> skills",
+        "source_role": "gem-orchestrator"
+      },
+      {
+        "edge": "gem-orchestrator->gem-critic: Delegate",
+        "quote": "delegate to `gem-critic(plan)`, only if: High-risk signal exists",
+        "source_role": "gem-orchestrator"
+      }
+    ],
+    "gem-planner": [
+      {
+        "edge": "gem-orchestrator->gem-planner: Delegate",
+        "quote": "Delegate to `gem-planner` with `task_clarifications`...",
+        "source_role": "gem-orchestrator",
+        "note": "receive side is dual-inferred; gem-planner.md itself never names gem-orchestrator, only 'Return minimal JSON per output_format' with no named recipient (so no send action extracted for gem-planner)."
+      }
+    ],
+    "gem-reviewer": [
+      {
+        "edge": "gem-orchestrator->gem-reviewer: Delegate",
+        "quote": "Delegate to `gem-reviewer(plan)`.",
+        "source_role": "gem-orchestrator",
+        "note": "same dual-inference; no send extracted (return target unnamed in gem-reviewer.md)."
+      }
+    ],
+    "gem-debugger": [
+      {
+        "edge": "gem-orchestrator->gem-debugger: Delegate",
+        "quote": "first delegate to `gem-debugger` for diagnosis (wave 1)",
+        "source_role": "gem-orchestrator",
+        "note": "same dual-inference; no send extracted."
+      }
+    ],
+    "gem-documentation-writer": [
+      {
+        "edge": "gem-orchestrator->gem-documentation-writer: Delegate",
+        "quote": "delegate to `gem-documentation-writer` -> PRD",
+        "source_role": "gem-orchestrator",
+        "note": "same dual-inference; no send extracted."
+      }
+    ],
+    "gem-skill-creator": [
+      {
+        "edge": "gem-orchestrator->gem-skill-creator: Delegate",
+        "quote": "delegate to `gem-skill-creator` -> skills",
+        "source_role": "gem-orchestrator",
+        "note": "gem-skill-creator.md does name 'orchestrator' once ('Query orchestrator memory for pattern frequency') but that is a memory read, not a message send, so no additional send action was extracted."
+      }
+    ],
+    "gem-critic": [
+      {
+        "edge": "gem-orchestrator->gem-critic: Delegate",
+        "quote": "delegate to `gem-critic(plan)`, only if: High-risk signal exists",
+        "source_role": "gem-orchestrator",
+        "note": "same dual-inference; no send extracted."
+      }
+    ]
+  },
+  "excluded": {
+    "prompt": {
+      "category": "ambiguous",
+      "reason": "team_builder matched this file via a generic 'invoke the sub-agent' phrase in a different file (agents.md); prompt.md itself never names another team role."
+    },
+    "prd": {
+      "category": "no-counterpart-named",
+      "reason": "prd.md/prd.agent.md is a solo PRD-writing guide; no cross-reference found."
+    },
+    "planner": {
+      "category": "ambiguous",
+      "reason": "distinct from gem-planner; the only nearby match (devbox-image-definition.md's 'Customization YAML Generation Planner' tool) is an unrelated Azure DevBox tool, not this 'planner' agent."
+    },
+    "agent-safety": {
+      "category": "ambiguous",
+      "reason": "'When agents delegate to other agents, apply the most restrictive policy from either' is a generic security rule about delegation in general, not a specific edge naming another harvested role."
+    },
+    "devbox-image-definition": {
+      "category": "ambiguous",
+      "reason": "'Customization YAML Generation Planner' is a specific unrelated Azure DevBox tool name, not the 'planner' role in this team."
+    },
+    "gem-documentation-writer__unused": {
+      "category": "n/a",
+      "reason": "placeholder, not used"
+    },
+    "debug": {
+      "category": "no-counterpart-named",
+      "reason": "debug.md contains zero handoff-verb matches; solo debugging checklist."
+    },
+    "plan": {
+      "category": "no-counterpart-named",
+      "reason": "plan.md contains zero handoff-verb matches; solo planning checklist."
+    },
+    "agents": {
+      "category": "ambiguous",
+      "reason": "agents.md is a meta-guide on how to write agent definitions; its 'Hand off to the Implementer agent'/'Hand off to the Reviewer agent' lines are a generic worked EXAMPLE inside documentation prose, not agents.md's own behavior, and 'Implementer'/'Reviewer' do not match any role in this harvested team."
+    }
+  },
+  "notes": "team_builder's explicit-reference heuristic swept 15 awesome-copilot files into one 'team' via short/generic role-name collisions (regex false positives, same failure mode as team 8's 'r'). Within it, gem-orchestrator.agent.md is a genuine, hand-written multi-agent orchestration spec that explicitly names 6 of the other 14 files as delegation targets -- a real recoverable 7-role subset. The other 8 files were never actually part of a described team; excluded and reported as their own no-block artifacts, not folded into the reduced run's coverage denominator ambiguity."
+}

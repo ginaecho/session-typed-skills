@@ -1,0 +1,32 @@
+{
+  "team_id": "worked_example:code_execution",
+  "evidence": {
+    "Reviewer": [
+      {
+        "edge": "Coder->Reviewer: SubmitCode",
+        "quote": "Inspect the Coder's submitted code for safety and correctness.",
+        "source_role": "Reviewer",
+        "note": "names Coder as source; label SubmitCode supplied by Coder's own text ('submit it so it can be run (send `SubmitCode`)'), whose own text names no recipient."
+      },
+      {
+        "edge": "Reviewer->Executor: Approve",
+        "quote": "approve it for execution (send `Approve` to the Executor).",
+        "source_role": "Reviewer"
+      }
+    ],
+    "Executor": [
+      {
+        "edge": "Reviewer->Executor: Approve",
+        "quote": "approve it for execution (send `Approve` to the Executor).",
+        "source_role": "Reviewer"
+      }
+    ]
+  },
+  "excluded": {
+    "Coder": {
+      "category": "no-counterpart-named",
+      "reason": "'submit it so it can be run (send `SubmitCode`)' names no recipient; Coder's role is only named as a *source* in Reviewer's text, never as a recipient of anything, so no LocalType action can be attributed to Coder without inventing one."
+    }
+  },
+  "notes": ""
+}
