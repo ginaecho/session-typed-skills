@@ -1,3 +1,6 @@
+# Provenance: this case is authored in-house (skills are hand-written, not
+# mined); its real academic and pattern lineage is documented in SOURCES.md
+# in this directory.
 case_id: trade_deadlock
 description: |
   THE DEADLOCK DEMO. A goods-for-payment trade whose plausible, human-written
