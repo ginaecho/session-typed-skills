@@ -1,8 +1,9 @@
 # Audit — user intent -> global protocol implementation, verification evidence (2026-07-11)
 
 **Purpose.** This document lets anyone independently verify that the
-"natural-language intent -> Scribble-validated global protocol" (S1->S2 seam)
-implementation described in `SEAM_AUTOTRAINING_PLAN.md` and
+"natural-language intent -> Scribble-validated global protocol" (S1->S2 step
+— the intent-to-protocol translation step, the *seam*) implementation
+described in `SEAM_AUTOTRAINING_PLAN.md` and
 `SEAM_TRAINING_EXECUTION_PLAN.md` is actually present in this branch and
 actually works, rather than trusting the worker reports' prose. Every command
 below was re-run in a fresh worktree by an independent auditor (not the
@@ -40,7 +41,7 @@ export STJP_NUSCR_BIN=/workspace/bin/nuscr   # for the opt-in nuscr backend
 | Data builders D1/D2/D3 + signature + splitter | `experiments/seam_bench/data/` (`signature.py`, `d1_expand.py`, `d2_backtranslate.py`, `d3_repair.py`, `splitter.py`, `leakage_check.py`, `common.py`) | EFSM-equivalence-class signature (dedupe key), D1 sweep/compose/crossover expansion, D2 back-translation (intent generation), D3 repair-tuple mining from mutation operators, family-stratified 80/10/10 splitter, leakage checker | 22 passed | `docs/reference/reports/seam/W3_data_builders.md` |
 | Faithfulness judge panel | `experiments/seam_bench/judge/` (`payloads.py`, `seats.py`, `classes.py`, `aggregate.py`, `canaries.py`, `cache.py`, `run_panel.py`) | 5-layer isolated judge panel (process isolation, payload sanitization, view decorrelation J-fwd/J-back/J-probe, structured verdicts + evidence verification, collusion/degeneration canaries -- planted check items with known correct answers), geometric-median aggregation (a robust way to combine scores so one extreme judge cannot drag the result), escalation gate | 62 passed | `docs/reference/reports/seam/W6_judge_panel.md` + `docs/reference/reports/seam/PANEL_SMOKE_2026-07-11.md` (live 14-seat run) |
 | Real-skills miner (D5) | `experiments/seam_bench/mining/` (`harvest.py`, `ledger.py`, `intent_extract.py`, `team_builder.py`, `formalize.py`, `run_mining.py`, `schema.py`) | Harvests real GitHub agent/skill artifacts, license/provenance ledger, team-builder heuristics, compaction -> real-Scribble-validated `DatasetRecord` funnel for `test-real` | 37 passed | `docs/reference/reports/seam/W8_miner.md` |
-| Real toolchain | `tools/setup_scribble_cloud.sh`; `docs/reference/NUSCR_CLOUD_INSTALL.md` | Connects the real `scribble-java` CLI + optional `nuscr` coinductive backend into the worktree; gold-pass/corrupt-reject self-test on every invocation | smoke test PASS (see above) | n/a (setup script, not a test suite) |
+| Real toolchain | `tools/setup_scribble_cloud.sh`; `docs/reference/NUSCR_CLOUD_INSTALL.md` | Connects the real `scribble-java` CLI + optional `nuscr` coinductive backend into the worktree; self-test on every invocation that a gold (a known-correct reference answer) protocol passes and a corrupted one is rejected | smoke test (a quick end-to-end check) PASS (see above) | n/a (setup script, not a test suite) |
 | Plans | `docs/reference/SEAM_AUTOTRAINING_PLAN.md`, `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` (incl. §9 worker task cards, §11 scout & red-team adjudication log) | Strategy proposal + executable training plan: stacks, judge-isolation mechanics, preregistered go/no-go gates, dispatch order, and the v2 adjudication of every red-team finding | n/a (design docs) | n/a |
 
 Corpus fixture used by the sweep below: `experiments/cases/_corpus/*.scr`

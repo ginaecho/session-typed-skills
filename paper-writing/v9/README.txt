@@ -3,9 +3,9 @@ with Multiparty Session Types" (v8 + the realized trainable-seam program --
 the "seam" is the translation step from plain-language intent to formal
 protocol)
 ============================================================================
-SUPERSEDES: v8 (repositioning + concurrent-work citations + the "seam is
-trainable" argument). Full per-edit detail in CHANGELOG_v9.md; macro fill map
-in TEMPLATE_HOWTO.md.
+SUPERSEDES: v8 (repositioning + concurrent-work citations + the argument that
+the translation step is trainable). Full per-edit detail in CHANGELOG_v9.md;
+macro fill map in TEMPLATE_HOWTO.md.
 CONTENTS: main.tex (single source, standalone preamble; \input{seam_results.tex});
 seam_results.tex (results template -- 26 pending-number macros); TEMPLATE_HOWTO.md
 (macro -> harness-field map); fig1_system fig2_results fig3_projected fig4_ladder
@@ -18,7 +18,8 @@ NOT COMPILED IN THIS SANDBOX -- no texlive/pandoc installed here. Compile locall
 compile, v9 ran a grep/python sanity pass (see CHANGELOG_v9.md #16): \begin/\end
 39/39 and per-environment balanced; braces 1066/1066 (verbatim stripped); 47 cite
 keys used, 48 bibitems, 0 undefined; all 26 \seam* macros defined.
-CHANGES vs v8: (1) NEW SECTION 8 "The Trainable Seam, Realized" -- positioned as
+CHANGES vs v8: (1) NEW SECTION 8 "Training the Intent-to-Protocol Translation
+Step, Realized" -- positioned as
 the BRIDGE (after the n=100 validation suite, before the typed extensions): v8
 promised the seam is trainable; v9 shows the training program realized. Covers the
 two-axis problem (validity machine-checkable via the real Scribble oracle,
@@ -45,7 +46,7 @@ GRPO/DeepSeekMath, DAPO, GSPO, Dr.GRPO; autoformalization: back-translation, Lea
 autoformalization; judge panels: PoLL, effective-votes, RoPoLL; GCD format-tax;
 the Liu et al. NL->network-protocol near-miss). (4) MINIMAL v8-claim touches --
 Contribution 5 extended to name the released seam instruments (measured, no pending
-numbers); Limitations translation-seam paragraph updated "Planned"->"Underway"
+numbers); Limitations translation-step paragraph updated "Planned"->"Underway"
 pointing at the realized section. Title, abstract, and the other contributions are
 UNCHANGED (the program's headline numbers are pending GPU; front-loading them would
 violate the empirical-first discipline).

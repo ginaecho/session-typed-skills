@@ -302,7 +302,7 @@ python -m pytest experiments/seam_bench/data/tests/ -q
 
 `test_recursion_gen.py` (10 new tests): determinism given `(seed, idx)`;
 shape/role-count variety across idx; a 30-candidate real-validator smoke
-covering all 3 shapes; positive + negative signature-correctness checks
+(a quick end-to-end check) covering all 3 shapes; positive + negative signature-correctness checks
 (different shapes differ, branch-order swap collapses to the same
 family); targeted checks that `double_loop` and `branching` candidates
 validate; peripheral-role containment (never leaks into the loop body);

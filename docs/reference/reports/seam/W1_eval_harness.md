@@ -2,7 +2,8 @@
 
 **Task card:** `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §9, row W1 —
 "eval harness: metric block + splits + JSONL schema + report generator; done
-when metrics reproduce on the 30-corpus smoke set; opened-test log exists."
+when metrics reproduce on the 30-corpus smoke set [smoke set = the fixture
+used for a smoke test, a quick end-to-end check]; opened-test log exists."
 Branch: `gc/seam-w1-eval-harness` (based on `origin/main` @ 592dc31, which
 includes the real-toolchain mandate and `tools/setup_scribble_cloud.sh`).
 
@@ -45,7 +46,8 @@ export STJP_NUSCR_BIN=/workspace/bin/nuscr   # for the opt-in nuscr backend
 
 (The /workspace shared build already existed; the script connected this
 checkout's `scribble-java/scribble-dist/target/lib` symlink and re-ran its
-gold-pass/corrupt-reject self-test.)
+self-test that a gold (a known-correct reference answer) protocol passes
+and a corrupted one is rejected.)
 
 ## 4. Smoke validation — exact commands and real output
 

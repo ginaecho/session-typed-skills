@@ -29,7 +29,8 @@ Natural-language intent  ──►  LLM drafts a global protocol (a .scr file)
                               human endorses the protocol
 ```
 
-We call this the **S1→S2 seam**: S1 is the intent (what the user actually
+We call the step from S1 to S2 the **intent-to-protocol translation step**
+(short: the "S1→S2 seam"): S1 is the intent (what the user actually
 asked for, in plain English), S2 is the validated global protocol (the
 formal plan `1_TECH_SETUP.md` describes). Today a person drafts the intent,
 an LLM drafts the protocol, Scribble rejects bad drafts, and a human signs
@@ -93,8 +94,11 @@ Three checks, increasingly strict, all deterministic:
 
 Level 3 uses the same **EFSM bisimulation** idea `6_RUN_REPORTS_EXPLAINED.md`
 covers for the E5 experiment: convert each agent's slice of the protocol
-into a small state machine (an EFSM), then check that both protocols' state
-machines accept exactly the same conversations. Two protocols that are
+into a small state machine (an EFSM — extended finite-state machine; see
+the [Glossary](reference/GLOSSARY.md)), then check that both protocols'
+state machines accept exactly the same conversations (bisimulation — a
+formal equivalence check meaning "these two state machines behave
+identically no matter what happens"). Two protocols that are
 "bisimilar" are indistinguishable from the outside — the strictest
 practical notion of "these mean the same thing."
 
@@ -124,6 +128,8 @@ restricted** view:
 
 ### The live smoke test — a faithfulness catch, in plain language
 
+("Smoke test" means a quick end-to-end check — run the whole pipeline once,
+for real, to see whether it visibly works before trusting it at scale.)
 On 2026-07-11 this panel ran for real (`docs/reference/reports/seam/PANEL_SMOKE_2026-07-11.md`)
 over three known-good (intent, protocol) pairs plus one deliberately swapped
 pair, using 14 isolated judge calls.
@@ -236,7 +242,10 @@ Two things are not built yet — deliberately, they're next:
   is meant to run first and cheaply, and it's what fills in the actual
   numbers behind everything the verifier stack in §2A can measure.
 - **GPU training (SFT and GRPO).** Actually fine-tuning a small open-weights
-  model on the data from §3, then reinforcement-learning it against the
+  model on the data from §3 (SFT — supervised fine-tuning, training on
+  labeled correct examples), then reinforcement-learning it (GRPO — Group
+  Relative Policy Optimization, a reinforcement-learning method that scores
+  each sampled output against the average of a sampled group) against the
   verifier stack (and, once calibrated, the faithfulness panel) is not
   something this document covers — it needs rented GPU time, a training
   stack, and its own runbook. That's `docs/reference/GPU_TRAINING_RUNBOOK.md`

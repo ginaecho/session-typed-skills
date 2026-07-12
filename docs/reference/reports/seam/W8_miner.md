@@ -86,7 +86,7 @@ process start in `run_mining.py`).
 |---|---|
 | `harvest.py` | adapters: `copilot_style` (`*.agent.md`/`*.instructions.md`), `skill_dir_style` (`SKILL.md` + frontmatter agent `.md`), `local_vendored` (`skills_safety/*/skills_original/`); `crewai_stub`/`langgraph_stub` interface stubs (R3: no static protocol to extract in the common case) |
 | `ledger.py` | per-artifact `LedgerEntry`: source repo, SPDX + verbatim license quote, commit SHA, retrieval route, quarantine verdict |
-| `intent_extract.py` | gold intent recovery (frontmatter `description`, "when to use" section, opening prose paragraph); silver reverse-engineering path is a documented, unimplemented stub (no API spend) |
+| `intent_extract.py` | gold (a known-correct reference answer) intent recovery (frontmatter `description`, "when to use" section, opening prose paragraph); silver reverse-engineering path is a documented, unimplemented stub (no API spend) |
 | `team_builder.py` | 3 heuristics in priority order: worked-example (skills_safety case boundaries + a curated real-file team mirroring `pr_merge`/`doc_pipeline`), explicit textual cross-reference (handoff-verb + role-name match), same-directory (capped at 6 roles) |
 | `formalize.py` | team → `skill_compactor.compact_and_synthesize(..., llm_client=None)` → real `ScribbleValidator` → `DatasetRecord`; `FunnelStats` tallies every stage with drop reasons |
 | `schema.py` | local `DatasetRecord` copy, field-identical to W1's `eval/schema.py` and W3's `data/common.py` (both unmerged as of this writing) — see the TODO in that file for consolidation |

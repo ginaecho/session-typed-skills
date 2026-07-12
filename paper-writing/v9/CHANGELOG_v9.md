@@ -9,13 +9,17 @@ template so they drop in without restructuring. v8's submission shape and
 every v8 claim are preserved.
 
 ## Positioning decision (rationale first)
-1. NEW SECTION, not an in-place paragraph expansion. The v8 "The seam is
-   trainable, not merely open" paragraph lived inside §7 (the n=100 validation
+1. NEW SECTION, not an in-place paragraph expansion. The v8 "Training the
+   intent-to-protocol translation step is possible, not merely a stated goal"
+   paragraph (originally titled "The seam is trainable, not merely open"; both
+   versions renamed in the 2026-07-12 plain-language pass, see Update below)
+   lived inside §7 (the n=100 validation
    suite), right after E5. The realized program is now substantial enough
    (system under training + four measured instruments + six preregistered
    gates + a novelty argument + a lineage-positioning paragraph) that inlining
    it would overload §7 and bury it. It is therefore a dedicated
-   **§8 "The Trainable Seam, Realized"** placed as the BRIDGE: immediately
+   **§8 "Training the Intent-to-Protocol Translation Step, Realized"**
+   (originally "The Trainable Seam, Realized") placed as the BRIDGE: immediately
    after §7 (which ends on E5's deterministic-half-done + pre-registration
    audit) and immediately before §8-old "Three Typed Extensions" (now §9). This
    keeps the narrative arc — measured suite → the one honest open seam →
@@ -27,7 +31,7 @@ every v8 claim are preserved.
    the enumerated (i)–(iv) mechanism detail moves into §8's reward-stack and
    gates subsections where it is developed properly.
 
-## New content — §8 "The Trainable Seam, Realized" (anchor: after §7, label sec:seam)
+## New content — §8 "Training the Intent-to-Protocol Translation Step, Realized" (anchor: after §7, label sec:seam)
 3. §8.1 "Two axes, treated differently": validity is machine-checkable (real
    Scribble-java oracle, total + counterexample-producing) and drives training
    directly; faithfulness is not machine-decidable and is the residual judged
@@ -215,3 +219,40 @@ Added that caveat to §8 and guide 8: the surviving real-world evidence is
 two upstream teams whose tasks plainly require multi-party interaction but
 whose texts contain no cross-role language; a task-level coordination
 filter is named as the required miner improvement before the claim scales.
+
+## Update 2026-07-12 — plain-language pass, full sweep (completes item #18)
+
+The 2026-07-11 pass (item 18 above) covered `main.tex`, this changelog, and
+`README.txt`. This update completes the sweep across the whole project's
+prose, including two title-level fixes deferred by the earlier pass:
+
+- **§8's section title itself** was still "The Trainable Seam, Realized" —
+  now **"Training the Intent-to-Protocol Translation Step, Realized"**
+  (`\label{sec:seam}` unchanged — it is a LaTeX identifier, not prose). The
+  section's opening sentence and the Limitations bold lead ("The translation
+  seam." → "The intent-to-protocol translation step.") were reworded to
+  match; paragraph claims and numbers are unchanged.
+- The §7 lead phrase "The seam is trainable, not merely open" (referenced
+  in item 12 above before this update) is now "Training the seam is
+  possible, not merely a stated goal."
+- Added missing first-use glosses this pass had not reached: "gold" (E5
+  paragraph and §8.2's reward-stack paragraph), "canary" (§8.2's panel
+  paragraph), "bisimulation" (E5 paragraph), "LoRA" (§8.2's system
+  paragraph), and "escrow" (six-arm-ladder paragraph, `escrow_trade` task
+  description).
+- Every cross-referencing file updated to match: `README.txt` (this
+  directory), `paper-writing/README.md`, `docs/8_INTENT_TO_PROTOCOL_TRAINING.md`,
+  `docs/reference/SEAM_AUTOTRAINING_PLAN.md`,
+  `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`,
+  `docs/reference/GPU_TRAINING_RUNBOOK.md`, and `docs/reference/GLOSSARY.md`
+  (new "intent-to-protocol training program" section added, covering seam,
+  canary, gold, escrow, geometric median, smoke test, SFT, GRPO, LoRA,
+  bisimulation, AST re-emission).
+- No claims, numbers, `\label`s, macros (`\seam*`), or citation keys
+  changed.
+- **LaTeX balance re-checked after all edits:** `\begin{`/`\end{}` count
+  39/39 (matched); raw brace count 1079/1079 open/close (unfiltered, i.e.
+  includes verbatim-adjacent braces — higher than the 1074 figure in item 19
+  because this count uses a different, unfiltered method; both agree the
+  file is balanced with escaped braces `\{`/`\}` skipped); final nesting
+  depth 0. No new packages introduced.

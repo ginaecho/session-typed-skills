@@ -64,7 +64,8 @@ it labels `source="protocol"` is fabricated by construction — `test_j_back_pro
 confirms the discard path catches this even though the comparator's own free text never says anything obviously wrong.
 
 **5.5 Collusion/degeneration audits.** `canaries.py` implements the full battery against an injected (mockable)
-judge function, so it runs in CI with zero network calls: swapped pairs, gold-vs-mutant separation
+judge function, so it runs in CI with zero network calls: swapped pairs,
+gold (a known-correct reference answer)-vs-mutant separation
 (`naive_behavior_changing_mutation` — a light textual sender/receiver swap for canary (a planted check item with a
 known correct answer) purposes only, explicitly **not** a substitute for D3's real mutation operators),
 duplicate-probe self-consistency, and the pairwise 5-gram
@@ -83,7 +84,8 @@ any abstention, and `write_escalation_record` appends a JSONL record for the hum
 The task card allowed shipping an interface-only stub if the critic machinery didn't expose what J-probe needs
 within reasonable effort. It did: `stjp_core.compiler.efsm_parser.get_efsm_from_scribble` cleanly builds a real
 per-role EFSM by shelling into the actual Scribble CLI, and this worktree already has the real toolchain connected
-(`bash tools/setup_scribble_cloud.sh`, gold-pass/corrupt-reject smoke both green here). So J-probe is **fully
+(`bash tools/setup_scribble_cloud.sh`, gold-pass/corrupt-reject smoke (a
+quick end-to-end check) both green here). So J-probe is **fully
 implemented**, not stubbed:
 
 - **Interface** (`classes.py`): `Probe = {query_text: str, compiled_check: ProbeSpec}`. `ProbeSpec` is a plain

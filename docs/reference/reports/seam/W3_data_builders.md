@@ -7,8 +7,9 @@ Spec: `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §3 + §9 (W3 row);
 Everything below ran against the REAL Scribble-java toolchain
 (`tools/setup_scribble_cloud.sh`, shared `/workspace` build, `lib/`
 symlink), on a 4-core cloud sandbox. Every builder starts with a
-fail-loud preflight (`common.assert_toolchain`): a gold corpus protocol
-must validate AND a corrupted copy must be rejected with a parser error —
+fail-loud preflight (`common.assert_toolchain`): a gold (a known-correct
+reference answer) corpus protocol must validate AND a corrupted copy must
+be rejected with a parser error —
 a missing/mis-connected toolchain aborts the run instead of surfacing as
 silent 100% rejection or fake counterexamples.
 
@@ -202,7 +203,7 @@ Two findings worth the planner's attention:
 ## D2 — back-translation (module + mocked run; NO API spend)
 
 **No `ANTHROPIC_API_KEY` exists in this environment, so the API smoke
-did not run and $0.00 was spent.** The module is complete and the whole
+(a quick end-to-end check) did not run and $0.00 was spent.** The module is complete and the whole
 pipeline ran end-to-end with the deterministic `MockIntentClient`
 (stated loudly in its own output: `[d2] MOCKED — no ANTHROPIC_API_KEY ...`):
 

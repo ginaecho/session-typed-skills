@@ -7,7 +7,9 @@ the plan's design — it is the sequence of commands, click-paths, and
 config skeletons needed to run it, for whichever GPU account the owner
 picks. Every provider path is written to be executable the day one is
 chosen; no step says "configure the environment" without naming the exact
-command.
+command. Training terms used throughout (SFT, GRPO, LoRA, gold) are defined
+once at the top of the plan document above — this runbook does not repeat
+those definitions.
 
 **No GPU account has been chosen yet.** §2 covers all three concrete paths
 (Modal, RunPod, Azure ML) side by side so this doc does not need to be

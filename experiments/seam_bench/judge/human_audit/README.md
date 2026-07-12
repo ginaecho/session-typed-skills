@@ -29,8 +29,9 @@ This writes three files here:
   comment-free canonical form the LLM judge panel sees
   (`judge/payloads.py::sanitize_protocol`) — no case names, no file paths,
   no "this one's a mutant" hints anywhere in this file.
-- `packet_key.jsonl` — the ground-truth stratum (gold / easy_negative /
-  hard_negative / repeat) for each item. **The Streamlit app never opens
+- `packet_key.jsonl` — the ground-truth stratum (gold — a known-correct
+  intent/protocol pair — / easy_negative / hard_negative / repeat) for each
+  item. **The Streamlit app never opens
   this file.** Don't peek at it before you're done labeling — it exists
   for `analysis.py` to join against afterward.
 - `packet_build_stats.json` — composition counts + the hard-negative
