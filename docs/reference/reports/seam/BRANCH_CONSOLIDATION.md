@@ -39,3 +39,30 @@ Untouched by design: `main`, `gc/stjp-skill-validation-bench`,
 `gc/stjp-skill-validation-bench-integrated-stateful`. The seam program is
 NOT merged into them; merging `gc/user_intent_global_protocol_training`
 into `main` is a deliberate follow-up decision, not part of this cleanup.
+
+---
+
+## Merge record (per the branch-cleanup rule) — 2026-07-12
+
+Branches merged this session and where their work now lives. Any of these is
+safe to delete; its work is preserved at the target.
+
+| branch | merged into | via | safe to delete |
+|---|---|---|---|
+| `gc/readme_operation_guidance_revised` | `main` | PR #14 (merge 0d74deb) | yes — already reflected on main |
+| `gc/docs_plain_language_sweep` | `main` | PR #15 (merge 0a26255) | yes |
+| `gc/fable5_interview_part2` | `main` | PR #16 (merge cfddab8) | yes |
+
+Not merged, kept by design: `gc/user_intent_global_protocol_training` — the
+full intent-to-protocol training program; merging it into `main` is a
+deliberate owner decision, not part of cleanup.
+
+Deletion command (this session's git proxy cannot delete remote refs; run from
+a normally-authenticated clone):
+
+```bash
+git push origin --delete \
+  gc/readme_operation_guidance_revised \
+  gc/docs_plain_language_sweep \
+  gc/fable5_interview_part2
+```
