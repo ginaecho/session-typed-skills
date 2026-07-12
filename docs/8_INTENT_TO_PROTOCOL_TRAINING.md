@@ -225,6 +225,9 @@ Two things are not built yet — deliberately, they're next:
   verifier stack (and, once calibrated, the faithfulness panel) is not
   something this document covers — it needs rented GPU time, a training
   stack, and its own runbook. That's `docs/reference/GPU_TRAINING_RUNBOOK.md`
+  For a one-page picture of the whole pipeline — what is done, what you
+  do, what the GPU does, in what order — see
+  `docs/reference/TRAINING_ROADMAP.md`.
   (being written alongside this guide).
 
 Every number this training program is allowed to call a "win" — how much
