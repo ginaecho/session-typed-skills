@@ -1,0 +1,4080 @@
+{
+  "case": "skills_pr_review_merge",
+  "arm": "bare",
+  "stjp_prompts": {},
+  "roles": [
+    "Author",
+    "CodeReviewer",
+    "Merger",
+    "SecurityReviewer"
+  ],
+  "max_rounds": 16,
+  "round": 16,
+  "efsms": {
+    "Author": {
+      "initial": "13",
+      "accepting": [
+        "14"
+      ],
+      "transitions": [
+        [
+          "13",
+          "send",
+          "CodeReviewer",
+          "ReadyForReview",
+          "String",
+          "15"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "20"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "22"
+        ],
+        [
+          "20",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "21"
+        ],
+        [
+          "21",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ],
+        [
+          "22",
+          "receive",
+          "Merger",
+          "MergeDone",
+          "String",
+          "14"
+        ],
+        [
+          "15",
+          "send",
+          "SecurityReviewer",
+          "ReadyForReview",
+          "String",
+          "16"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "17"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "19"
+        ],
+        [
+          "17",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "18"
+        ],
+        [
+          "18",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ]
+      ]
+    },
+    "CodeReviewer": {
+      "initial": "38",
+      "accepting": [
+        "39"
+      ],
+      "transitions": [
+        [
+          "38",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "40"
+        ],
+        [
+          "40",
+          "send",
+          "Author",
+          "ReviewComments",
+          "String",
+          "41"
+        ],
+        [
+          "40",
+          "send",
+          "SecurityReviewer",
+          "QualityClean",
+          "String",
+          "44"
+        ],
+        [
+          "41",
+          "send",
+          "SecurityReviewer",
+          "ReviewComments",
+          "String",
+          "42"
+        ],
+        [
+          "42",
+          "send",
+          "Merger",
+          "ReviewComments",
+          "String",
+          "43"
+        ],
+        [
+          "43",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "44",
+          "send",
+          "Author",
+          "QualityClean",
+          "String",
+          "45"
+        ],
+        [
+          "45",
+          "send",
+          "Merger",
+          "QualityClean",
+          "String",
+          "46"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "47"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "48"
+        ],
+        [
+          "47",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "48",
+          "send",
+          "Merger",
+          "QualityApproved",
+          "String",
+          "39"
+        ]
+      ]
+    },
+    "Merger": {
+      "initial": "82",
+      "accepting": [
+        "83"
+      ],
+      "transitions": [
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "82"
+        ],
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "84"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "82"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "85"
+        ],
+        [
+          "85",
+          "receive",
+          "CodeReviewer",
+          "QualityApproved",
+          "String",
+          "86"
+        ],
+        [
+          "86",
+          "send",
+          "Author",
+          "MergeDone",
+          "String",
+          "83"
+        ]
+      ]
+    },
+    "SecurityReviewer": {
+      "initial": "63",
+      "accepting": [
+        "64"
+      ],
+      "transitions": [
+        [
+          "63",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "65"
+        ],
+        [
+          "67",
+          "send",
+          "Author",
+          "SecurityFindings",
+          "String",
+          "68"
+        ],
+        [
+          "67",
+          "send",
+          "Merger",
+          "SecurityApproved",
+          "String",
+          "71"
+        ],
+        [
+          "68",
+          "send",
+          "CodeReviewer",
+          "SecurityFindings",
+          "String",
+          "69"
+        ],
+        [
+          "69",
+          "send",
+          "Merger",
+          "SecurityFindings",
+          "String",
+          "70"
+        ],
+        [
+          "70",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ],
+        [
+          "71",
+          "send",
+          "CodeReviewer",
+          "SecurityApproved",
+          "String",
+          "72"
+        ],
+        [
+          "72",
+          "send",
+          "Author",
+          "SecurityApproved",
+          "String",
+          "64"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "66"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "67"
+        ],
+        [
+          "66",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ]
+      ]
+    }
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 2,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 3,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 4,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 5,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 6,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 7,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 8,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 9,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    },
+    {
+      "trial": 10,
+      "status": "max_rounds",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "PR ready for review",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete. No issues found.",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "initial revision ready",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review clean - approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Code security approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pr-ready",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "ReviewComments",
+          "payload": "Code review initiated",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review approved - ready for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 8,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved pending security review",
+          "delivered": true
+        },
+        {
+          "round": 9,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Updated implementation",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete; no blocking issues found.",
+          "delivered": true
+        },
+        {
+          "round": 10,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "v1",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code review complete, no quality issues found",
+          "delivered": true
+        },
+        {
+          "round": 11,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality review complete, no issues found",
+          "delivered": true
+        },
+        {
+          "round": 12,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review complete. This code change is approved for merge.",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "addressed code review",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete - approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 13,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code quality approved",
+          "delivered": true
+        },
+        {
+          "round": 14,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review passed",
+          "delivered": true
+        },
+        {
+          "round": 15,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "Revision",
+          "payload": "Addressed review comments",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "Code review complete and approved for security assessment",
+          "delivered": true
+        },
+        {
+          "round": 16,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "Security review approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 0,
+      "agent_calls": 64,
+      "malformed": 1,
+      "prompt_chars": 162909,
+      "reply_chars": 6093,
+      "pending_recv": []
+    }
+  ],
+  "agent_seconds": 1448.410148382187
+}

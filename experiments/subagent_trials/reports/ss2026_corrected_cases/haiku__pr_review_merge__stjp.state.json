@@ -1,0 +1,1575 @@
+{
+  "case": "skills_pr_review_merge",
+  "arm": "stjp",
+  "stjp_prompts": {
+    "Author": "# Revised **Author** skill (STJP-validated)\n\nFix vs original: the original `address-comments` file never says who your\nrevision goes to, or when you are actually free to stop looping. This\ncontract makes both concurrent reviewers first-class recipients of every\nrevision, and says exactly what \"done\" means: a `MergeDone` from the\nMerger, which can only ever arrive after the loop has produced a clean\nquality pass *and* a clean security pass on the same revision.\n\n```localtype\nCodeReviewer!ReadyForReview(String);\nSecurityReviewer!ReadyForReview(String);\nrec ROUND {\n  choice at CodeReviewer {\n    CodeReviewer?ReviewComments(String);\n    CodeReviewer!Revision(String);\n    SecurityReviewer!Revision(String);\n    continue ROUND;\n  } or {\n    CodeReviewer?QualityClean(String);\n    choice at SecurityReviewer {\n      SecurityReviewer?SecurityFindings(String);\n      CodeReviewer!Revision(String);\n      SecurityReviewer!Revision(String);\n      continue ROUND;\n    } or {\n      SecurityReviewer?SecurityApproved(String);\n    }\n  }\n}\nMerger?MergeDone(String);\n```\n\nTASK CONTEXT: Get an already-open pull request reviewed to completion and merged safely. The Author has already opened the PR; the CodeReviewer and the SecurityReviewer both examine the current revision concurrently. Each round, the CodeReviewer either raises comments (which the Author must address with a new Revision, restarting the round) or judges the change clean and hands off to the SecurityReviewer, who either raises security findings (which the Author must also address, restarting the round) or approves. Only when the SecurityReviewer's approval AND the CodeReviewer's quality approval have both reached the Merger does the Merger merge the change and confirm to the Author. A change must never be merged on only one of the two approvals, and the review loop must be allowed to run more than once before the merge happens.\n\nYou are governed by a machine-checked interaction contract (below). Follow it EXACTLY \u2014 a protocol gate rejects any other message before delivery.\n\n# Author \u2014 local contract\n\n**Protocol**: `PrReviewMerge`  \nGenerated from the Scribble-validated projection \u2014 do not edit; regenerate from the protocol.\n\n## Your state machine\n\nStart in state `13`. At each state you may ONLY do the listed action(s); anything else is off-protocol.\n\n- state `13`: send `ReadyForReview(String)` to **CodeReviewer** \u2192 state `15`\n- state `14`: TERMINAL \u2014 stop.\n- state `15`: send `ReadyForReview(String)` to **SecurityReviewer** \u2192 state `16`\n- state `16`: wait to receive `ReviewComments(String)` from **CodeReviewer** \u2192 state `17`\n- state `16`: wait to receive `QualityClean(String)` from **CodeReviewer** \u2192 state `19`\n- state `17`: send `Revision(String)` to **CodeReviewer** \u2192 state `18`\n- state `18`: send `Revision(String)` to **SecurityReviewer** \u2192 state `16`\n- state `19`: wait to receive `SecurityFindings(String)` from **SecurityReviewer** \u2192 state `20`\n- state `19`: wait to receive `SecurityApproved(String)` from **SecurityReviewer** \u2192 state `22`\n- state `20`: send `Revision(String)` to **CodeReviewer** \u2192 state `21`\n- state `21`: send `Revision(String)` to **SecurityReviewer** \u2192 state `16`\n- state `22`: wait to receive `MergeDone(String)` from **Merger** \u2192 state `14`\n",
+    "CodeReviewer": "# Revised **CodeReviewer** skill (STJP-validated)\n\nFix vs original: the original `code-review-generic` instructions say what\nseverity triage to do but never say who hears the verdict. This contract\nmakes clear that a \"clean\" verdict does not go straight to the Merger \u2014 it\nfirst has to survive the SecurityReviewer's pass, and only your own\n`QualityApproved`, sent directly to the Merger alongside the\nSecurityReviewer's own approval, is what actually unblocks the merge.\n\n```localtype\nAuthor?ReadyForReview(String);\nrec ROUND {\n  choice at self {\n    Author!ReviewComments(String);\n    SecurityReviewer!ReviewComments(String);\n    Merger!ReviewComments(String);\n    Author?Revision(String);\n    continue ROUND;\n  } or {\n    SecurityReviewer!QualityClean(String);\n    Author!QualityClean(String);\n    Merger!QualityClean(String);\n    choice at SecurityReviewer {\n      SecurityReviewer?SecurityFindings(String);\n      Author?Revision(String);\n      continue ROUND;\n    } or {\n      SecurityReviewer?SecurityApproved(String);\n      Merger!QualityApproved(String);\n    }\n  }\n}\n```\n\nYour `QualityApproved` message must contain the word \"approved\" \u2014 the\ndelivery gate checks for it and will reject an approval without it.\n\nTASK CONTEXT: Get an already-open pull request reviewed to completion and merged safely. The Author has already opened the PR; the CodeReviewer and the SecurityReviewer both examine the current revision concurrently. Each round, the CodeReviewer either raises comments (which the Author must address with a new Revision, restarting the round) or judges the change clean and hands off to the SecurityReviewer, who either raises security findings (which the Author must also address, restarting the round) or approves. Only when the SecurityReviewer's approval AND the CodeReviewer's quality approval have both reached the Merger does the Merger merge the change and confirm to the Author. A change must never be merged on only one of the two approvals, and the review loop must be allowed to run more than once before the merge happens.\n\nYou are governed by a machine-checked interaction contract (below). Follow it EXACTLY \u2014 a protocol gate rejects any other message before delivery.\n\n# CodeReviewer \u2014 local contract\n\n**Protocol**: `PrReviewMerge`  \nGenerated from the Scribble-validated projection \u2014 do not edit; regenerate from the protocol.\n\n## Your state machine\n\nStart in state `38`. At each state you may ONLY do the listed action(s); anything else is off-protocol.\n\n- state `38`: wait to receive `ReadyForReview(String)` from **Author** \u2192 state `40`\n- state `39`: TERMINAL \u2014 stop.\n- state `40`: send `ReviewComments(String)` to **Author** \u2192 state `41`\n- state `40`: send `QualityClean(String)` to **SecurityReviewer** \u2192 state `44`\n- state `41`: send `ReviewComments(String)` to **SecurityReviewer** \u2192 state `42`\n- state `42`: send `ReviewComments(String)` to **Merger** \u2192 state `43`\n- state `43`: wait to receive `Revision(String)` from **Author** \u2192 state `40`\n- state `44`: send `QualityClean(String)` to **Author** \u2192 state `45`\n- state `45`: send `QualityClean(String)` to **Merger** \u2192 state `46`\n- state `46`: wait to receive `SecurityFindings(String)` from **SecurityReviewer** \u2192 state `47`\n- state `46`: wait to receive `SecurityApproved(String)` from **SecurityReviewer** \u2192 state `48`\n- state `47`: wait to receive `Revision(String)` from **Author** \u2192 state `40`\n- state `48`: send `QualityApproved(String)` to **Merger** \u2192 state `39`\n",
+    "Merger": "# Revised **Merger** skill (STJP-validated)\n\nFix vs original: the original `principal-software-engineer` agent's own\nbias \u2014 \"good over perfect\", \"bias to delivery... to keep the team\nunblocked\" \u2014 is exactly what an unprotocoled ship call would exploit: it\nnever says which approvals to wait for. This contract makes you stay\nsilent through every round of the review loop (you still see each round's\n`ReviewComments`/`QualityClean`/`SecurityFindings` go by, so you always\nknow why the change isn't ready yet) and merge only once **both**\napprovals \u2014 `SecurityApproved` and `QualityApproved` \u2014 have reached you on\nthe same, final revision.\n\n```localtype\nrec ROUND {\n  choice at CodeReviewer {\n    CodeReviewer?ReviewComments(String);\n    continue ROUND;\n  } or {\n    CodeReviewer?QualityClean(String);\n    choice at SecurityReviewer {\n      SecurityReviewer?SecurityFindings(String);\n      continue ROUND;\n    } or {\n      SecurityReviewer?SecurityApproved(String);\n      CodeReviewer?QualityApproved(String);\n    }\n  }\n}\nAuthor!MergeDone(String);\n```\n\nTASK CONTEXT: Get an already-open pull request reviewed to completion and merged safely. The Author has already opened the PR; the CodeReviewer and the SecurityReviewer both examine the current revision concurrently. Each round, the CodeReviewer either raises comments (which the Author must address with a new Revision, restarting the round) or judges the change clean and hands off to the SecurityReviewer, who either raises security findings (which the Author must also address, restarting the round) or approves. Only when the SecurityReviewer's approval AND the CodeReviewer's quality approval have both reached the Merger does the Merger merge the change and confirm to the Author. A change must never be merged on only one of the two approvals, and the review loop must be allowed to run more than once before the merge happens.\n\nYou are governed by a machine-checked interaction contract (below). Follow it EXACTLY \u2014 a protocol gate rejects any other message before delivery.\n\n# Merger \u2014 local contract\n\n**Protocol**: `PrReviewMerge`  \nGenerated from the Scribble-validated projection \u2014 do not edit; regenerate from the protocol.\n\n## Your state machine\n\nStart in state `82`. At each state you may ONLY do the listed action(s); anything else is off-protocol.\n\n- state `82`: wait to receive `ReviewComments(String)` from **CodeReviewer** \u2192 state `82`\n- state `82`: wait to receive `QualityClean(String)` from **CodeReviewer** \u2192 state `84`\n- state `83`: TERMINAL \u2014 stop.\n- state `84`: wait to receive `SecurityFindings(String)` from **SecurityReviewer** \u2192 state `82`\n- state `84`: wait to receive `SecurityApproved(String)` from **SecurityReviewer** \u2192 state `85`\n- state `85`: wait to receive `QualityApproved(String)` from **CodeReviewer** \u2192 state `86`\n- state `86`: send `MergeDone(String)` to **Author** \u2192 state `83`\n",
+    "SecurityReviewer": "# Revised **SecurityReviewer** skill (STJP-validated)\n\nFix vs original: the original `se-security-reviewer` agent never says when\nyour review happens relative to the code reviewer's, or who your\nclearance is for. This contract makes clear that you only review after the\nCodeReviewer has already signed off on quality, and your `SecurityApproved`\ngoes directly to the Merger (as well as back to the Author and\nCodeReviewer, so the whole team knows the change is clear) \u2014 the merge may\nnot happen without it.\n\n```localtype\nAuthor?ReadyForReview(String);\nrec ROUND {\n  choice at CodeReviewer {\n    CodeReviewer?ReviewComments(String);\n    Author?Revision(String);\n    continue ROUND;\n  } or {\n    CodeReviewer?QualityClean(String);\n    choice at self {\n      Author!SecurityFindings(String);\n      CodeReviewer!SecurityFindings(String);\n      Merger!SecurityFindings(String);\n      Author?Revision(String);\n      continue ROUND;\n    } or {\n      Merger!SecurityApproved(String);\n      CodeReviewer!SecurityApproved(String);\n      Author!SecurityApproved(String);\n    }\n  }\n}\n```\n\nYour `SecurityApproved` message must contain the word \"approved\" \u2014 the\ndelivery gate checks for it and will reject an approval without it.\n\nTASK CONTEXT: Get an already-open pull request reviewed to completion and merged safely. The Author has already opened the PR; the CodeReviewer and the SecurityReviewer both examine the current revision concurrently. Each round, the CodeReviewer either raises comments (which the Author must address with a new Revision, restarting the round) or judges the change clean and hands off to the SecurityReviewer, who either raises security findings (which the Author must also address, restarting the round) or approves. Only when the SecurityReviewer's approval AND the CodeReviewer's quality approval have both reached the Merger does the Merger merge the change and confirm to the Author. A change must never be merged on only one of the two approvals, and the review loop must be allowed to run more than once before the merge happens.\n\nYou are governed by a machine-checked interaction contract (below). Follow it EXACTLY \u2014 a protocol gate rejects any other message before delivery.\n\n# SecurityReviewer \u2014 local contract\n\n**Protocol**: `PrReviewMerge`  \nGenerated from the Scribble-validated projection \u2014 do not edit; regenerate from the protocol.\n\n## Your state machine\n\nStart in state `63`. At each state you may ONLY do the listed action(s); anything else is off-protocol.\n\n- state `63`: wait to receive `ReadyForReview(String)` from **Author** \u2192 state `65`\n- state `64`: TERMINAL \u2014 stop.\n- state `65`: wait to receive `ReviewComments(String)` from **CodeReviewer** \u2192 state `66`\n- state `65`: wait to receive `QualityClean(String)` from **CodeReviewer** \u2192 state `67`\n- state `66`: wait to receive `Revision(String)` from **Author** \u2192 state `65`\n- state `67`: send `SecurityFindings(String)` to **Author** \u2192 state `68`\n- state `67`: send `SecurityApproved(String)` to **Merger** \u2192 state `71`\n- state `68`: send `SecurityFindings(String)` to **CodeReviewer** \u2192 state `69`\n- state `69`: send `SecurityFindings(String)` to **Merger** \u2192 state `70`\n- state `70`: wait to receive `Revision(String)` from **Author** \u2192 state `65`\n- state `71`: send `SecurityApproved(String)` to **CodeReviewer** \u2192 state `72`\n- state `72`: send `SecurityApproved(String)` to **Author** \u2192 state `64`\n"
+  },
+  "roles": [
+    "Author",
+    "CodeReviewer",
+    "Merger",
+    "SecurityReviewer"
+  ],
+  "max_rounds": 24,
+  "round": 7,
+  "efsms": {
+    "Author": {
+      "initial": "13",
+      "accepting": [
+        "14"
+      ],
+      "transitions": [
+        [
+          "13",
+          "send",
+          "CodeReviewer",
+          "ReadyForReview",
+          "String",
+          "15"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "20"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "22"
+        ],
+        [
+          "20",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "21"
+        ],
+        [
+          "21",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ],
+        [
+          "22",
+          "receive",
+          "Merger",
+          "MergeDone",
+          "String",
+          "14"
+        ],
+        [
+          "15",
+          "send",
+          "SecurityReviewer",
+          "ReadyForReview",
+          "String",
+          "16"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "17"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "19"
+        ],
+        [
+          "17",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "18"
+        ],
+        [
+          "18",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ]
+      ]
+    },
+    "CodeReviewer": {
+      "initial": "38",
+      "accepting": [
+        "39"
+      ],
+      "transitions": [
+        [
+          "38",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "40"
+        ],
+        [
+          "40",
+          "send",
+          "Author",
+          "ReviewComments",
+          "String",
+          "41"
+        ],
+        [
+          "40",
+          "send",
+          "SecurityReviewer",
+          "QualityClean",
+          "String",
+          "44"
+        ],
+        [
+          "41",
+          "send",
+          "SecurityReviewer",
+          "ReviewComments",
+          "String",
+          "42"
+        ],
+        [
+          "42",
+          "send",
+          "Merger",
+          "ReviewComments",
+          "String",
+          "43"
+        ],
+        [
+          "43",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "44",
+          "send",
+          "Author",
+          "QualityClean",
+          "String",
+          "45"
+        ],
+        [
+          "45",
+          "send",
+          "Merger",
+          "QualityClean",
+          "String",
+          "46"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "47"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "48"
+        ],
+        [
+          "47",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "48",
+          "send",
+          "Merger",
+          "QualityApproved",
+          "String",
+          "39"
+        ]
+      ]
+    },
+    "Merger": {
+      "initial": "82",
+      "accepting": [
+        "83"
+      ],
+      "transitions": [
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "82"
+        ],
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "84"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "82"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "85"
+        ],
+        [
+          "85",
+          "receive",
+          "CodeReviewer",
+          "QualityApproved",
+          "String",
+          "86"
+        ],
+        [
+          "86",
+          "send",
+          "Author",
+          "MergeDone",
+          "String",
+          "83"
+        ]
+      ]
+    },
+    "SecurityReviewer": {
+      "initial": "63",
+      "accepting": [
+        "64"
+      ],
+      "transitions": [
+        [
+          "63",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "65"
+        ],
+        [
+          "67",
+          "send",
+          "Author",
+          "SecurityFindings",
+          "String",
+          "68"
+        ],
+        [
+          "67",
+          "send",
+          "Merger",
+          "SecurityApproved",
+          "String",
+          "71"
+        ],
+        [
+          "68",
+          "send",
+          "CodeReviewer",
+          "SecurityFindings",
+          "String",
+          "69"
+        ],
+        [
+          "69",
+          "send",
+          "Merger",
+          "SecurityFindings",
+          "String",
+          "70"
+        ],
+        [
+          "70",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ],
+        [
+          "71",
+          "send",
+          "CodeReviewer",
+          "SecurityApproved",
+          "String",
+          "72"
+        ],
+        [
+          "72",
+          "send",
+          "Author",
+          "SecurityApproved",
+          "String",
+          "64"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "66"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "67"
+        ],
+        [
+          "66",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ]
+      ]
+    }
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 2,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 3,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 4,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 5,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 6,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 7,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 8,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 9,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    },
+    {
+      "trial": 10,
+      "status": "success",
+      "trace": [
+        {
+          "round": 1,
+          "sender": "Author",
+          "receiver": "CodeReviewer",
+          "label": "ReadyForReview",
+          "payload": "pull_request_ready_for_review",
+          "delivered": true
+        },
+        {
+          "round": 2,
+          "sender": "CodeReviewer",
+          "receiver": "SecurityReviewer",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "Author",
+          "receiver": "SecurityReviewer",
+          "label": "ReadyForReview",
+          "payload": "ready",
+          "delivered": true
+        },
+        {
+          "round": 3,
+          "sender": "CodeReviewer",
+          "receiver": "Author",
+          "label": "QualityClean",
+          "payload": "code_quality_review_passed",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityClean",
+          "payload": "clean",
+          "delivered": true
+        },
+        {
+          "round": 4,
+          "sender": "SecurityReviewer",
+          "receiver": "Merger",
+          "label": "SecurityApproved",
+          "payload": "security review approved",
+          "delivered": true
+        },
+        {
+          "round": 5,
+          "sender": "SecurityReviewer",
+          "receiver": "CodeReviewer",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        },
+        {
+          "round": 6,
+          "sender": "CodeReviewer",
+          "receiver": "Merger",
+          "label": "QualityApproved",
+          "payload": "quality approved",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "Merger",
+          "receiver": "Author",
+          "label": "MergeDone",
+          "payload": "PR merged successfully",
+          "delivered": true
+        },
+        {
+          "round": 7,
+          "sender": "SecurityReviewer",
+          "receiver": "Author",
+          "label": "SecurityApproved",
+          "payload": "approved",
+          "delivered": true
+        }
+      ],
+      "role_states": {
+        "Author": "14",
+        "CodeReviewer": "39",
+        "Merger": "83",
+        "SecurityReviewer": "64"
+      },
+      "rejections": [
+        {
+          "round": 2,
+          "role": "Author",
+          "to": "CodeReviewer",
+          "label": "ReadyForReview",
+          "expected": [
+            "send ReadyForReview(String) to SecurityReviewer"
+          ],
+          "acked": true
+        },
+        {
+          "round": 6,
+          "role": "SecurityReviewer",
+          "to": "Merger",
+          "label": "SecurityApproved",
+          "expected": [
+            "send SecurityApproved(String) to Author"
+          ],
+          "acked": true
+        }
+      ],
+      "no_progress_rounds": 0,
+      "agent_calls": 12,
+      "malformed": 0,
+      "prompt_chars": 45883,
+      "reply_chars": 1130,
+      "pending_recv": []
+    }
+  ],
+  "agent_seconds": 643.1683895587921
+}

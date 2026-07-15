@@ -1,0 +1,550 @@
+{
+  "case": "skills_pr_review_merge",
+  "arm": "unchecked",
+  "stjp_prompts": {},
+  "roles": [
+    "Author",
+    "CodeReviewer",
+    "Merger",
+    "SecurityReviewer"
+  ],
+  "max_rounds": 8,
+  "round": 2,
+  "efsms": {
+    "Author": {
+      "initial": "13",
+      "accepting": [
+        "14"
+      ],
+      "transitions": [
+        [
+          "13",
+          "send",
+          "CodeReviewer",
+          "ReadyForReview",
+          "String",
+          "15"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "20"
+        ],
+        [
+          "19",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "22"
+        ],
+        [
+          "20",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "21"
+        ],
+        [
+          "21",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ],
+        [
+          "22",
+          "receive",
+          "Merger",
+          "MergeDone",
+          "String",
+          "14"
+        ],
+        [
+          "15",
+          "send",
+          "SecurityReviewer",
+          "ReadyForReview",
+          "String",
+          "16"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "17"
+        ],
+        [
+          "16",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "19"
+        ],
+        [
+          "17",
+          "send",
+          "CodeReviewer",
+          "Revision",
+          "String",
+          "18"
+        ],
+        [
+          "18",
+          "send",
+          "SecurityReviewer",
+          "Revision",
+          "String",
+          "16"
+        ]
+      ]
+    },
+    "CodeReviewer": {
+      "initial": "38",
+      "accepting": [
+        "39"
+      ],
+      "transitions": [
+        [
+          "38",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "40"
+        ],
+        [
+          "40",
+          "send",
+          "Author",
+          "ReviewComments",
+          "String",
+          "41"
+        ],
+        [
+          "40",
+          "send",
+          "SecurityReviewer",
+          "QualityClean",
+          "String",
+          "44"
+        ],
+        [
+          "41",
+          "send",
+          "SecurityReviewer",
+          "ReviewComments",
+          "String",
+          "42"
+        ],
+        [
+          "42",
+          "send",
+          "Merger",
+          "ReviewComments",
+          "String",
+          "43"
+        ],
+        [
+          "43",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "44",
+          "send",
+          "Author",
+          "QualityClean",
+          "String",
+          "45"
+        ],
+        [
+          "45",
+          "send",
+          "Merger",
+          "QualityClean",
+          "String",
+          "46"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "47"
+        ],
+        [
+          "46",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "48"
+        ],
+        [
+          "47",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "40"
+        ],
+        [
+          "48",
+          "send",
+          "Merger",
+          "QualityApproved",
+          "String",
+          "39"
+        ]
+      ]
+    },
+    "Merger": {
+      "initial": "82",
+      "accepting": [
+        "83"
+      ],
+      "transitions": [
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "82"
+        ],
+        [
+          "82",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "84"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityFindings",
+          "String",
+          "82"
+        ],
+        [
+          "84",
+          "receive",
+          "SecurityReviewer",
+          "SecurityApproved",
+          "String",
+          "85"
+        ],
+        [
+          "85",
+          "receive",
+          "CodeReviewer",
+          "QualityApproved",
+          "String",
+          "86"
+        ],
+        [
+          "86",
+          "send",
+          "Author",
+          "MergeDone",
+          "String",
+          "83"
+        ]
+      ]
+    },
+    "SecurityReviewer": {
+      "initial": "63",
+      "accepting": [
+        "64"
+      ],
+      "transitions": [
+        [
+          "63",
+          "receive",
+          "Author",
+          "ReadyForReview",
+          "String",
+          "65"
+        ],
+        [
+          "67",
+          "send",
+          "Author",
+          "SecurityFindings",
+          "String",
+          "68"
+        ],
+        [
+          "67",
+          "send",
+          "Merger",
+          "SecurityApproved",
+          "String",
+          "71"
+        ],
+        [
+          "68",
+          "send",
+          "CodeReviewer",
+          "SecurityFindings",
+          "String",
+          "69"
+        ],
+        [
+          "69",
+          "send",
+          "Merger",
+          "SecurityFindings",
+          "String",
+          "70"
+        ],
+        [
+          "70",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ],
+        [
+          "71",
+          "send",
+          "CodeReviewer",
+          "SecurityApproved",
+          "String",
+          "72"
+        ],
+        [
+          "72",
+          "send",
+          "Author",
+          "SecurityApproved",
+          "String",
+          "64"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "ReviewComments",
+          "String",
+          "66"
+        ],
+        [
+          "65",
+          "receive",
+          "CodeReviewer",
+          "QualityClean",
+          "String",
+          "67"
+        ],
+        [
+          "66",
+          "receive",
+          "Author",
+          "Revision",
+          "String",
+          "65"
+        ]
+      ]
+    }
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 2,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 3,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 4,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 5,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 6,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 7,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 8,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 9,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    },
+    {
+      "trial": 10,
+      "status": "deadlock",
+      "trace": [],
+      "role_states": {
+        "Author": "13",
+        "CodeReviewer": "38",
+        "Merger": "82",
+        "SecurityReviewer": "63"
+      },
+      "rejections": [],
+      "no_progress_rounds": 2,
+      "agent_calls": 8,
+      "malformed": 1,
+      "prompt_chars": 15934,
+      "reply_chars": 511,
+      "pending_recv": []
+    }
+  ],
+  "agent_seconds": 200.32949328422546
+}
