@@ -31,6 +31,25 @@ this runbook as the scaffold they fill in, not the other way around.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. Prerequisites checklist](#1-prerequisites-checklist)
+  - [1.1 Already in the repo (nothing to build)](#11-already-in-the-repo-nothing-to-build)
+  - [1.2 What the GPU run actually consumes](#12-what-the-gpu-run-actually-consumes)
+  - [1.3 Full-size data build — run BEFORE renting GPU](#13-full-size-data-build--run-before-renting-gpu)
+- [2. Provider setup — three paths](#2-provider-setup--three-paths)
+  - [2(a) Modal](#2a-modal)
+  - [2(b) RunPod (Secure Cloud, A100-80GB)](#2b-runpod-secure-cloud-a100-80gb)
+  - [2(c) Azure ML (NC A100 v4, spot)](#2c-azure-ml-nc-a100-v4-spot)
+- [3. Environment — pin block and model ladder](#3-environment--pin-block-and-model-ladder)
+- [4. W13 plumbing smoke — gates everything downstream](#4-w13-plumbing-smoke--gates-everything-downstream)
+- [5. SFT (W9 / T1)](#5-sft-w9--t1)
+- [6. GRPO (W10 / T2)](#6-grpo-w10--t2)
+- [7. Artifact persistence (W14) — surviving an ephemeral sandbox](#7-artifact-persistence-w14--surviving-an-ephemeral-sandbox)
+- [8. Reporting results back](#8-reporting-results-back)
+<!-- MENU:END -->
+
 ## 1. Prerequisites checklist
 
 ### 1.1 Already in the repo (nothing to build)

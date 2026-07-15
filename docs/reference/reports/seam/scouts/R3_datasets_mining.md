@@ -1,8 +1,6 @@
 # R3 — Comparable Datasets & D5 Mining Targets
 
-Scout report for the seam-training program (the "seam" is the translation
-step from plain-language intent to formal protocol;
-`docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`
+Scout report for the seam-training program (`docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`
 §3 D5, §7). Date of research: 2026-07-11. All GitHub numbers below are from
 live `search_code`/`search_repositories` calls made today; web-search numbers
 are from paper abstracts/READMEs fetched today. Every count is an
@@ -10,6 +8,17 @@ are from paper abstracts/READMEs fetched today. Every count is an
 Task B's methodology note.
 
 ---
+
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [Task A — Comparable NL→formal-spec datasets](#task-a--comparable-nlformal-spec-datasets)
+- [Task B — D5 mining targets, sized](#task-b--d5-mining-targets-sized)
+  - [1. Claude/agent skills — the proven recipe, scaled](#1-claudeagent-skills--the-proven-recipe-scaled)
+  - [2. Multi-agent framework configs](#2-multi-agent-framework-configs)
+  - [3. CI/release/review pipelines as protocols — mostly a bad target, say so](#3-cireleasereview-pipelines-as-protocols--mostly-a-bad-target-say-so)
+  - [Ranked mining shortlist (top 5, with expected item counts)](#ranked-mining-shortlist-top-5-with-expected-item-counts)
+<!-- MENU:END -->
 
 ## Task A — Comparable NL→formal-spec datasets
 
@@ -62,7 +71,7 @@ mass crawl).
 ### 1. Claude/agent skills — the proven recipe, scaled
 
 **Existing precedent** (`experiments/cases/skills_safety/`): `pr_merge` pulled
-5 of 243 `agents/*.agent.md` files from `github/awesome-copilot` (MIT);
+5 of 243 [`agents/*.agent.md`](https://github.com/github/awesome-copilot/tree/main/agents) files from [`github/awesome-copilot`](https://github.com/github/awesome-copilot) (MIT);
 `doc_pipeline` pulled 3 of 12 usable Apache-2.0 skills from `anthropics/skills`.
 Both are **hand-curated single-repo pulls**, not automated mass mining — the
 compactor (`stjp_core/generation/skill_compactor.py`) takes it from there
@@ -70,9 +79,9 @@ compactor (`stjp_core/generation/skill_compactor.py`) takes it from there
 
 | source | inventory | license | intent-text | harvest difficulty |
 |---|---|---|---|---|
-| `github/awesome-copilot` | **243** `*.agent.md` + **209** `*.instructions.md` = ~452 role/instruction files (exact repo-scoped count); already-used: 5 (`pr_merge`) | MIT (confirmed, verbatim `LICENSE` saved in `_incoming/`) | Gold (a known-correct reference source) — each file is a standalone human-curated persona/instruction prose block (`description`, body) | **A** — same recipe already proven; just needs more team compositions selected by a human/LLM reading the ~450 remaining files and grouping into plausible pipelines (dev-workflow angle: PRD → Architect → Plan → Debug chains are visible in the sampled filenames alone) |
+| [`github/awesome-copilot`](https://github.com/github/awesome-copilot) | **243** [`*.agent.md`](https://github.com/github/awesome-copilot/tree/main/agents) + **209** [`*.instructions.md`](https://github.com/github/awesome-copilot/tree/main/instructions) = ~452 role/instruction files (exact repo-scoped count); already-used: 5 (`pr_merge`) | MIT (confirmed, verbatim `LICENSE` saved in `_incoming/`) | Gold (a known-correct reference source) — each file is a standalone human-curated persona/instruction prose block (`description`, body) | **A** — same recipe already proven; just needs more team compositions selected by a human/LLM reading the ~450 remaining files and grouping into plausible pipelines (dev-workflow angle: PRD → Architect → Plan → Debug chains are visible in the sampled filenames alone) |
 | `VoltAgent/awesome-claude-code-subagents` | 100+ subagent files (single repo, unmined by this program) | **MIT** (confirmed via fetched `LICENSE`) | Likely gold — subagent files ship structured "when to use" descriptions per the repo's stated purpose | **A/B** — same shape as awesome-copilot but unverified whether files are single-persona prose (need one fetch pass to confirm frontmatter shape before treating as equivalent-quality source) |
-| `anthropics/skills` — remaining unused skills | 9 more Apache-2.0 "Example Skills" not yet mined: `algorithmic-art`, `canvas-design`, `frontend-design`, `mcp-builder`, `skill-creator`, `slack-gif-creator`, `theme-factory`, `web-artifacts-builder`, `webapp-testing` (the `docx/pdf/pptx/xlsx` document skills remain excluded — source-available, copy/derivative forbidden) | Apache-2.0 per-skill (already verified in-repo, `_incoming/anthropic_skills/PROVENANCE.md`) | Gold — same SKILL.md prose format already used for `doc_pipeline` | **A** — small remaining pool (maybe 2-3 more team compositions, e.g. `frontend-design` → `webapp-testing` → `skill-creator` reads like a natural build→test→package pipeline), but trivially low-risk since the license read is already done |
+| [`anthropics/skills`](https://github.com/anthropics/skills) — remaining unused skills | 9 more Apache-2.0 "Example Skills" not yet mined: [`algorithmic-art`](https://github.com/anthropics/skills/blob/main/skills/algorithmic-art/SKILL.md), [`canvas-design`](https://github.com/anthropics/skills/blob/main/skills/canvas-design/SKILL.md), [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md), [`mcp-builder`](https://github.com/anthropics/skills/blob/main/skills/mcp-builder/SKILL.md), [`skill-creator`](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md), [`slack-gif-creator`](https://github.com/anthropics/skills/blob/main/skills/slack-gif-creator/SKILL.md), [`theme-factory`](https://github.com/anthropics/skills/blob/main/skills/theme-factory/SKILL.md), [`web-artifacts-builder`](https://github.com/anthropics/skills/blob/main/skills/web-artifacts-builder/SKILL.md), [`webapp-testing`](https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md) (the `docx/pdf/pptx/xlsx` document skills remain excluded — source-available, copy/derivative forbidden) | Apache-2.0 per-skill (already verified in-repo, `_incoming/anthropic_skills/PROVENANCE.md`) | Gold — same SKILL.md prose format already used for `doc_pipeline` | **A** — small remaining pool (maybe 2-3 more team compositions, e.g. `frontend-design` → `webapp-testing` → `skill-creator` reads like a natural build→test→package pipeline), but trivially low-risk since the license read is already done |
 | `rohitg00/awesome-claude-code-toolkit` | Repo claims 135 agents + 35 skills + 42 commands (self-reported in its own description, not independently recounted here) | Not checked this pass | Unknown until sampled | **B** — large claimed inventory, but license and file-format need one verification pass before treating as equal-quality to the two MIT repos above |
 | Generic `filename:SKILL.md` / `path:.claude/skills` across all of GitHub | 337K / 123K raw hits (see methodology note — mostly noise) | Mixed/unknown per-repo | Mixed — most hits are non-agent files (READMEs, unrelated "skill.md" docs) or one-off single-role files with no natural "team" to compose | **C** as a blind crawl — only usable after a filtering pass (frontmatter shape, repo license, co-located sibling skills implying a team); `awesome-claude-code` (49.8K★, MIT-adjacent aggregator) is the natural index to drive that filtering rather than crawling GitHub search directly |
 | `CLAUDE.md` / `AGENTS.md` role sections across GitHub | 616K / 558K raw hits (same noise caveat — most are generic build/lint instructions, not multi-role team descriptions) | Mixed | Sparse — only a minority of these files describe multiple distinct agent *roles* in one repo (most are single-agent dev-environment instructions, confirmed by the sample: gosec, Paket, HIP are all single-actor build guidance) | **C** — low signal-to-noise; only worth mining opportunistically (e.g. `redpanda-data/connect`'s `CLAUDE.md` sample hit literally had a "## Skills and Agents" section, suggesting occasional multi-role repos exist, but finding them requires per-file inspection, not a bulk query) |
@@ -81,7 +90,7 @@ compactor (`stjp_core/generation/skill_compactor.py`) takes it from there
 
 | framework | where the human-written intent lives | how it maps to roles/messages/ordering | estimated yield | license posture | harvest difficulty |
 |---|---|---|---|---|---|
-| **CrewAI** | `config/agents.yaml`: `role:`, `goal:`, `backstory:` fields (prose, human-authored) per agent; `config/tasks.yaml`: `description:`/`expected_output:` per task | **Mechanical for WHAT, manual for WHO-SENDS-WHAT-TO-WHOM.** `role`/`goal`/`backstory` give a clean per-role intent (≈ our `role_descriptions`). Ordering is only *partially* explicit: `Process.sequential` + a task's `context: [other_task]` field gives a real dependency edge; `Process.hierarchical` delegates ordering to a manager LLM at runtime — no static protocol exists for those crews | ~2,980 repos import `crewai.Agent` directly; a stricter `config/agents.yaml`-shaped scan returns dozens (23 in a `path:config`+`crewai` combo query, almost certainly undercounting due to the same path-qualifier API limitation noted above) — realistic per-repo yield is **one team per repo**, so this is a long-tail many-small-repos target, not a few-large-repos one | Per-repo, must check each (no central permissive umbrella like awesome-copilot) | **B** — good intent text, ordering needs a code read (task `context:` graph + `Process` type), and sequential-process crews are the only cleanly-static subset |
+| **[CrewAI](https://github.com/crewAIInc/crewAI)** | `config/agents.yaml`: `role:`, `goal:`, `backstory:` fields (prose, human-authored) per agent; `config/tasks.yaml`: `description:`/`expected_output:` per task | **Mechanical for WHAT, manual for WHO-SENDS-WHAT-TO-WHOM.** `role`/`goal`/`backstory` give a clean per-role intent (≈ our `role_descriptions`). Ordering is only *partially* explicit: `Process.sequential` + a task's `context: [other_task]` field gives a real dependency edge; `Process.hierarchical` delegates ordering to a manager LLM at runtime — no static protocol exists for those crews | ~2,980 repos import `crewai.Agent` directly; a stricter `config/agents.yaml`-shaped scan returns dozens (23 in a `path:config`+`crewai` combo query, almost certainly undercounting due to the same path-qualifier API limitation noted above) — realistic per-repo yield is **one team per repo**, so this is a long-tail many-small-repos target, not a few-large-repos one | Per-repo, must check each (no central permissive umbrella like awesome-copilot) | **B** — good intent text, ordering needs a code read (task `context:` graph + `Process` type), and sequential-process crews are the only cleanly-static subset |
 | **AutoGen / AG2** | `system_message=` string literals embedded in Python (`ConversableAgent`/`AssistantAgent` constructors) — prose, human-authored, but requires source parsing (not a separate config file) | Only mechanical when `GroupChat(..., speaker_selection_method="round_robin")` or a custom deterministic selector is used — a fixed order is then directly readable. When `speaker_selection_method="auto"` (LLM-managed, the common default), there is **no static protocol to extract** — the ordering is decided live by an LLM manager at runtime, not authored anywhere | ~2,936 repos hit `GroupChat` + `import autogen`/`ag2` — most are tutorial-shaped (the sampled hits include several toy/course examples) | Per-repo | **B/C** — must filter for the deterministic-selector subset first; the LLM-managed-order majority is not a usable mining target for a *protocol* (no fixed choreography exists to recover) |
 | **LangGraph** | Sparse — node names and occasional per-node docstrings are the closest thing to intent text; task-specific "why" prose is often thin or absent, especially in tutorial repos | **Best mechanical fit of the three.** `add_node`/`add_edge`/`add_conditional_edges` calls already *are* an explicit graph (nodes ≈ roles/states, edges ≈ ordering, conditional edges ≈ branches) — structurally close to an EFSM/global-protocol skeleton, translation is closer to a parser than an inference task | ~6,424 repos hit `from langgraph.graph import StateGraph` | Per-repo | **B** — structurally the easiest of the three to convert mechanically (graph→protocol is nearly 1:1), but the *intent* half of the (intent, protocol) pair is often weak or tutorial-boilerplate rather than a genuine human ask, which is exactly what D5 needs to be "gold" — this is the framework where protocol-extraction is easy but intent-quality needs the most scrutiny per repo |
 
@@ -112,13 +121,13 @@ compactor (`stjp_core/generation/skill_compactor.py`) takes it from there
 
 ### Ranked mining shortlist (top 5, with expected item counts)
 
-1. **`github/awesome-copilot`** (MIT) — 243 `*.agent.md` + 209
-   `*.instructions.md` files, 5 already used. Same proven recipe as `pr_merge`.
+1. **[`github/awesome-copilot`](https://github.com/github/awesome-copilot)** (MIT) — 243 [`*.agent.md`](https://github.com/github/awesome-copilot/tree/main/agents) + 209
+   [`*.instructions.md`](https://github.com/github/awesome-copilot/tree/main/instructions) files, 5 already used. Same proven recipe as `pr_merge`.
    Expected yield: **15–25 more team compositions** (3–6 roles each) →
    roughly **60–130 candidate (intent, skills-team) items** before the
    compactor/validator filter (which is expected to reject a nontrivial
    fraction, per the plan's "low yield is itself a finding" framing).
-2. **`VoltAgent/awesome-claude-code-subagents`** (MIT, confirmed) — 100+
+2. **[`VoltAgent/awesome-claude-code-subagents`](https://github.com/VoltAgent/awesome-claude-code-subagents)** (MIT, confirmed) — 100+
    subagent files in one unmined repo. Expected yield, pending one
    file-format verification pass: **similar order of magnitude to #1,
    roughly 50–100 candidate items** across dev-workflow-shaped teams

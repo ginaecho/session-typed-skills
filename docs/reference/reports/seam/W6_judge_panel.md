@@ -7,6 +7,18 @@ Deliverable: `experiments/seam_bench/judge/` — `judge_panel.py`'s responsibili
 `payloads.py`, `seats.py`, `classes.py`, `aggregate.py`, `canaries.py`, `cache.py`, `run_panel.py` (orchestration
 glue), plus `tests/`.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [Architecture](#architecture)
+- [J-probe status: implemented against the REAL toolchain, not interface+gap](#j-probe-status-implemented-against-the-real-toolchain-not-interfacegap)
+- [Effective-votes estimate](#effective-votes-estimate)
+- [Deviations from the task card](#deviations-from-the-task-card)
+- [Real smoke (conditional) — not run](#real-smoke-conditional--not-run)
+- [Test output](#test-output)
+- [Files](#files)
+<!-- MENU:END -->
+
 ## Architecture
 
 ```

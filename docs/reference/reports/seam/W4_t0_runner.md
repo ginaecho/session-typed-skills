@@ -16,6 +16,19 @@ workflow produces the real drafts, replayed through this harness via
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. What was built — `experiments/seam_bench/t0/`](#1-what-was-built--experimentsseam_bencht0)
+- [2. The drafts-JSONL schema the planner's workflow must produce](#2-the-drafts-jsonl-schema-the-planners-workflow-must-produce)
+- [3. The 23-pair extraction — discovery rule and real-Scribble result](#3-the-23-pair-extraction--discovery-rule-and-real-scribble-result)
+- [4. Test suite](#4-test-suite)
+- [5. End-to-end integration check (not part of the committed test suite)](#5-end-to-end-integration-check-not-part-of-the-committed-test-suite)
+- [6. Exact command the planner will run once drafts exist](#6-exact-command-the-planner-will-run-once-drafts-exist)
+- [7. Deviations from the brief, and why](#7-deviations-from-the-brief-and-why)
+- [8. Artifacts](#8-artifacts)
+<!-- MENU:END -->
+
 ## 1. What was built — `experiments/seam_bench/t0/`
 
 | module | contents |

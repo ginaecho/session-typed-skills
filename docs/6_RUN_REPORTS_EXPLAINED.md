@@ -31,17 +31,81 @@ This document has two parts:
   column reads in *calls*, not *tokens*, and a
   [**dollar-cost estimate**](#what-this-reproduction-actually-cost-in-dollars) of
   the whole reproduction (**under $100**).
-- **Part 3 — the real-skills two-model run (2026-07-08), reported separately.**
+- **Part 3 — the real-skills two-model run (2026-07-08),
+  [summarized below](#part-3--the-real-skills-two-model-run-2026-07-08).**
   Two agent teams built from *real, publicly shared skill files* (Anthropic's
-  `anthropics/skills` and GitHub's `awesome-copilot`), each run in three
+  [`anthropics/skills`](https://github.com/anthropics/skills) and GitHub's [`awesome-copilot`](https://github.com/github/awesome-copilot)), each run in three
   settings, once with a small model (Haiku) and once with a mid-tier model
   (Sonnet) playing the team members — 120 trials. Which team fails without a
   coordination plan turns out to depend on the model; with full STJP both
-  models are flawless and indistinguishable at 3× lower cost. Full
-  plain-language report:
+  models are flawless and indistinguishable at 3× lower cost. The full
+  trial-by-trial report is
   [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
 
 ---
+
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+  - [Words this document uses (plain-English glossary)](#words-this-document-uses-plain-english-glossary)
+- [Part 1 — the finance run (2026-07-02)](#part-1--the-finance-run-2026-07-02)
+  - [1. The headline result (2026-07-02 finance run)](#1-the-headline-result-2026-07-02-finance-run)
+  - [2. Reading the results table](#2-reading-the-results-table)
+    - [Column meanings](#column-meanings)
+    - [The same ladder on REAL skills (2026-07-06 cloud run)](#the-same-ladder-on-real-skills-2026-07-06-cloud-run)
+    - [The same real-skills ladder at n=100 with a STRONGER model (Sonnet, 2026-07-07)](#the-same-real-skills-ladder-at-n100-with-a-stronger-model-sonnet-2026-07-07)
+  - [3. Understanding the arms (what changed between columns)](#3-understanding-the-arms-what-changed-between-columns)
+    - [Arm A: Intent only (baseline)](#arm-a-intent-only-baseline)
+    - [Arm B: Global protocol as text (reference)](#arm-b-global-protocol-as-text-reference)
+    - [Arm C-min: Local contract (observer)](#arm-c-min-local-contract-observer)
+    - [Arm C+spec: Local + gate (with enforcement)](#arm-cspec-local--gate-with-enforcement)
+    - [Arm C+min: Local lean + gate (compressed + enforced)](#arm-cmin-local-lean--gate-compressed--enforced)
+    - [Arm STJP: Full stack (scheduler + gate + protocol)](#arm-stjp-full-stack-scheduler--gate--protocol)
+  - [4. The five grades (predictions vs reality)](#4-the-five-grades-predictions-vs-reality)
+    - [Prediction 1: Correctness (unconfounded)](#prediction-1-correctness-unconfounded)
+    - [Prediction 2: Token savings](#prediction-2-token-savings)
+    - [Prediction 3: Lean contract vs global text (same execution plane)](#prediction-3-lean-contract-vs-global-text-same-execution-plane)
+    - [Prediction 4: Orchestrator cost](#prediction-4-orchestrator-cost)
+    - [Prediction 5: Token-per-call analysis](#prediction-5-token-per-call-analysis)
+  - [5. Safety grading: Severity levels](#5-safety-grading-severity-levels)
+    - [S0 (Benign) — not counted](#s0-benign--not-counted)
+    - [S1 (Waste) — noted, not fatal](#s1-waste--noted-not-fatal)
+    - [S2 (Skipped obligation) — protocol violation](#s2-skipped-obligation--protocol-violation)
+    - [S3 (Never finished) — task failure](#s3-never-finished--task-failure)
+    - [S4 (Disaster) — irreversible, critical](#s4-disaster--irreversible-critical)
+  - [6. Critical properties audit](#6-critical-properties-audit)
+    - [C1: Data provenance (no guessing)](#c1-data-provenance-no-guessing)
+    - [C2: Context completeness (read everything first)](#c2-context-completeness-read-everything-first)
+    - [C3: Authorization before irreversible acts](#c3-authorization-before-irreversible-acts)
+  - [7. Common questions answered](#7-common-questions-answered)
+    - [Q: Why did C-min only get 60%?](#q-why-did-c-min-only-get-60)
+    - [Q: Why is B (global text) so expensive?](#q-why-is-b-global-text-so-expensive)
+    - [Q: Can STJP get cheaper? Is 13.3k the floor?](#q-can-stjp-get-cheaper-is-133k-the-floor)
+    - [Q: Did GPT-5.4's strength hide STJP's value?](#q-did-gpt-54s-strength-hide-stjps-value)
+    - [Q: How do we know the monitor is correct?](#q-how-do-we-know-the-monitor-is-correct)
+- [Part 2 — the n=100 reliability run (2026-07-04)](#part-2--the-n100-reliability-run-2026-07-04)
+  - [8. Why a second run at all?](#8-why-a-second-run-at-all)
+  - [9. The seven experiments, in plain English](#9-the-seven-experiments-in-plain-english)
+    - [The instruments check — "are our measuring tools correct?" (do this first)](#the-instruments-check--are-our-measuring-tools-correct-do-this-first)
+    - [E1 — "does the safety checker catch broken rulebooks?"](#e1--does-the-safety-checker-catch-broken-rulebooks)
+    - [E2 — "can a hostile agent sneak secrets past the gate?"](#e2--can-a-hostile-agent-sneak-secrets-past-the-gate)
+    - [E3 — "does the benefit hold for weak and strong models?" (measured across 3 Claude tiers)](#e3--does-the-benefit-hold-for-weak-and-strong-models-measured-across-3-claude-tiers)
+    - [E4 — "how many runs-in-a-row will it survive?" (the reason we did n=100)](#e4--how-many-runs-in-a-row-will-it-survive-the-reason-we-did-n100)
+    - [E5 — "does English→rulebook translation keep the meaning?"](#e5--does-englishrulebook-translation-keep-the-meaning)
+    - [E6 — "does it stay cheap as the team grows?"](#e6--does-it-stay-cheap-as-the-team-grows)
+    - [E7 — "does it work outside our own framework?"](#e7--does-it-work-outside-our-own-framework)
+    - [The interaction trials — cooperative task, 100 runs each](#the-interaction-trials--cooperative-task-100-runs-each)
+  - [10. The full arm-ladder at n=100, reproduced without Foundry](#10-the-full-arm-ladder-at-n100-reproduced-without-foundry)
+    - [Why this is *not* laid out in the exact same format as §2](#why-this-is-not-laid-out-in-the-exact-same-format-as-2)
+    - [What this reproduction actually cost (in dollars)](#what-this-reproduction-actually-cost-in-dollars)
+  - [11. What Part 2 proves, in one paragraph](#11-what-part-2-proves-in-one-paragraph)
+  - [12. Where the supporting data lives](#12-where-the-supporting-data-lives)
+- [Part 3 — the real-skills two-model run (2026-07-08)](#part-3--the-real-skills-two-model-run-2026-07-08)
+  - [13. Why a third run — the motivation](#13-why-a-third-run--the-motivation)
+  - [14. What happened — the headline results](#14-what-happened--the-headline-results)
+  - [15. What Part 3 proves, in one paragraph](#15-what-part-3-proves-in-one-paragraph)
+  - [16. What to read next](#16-what-to-read-next)
+<!-- MENU:END -->
 
 ## Words this document uses (plain-English glossary)
 
@@ -69,7 +133,7 @@ is used later; none is assumed.
 
 ---
 
-## Part 1 — the finance run (2026-07-02)
+# Part 1 — the finance run (2026-07-02)
 
 ## 1. The headline result (2026-07-02 finance run)
 
@@ -1005,7 +1069,84 @@ The design rationale for each experiment (the deeper "why") is in
 
 ---
 
-## 13. What to read next
+# Part 3 — the real-skills two-model run (2026-07-08)
+
+Everything above used tasks and rulebooks this project wrote for itself. A
+fair reader will ask two things: **does any of this work on job
+instructions that real people actually published?** And **does the answer
+depend on which AI model plays the team members?** Part 3 answers both.
+The short version is below; every number, trace, and honest caveat is in
+the full report,
+[`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
+
+## 13. Why a third run — the motivation
+
+Two agent teams were built from real, publicly shared files, downloaded
+as-is (with their licenses checked):
+
+- **The "announcement team"** — three skills from Anthropic's public
+  collection ([anthropics/skills](https://github.com/anthropics/skills)):
+  a Writer using [`internal-comms`](https://github.com/anthropics/skills/blob/main/skills/internal-comms/SKILL.md), a
+  BrandReviewer using [`brand-guidelines`](https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md),
+  and a DocLead using [`doc-coauthoring`](https://github.com/anthropics/skills/blob/main/skills/doc-coauthoring/SKILL.md).
+  The rule that matters: the announcement must not go out before the brand
+  review approves it, and must not go out twice.
+- **The "code-change team"** — four files from GitHub's public Copilot
+  collection ([github/awesome-copilot](https://github.com/github/awesome-copilot)):
+  an Author using [`address-comments`](https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md),
+  a CodeReviewer using [`code-review-generic`](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md),
+  a SecurityReviewer using [`se-security-reviewer`](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md),
+  and a Merger using [`principal-software-engineer`](https://github.com/github/awesome-copilot/blob/main/agents/principal-software-engineer.agent.md).
+  The rule: the change must not be merged before the security review
+  passes, and must not be merged twice.
+
+The key property of these files — and the reason they make a good test —
+is that **each one describes a single job well, and none of them says
+anything about the order the team must work in.** That ordering normally
+lives in a human's head. Each team was run in the same three settings as
+the earlier parts (no plan / plan written into the instructions / full
+STJP), and the whole thing was done **twice**: once with a small model
+(Haiku) playing every team member, once with a smarter, more expensive
+model (Sonnet). 10 trials per setting per model — 120 trials in all.
+
+## 14. What happened — the headline results
+
+| Setting | Announcement team (small / smarter model) | Code-change team (small / smarter model) | Rule-breaking messages per run | AI calls per trial | Text cost per trial |
+|---|---:|---:|---:|---:|---:|
+| Original files, no plan | 10/10 · **0/10** | **0/10** · 10/10 | 120–180 | 16 | ~5,300–5,900 tokens |
+| Plan written as text | 10/10 · 10/10 | 10/10 · 10/10 | 120 | 16 | ~4,200–4,400 tokens |
+| **Full STJP** | **10/10 · 10/10** | **10/10 · 10/10** | **0** | **4** | **~1,800 tokens** |
+
+Three things to notice, in plain words:
+
+1. **Without a coordination plan, which team fails depends on which model
+   you use — and you cannot predict it.** The small model delivered the
+   announcement every time but never once delivered the code change; the
+   smarter model did the exact opposite. Same files, same instructions,
+   same budget. Paying for the smarter model did not fix the problem — it
+   just moved the failure to the other team.
+2. **Writing the plan into everyone's instructions fixes completion, but
+   not discipline.** Both models then delivered 20/20 — but members still
+   sent 120 messages per run that broke the agreed order (mostly re-sending
+   things while waiting), because nothing stops them.
+3. **Full STJP was flawless and identical on both models.** 40/40
+   deliveries, zero rule-breaking messages, and exactly 4 AI calls per
+   trial — the minimum possible, since the job takes exactly 4 messages.
+   Cost: about 3× cheaper than no plan and 2.4× cheaper than plan-as-text.
+
+## 15. What Part 3 proves, in one paragraph
+
+On real, published job instructions — not ones this project wrote — a team
+of AI agents with no coordination plan fails silently about half the time,
+and *which* half depends on the model, so you can't buy your way out with
+a more expensive one. With the full STJP setup, the cheapest model
+performed exactly like the expensive one: every trial delivered, no rule
+was ever broken, and each delivery cost a third of the uncoordinated
+attempt. The structure, not the model, did the work.
+
+---
+
+## 16. What to read next
 
 - **To understand how this benchmark is designed:** Read `3_BENCHMARK_DESIGN_EXPLAINED.md`
 - **To learn about testing strategies:** Read `2_TESTING_STRATEGIES.md`

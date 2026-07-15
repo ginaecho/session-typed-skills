@@ -29,6 +29,22 @@ through it.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. Setup (reproducing W8's exact 13 teams)](#1-setup-reproducing-w8s-exact-13-teams)
+- [2. Extraction discipline (how I decided what counted as evidence)](#2-extraction-discipline-how-i-decided-what-counted-as-evidence)
+- [3. Per-team funnel](#3-per-team-funnel)
+- [4. The three-way outcome, across 13 teams](#4-the-three-way-outcome-across-13-teams)
+- [5. Two write-ups worth reading in full](#5-two-write-ups-worth-reading-in-full)
+  - [5.1 Teams 8 and 10 are pipeline artifacts, not teams](#51-teams-8-and-10-are-pipeline-artifacts-not-teams)
+  - [5.2 Team 9: a real 7-role sub-team hiding inside a 15-role false-positive cluster](#52-team-9-a-real-7-role-sub-team-hiding-inside-a-15-role-false-positive-cluster)
+- [6. Recovered `test-real` dataset items](#6-recovered-test-real-dataset-items)
+- [7. What this does to the paper's claim](#7-what-this-does-to-the-papers-claim)
+- [8. Human-read baseline (prepared, not required)](#8-human-read-baseline-prepared-not-required)
+- [9. Artifacts](#9-artifacts)
+<!-- MENU:END -->
+
 ## 1. Setup (reproducing W8's exact 13 teams)
 
 Per protocol: cloned the same three repos at the same commits W8 recorded

@@ -25,6 +25,18 @@ those facts.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [The meta-finding, stated first](#the-meta-finding-stated-first)
+- [Incident 1 — Stalled waiting for a signal that was never coming](#incident-1--stalled-waiting-for-a-signal-that-was-never-coming)
+- [Incident 2 — Two writers on one shared resource](#incident-2--two-writers-on-one-shared-resource)
+- [Incident 3 — A message-format mismatch killed a run instantly](#incident-3--a-message-format-mismatch-killed-a-run-instantly)
+- [Incident 4 — Concurrent writes to one branch](#incident-4--concurrent-writes-to-one-branch)
+- [The candidate protocol](#the-candidate-protocol)
+- [Honesty about strength of evidence](#honesty-about-strength-of-evidence)
+<!-- MENU:END -->
+
 ## The meta-finding, stated first
 
 This project's central argument is that documented artifacts under-state

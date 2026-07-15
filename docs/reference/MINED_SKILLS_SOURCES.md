@@ -11,6 +11,20 @@ web search where direct fetch was blocked — see "How verification was
 done" below). Nothing here was guessed; anything that could not be
 confirmed is labeled **UNVERIFIED** with the reason.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [Two kinds of "source" — why the distinction matters](#two-kinds-of-source--why-the-distinction-matters)
+- [How verification was done](#how-verification-was-done)
+- [Part A — Sources of the 5 recovered `test-real` dataset items (highest stakes)](#part-a--sources-of-the-5-recovered-test-real-dataset-items-highest-stakes)
+- [Part B — Sources harvested-and-assessed (the 7 mining-corpus repos)](#part-b--sources-harvested-and-assessed-the-7-mining-corpus-repos)
+  - [`doc_pipeline` exact-file permalinks (adapted-from, `anthropics/skills` @ `9d2f1ae187231d8199c64b5b762e1bdf2244733d`)](#doc_pipeline-exact-file-permalinks-adapted-from-anthropicsskills--9d2f1ae187231d8199c64b5b762e1bdf2244733d)
+  - [`pr_merge` remaining exact-file permalinks (adapted-from, `github/awesome-copilot` @ `30472ecf0fe34cc561df958c08501ecc5ca80ea4`)](#pr_merge-remaining-exact-file-permalinks-adapted-from-githubawesome-copilot--30472ecf0fe34cc561df958c08501ecc5ca80ea4)
+- [Part C — Quarantined / unusable sources](#part-c--quarantined--unusable-sources)
+- [Part D — Standards cited in every paper's introduction (`\citep{anthropic-skills}`)](#part-d--standards-cited-in-every-papers-introduction-citepanthropic-skills)
+- [Machine-readable companion](#machine-readable-companion)
+<!-- MENU:END -->
+
 ## Two kinds of "source" — why the distinction matters
 
 Some entries below are **verbatim**: this project copied a file's text

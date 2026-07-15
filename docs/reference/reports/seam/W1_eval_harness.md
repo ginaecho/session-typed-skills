@@ -9,6 +9,22 @@ includes the real-toolchain mandate and `tools/setup_scribble_cloud.sh`).
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. What was built](#1-what-was-built)
+- [2. Where the E5 checker was found](#2-where-the-e5-checker-was-found)
+- [3. Toolchain setup (this worktree)](#3-toolchain-setup-this-worktree)
+- [4. Smoke validation — exact commands and real output](#4-smoke-validation--exact-commands-and-real-output)
+  - [4.1 Test suite](#41-test-suite)
+  - [4.2 Smoke entry script](#42-smoke-entry-script)
+  - [4.3 Smoke metric table (from `smoke_out/report.md`)](#43-smoke-metric-table-from-smoke_outreportmd)
+  - [4.4 Opened-test log (done-criterion)](#44-opened-test-log-done-criterion)
+- [5. A real finding from the smoke run](#5-a-real-finding-from-the-smoke-run)
+- [6. Deviations from the brief, and why](#6-deviations-from-the-brief-and-why)
+- [7. Artifacts](#7-artifacts)
+<!-- MENU:END -->
+
 ## 1. What was built
 
 Package `experiments/seam_bench/eval/`:

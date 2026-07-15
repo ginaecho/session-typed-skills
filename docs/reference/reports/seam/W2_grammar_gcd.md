@@ -14,6 +14,19 @@ Deliverables (all on branch `gc/seam-w2-grammar-gcd`):
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. Grammar coverage](#1-grammar-coverage)
+  - [Known simplifications (also in the grammar file header)](#known-simplifications-also-in-the-grammar-file-header)
+- [2. vLLM / xgrammar grammar-format finding (with evidence)](#2-vllm--xgrammar-grammar-format-finding-with-evidence)
+- [3. Round-trip results (real numbers)](#3-round-trip-results-real-numbers)
+- [4. `.refn` guard sidecar — scoped OUT (justified)](#4-refn-guard-sidecar--scoped-out-justified)
+- [5. Skip-list rationale](#5-skip-list-rationale)
+- [6. Requirements placement](#6-requirements-placement)
+- [7. Open issues / notes for the planner](#7-open-issues--notes-for-the-planner)
+<!-- MENU:END -->
+
 ## 1. Grammar coverage
 
 The grammar covers exactly the constructs this repo emits/accepts, derived from

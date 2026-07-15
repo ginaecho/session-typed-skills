@@ -32,6 +32,25 @@ export STJP_NUSCR_BIN=/workspace/bin/nuscr   # for the opt-in nuscr backend
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. Component inventory](#1-component-inventory)
+- [2. Suite runs — exact commands + verbatim tails](#2-suite-runs--exact-commands--verbatim-tails)
+  - [2.1 Grammar suite](#21-grammar-suite)
+  - [2.2 Eval harness suite](#22-eval-harness-suite)
+  - [2.3 Data builders suite](#23-data-builders-suite)
+  - [2.4 Judge panel suite](#24-judge-panel-suite)
+  - [2.5 Mining suite](#25-mining-suite)
+  - [2.6 Package import check](#26-package-import-check)
+  - [2.7 Real-Scribble corpus sweep + negative control](#27-real-scribble-corpus-sweep--negative-control)
+- [3. Measured-results summary (pulled from the underlying reports; not](#3-measured-results-summary-pulled-from-the-underlying-reports-not)
+- [4. What is NOT yet done (explicitly out of scope / blocked, per the plan](#4-what-is-not-yet-done-explicitly-out-of-scope--blocked-per-the-plan)
+- [5. How to re-run everything](#5-how-to-re-run-everything)
+- [6. Audit verdict](#6-audit-verdict)
+- [Addendum — post-audit integrations (same day, planner-verified)](#addendum--post-audit-integrations-same-day-planner-verified)
+<!-- MENU:END -->
+
 ## 1. Component inventory
 
 | component | path(s) | purpose | test count | evidence report |

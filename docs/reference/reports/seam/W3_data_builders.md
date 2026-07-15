@@ -13,6 +13,20 @@ be rejected with a parser error —
 a missing/mis-connected toolchain aborts the run instead of surfacing as
 silent 100% rejection or fake counterexamples.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [What exists](#what-exists)
+- [Signature design + verification (task-card requirement)](#signature-design--verification-task-card-requirement)
+- [D1 — expansion (bounded run, measured saturation)](#d1--expansion-bounded-run-measured-saturation)
+- [D3 — repair tuples + calibration split-out](#d3--repair-tuples--calibration-split-out)
+- [D2 — back-translation (module + mocked run; NO API spend)](#d2--back-translation-module--mocked-run-no-api-spend)
+- [D4 — splits + leakage check (done-criterion: GREEN)](#d4--splits--leakage-check-done-criterion-green)
+- [Tests](#tests)
+- [Reproduction commands (full-size builds)](#reproduction-commands-full-size-builds)
+- [Done-criteria vs task card](#done-criteria-vs-task-card)
+<!-- MENU:END -->
+
 ## What exists
 
 Package `experiments/seam_bench/data/`:

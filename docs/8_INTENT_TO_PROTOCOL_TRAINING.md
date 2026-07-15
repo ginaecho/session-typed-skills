@@ -8,6 +8,22 @@ run today, on this repo, to see it in action.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. The gap this closes](#1-the-gap-this-closes)
+  - [Why this loop is trainable](#why-this-loop-is-trainable)
+  - [Why validity alone is not enough](#why-validity-alone-is-not-enough)
+- [2. The two instruments](#2-the-two-instruments)
+  - [A. The verifier stack — for validity](#a-the-verifier-stack--for-validity)
+  - [B. The memoryless judge panel — for faithfulness](#b-the-memoryless-judge-panel--for-faithfulness)
+  - [The live smoke test — a faithfulness catch, in plain language](#the-live-smoke-test--a-faithfulness-catch-in-plain-language)
+- [3. What exists today](#3-what-exists-today)
+  - [The miner's honest finding: 609 → 0](#the-miners-honest-finding-609--0)
+- [4. What is pending](#4-what-is-pending)
+- [5. What to read next](#5-what-to-read-next)
+<!-- MENU:END -->
+
 ## 1. The gap this closes
 
 Every STJP guide so far starts from a protocol that already exists. This

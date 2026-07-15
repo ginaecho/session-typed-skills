@@ -6,6 +6,13 @@ on ONE branch:
 **`gc/user_intent_global_protocol_training`** (implementation, reports,
 audit + raw traces, docs guide 8, GPU runbook, paper v9, labeling tool).
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [Superseded branches — safe to delete](#superseded-branches--safe-to-delete)
+- [Merge record (per the branch-cleanup rule) — 2026-07-12](#merge-record-per-the-branch-cleanup-rule--2026-07-12)
+<!-- MENU:END -->
+
 ## Superseded branches — safe to delete
 
 Containment was verified before consolidation (per-branch content diff

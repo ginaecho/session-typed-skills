@@ -9,6 +9,19 @@ project. Every technical word is explained where it first appears.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. What question does this experiment answer?](#1-what-question-does-this-experiment-answer)
+- [2. The two teams we built (from real public files)](#2-the-two-teams-we-built-from-real-public-files)
+- [3. How one test run works](#3-how-one-test-run-works)
+- [4. What we measured (in plain words)](#4-what-we-measured-in-plain-words)
+- [5. Results](#5-results)
+- [6. What this means](#6-what-this-means)
+- [7. Honest limits](#7-honest-limits)
+- [8. Where everything is](#8-where-everything-is)
+<!-- MENU:END -->
+
 ## 1. What question does this experiment answer?
 
 Teams of AI assistants are usually built by giving each assistant a "skill" —
@@ -35,14 +48,14 @@ were sent out to fetch them from public repositories, record where each file
 came from, and check its license permits reuse.
 
 **Team 1 — the "announcement team"** (folder name `doc_pipeline`), built
-from Anthropic's public skills repository (github.com/anthropics/skills,
+from Anthropic's public skills repository ([github.com/anthropics/skills](https://github.com/anthropics/skills),
 each skill individually Apache-2.0 licensed):
 
-- a **Writer** using the `internal-comms` skill (writes company
+- a **Writer** using the [`internal-comms`](https://github.com/anthropics/skills/blob/main/skills/internal-comms/SKILL.md) skill (writes company
   announcements in the company's formats),
-- a **BrandReviewer** using the `brand-guidelines` skill (checks brand
+- a **BrandReviewer** using the [`brand-guidelines`](https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md) skill (checks brand
   colors, fonts, style),
-- a **DocLead** using the `doc-coauthoring` skill (finalizes and
+- a **DocLead** using the [`doc-coauthoring`](https://github.com/anthropics/skills/blob/main/skills/doc-coauthoring/SKILL.md) skill (finalizes and
   distributes documents),
 - plus a **Requester** (the person asking for the announcement).
 
@@ -51,16 +64,16 @@ out before the brand review has approved it, and must not go out twice.**
 
 **Team 2 — the "code-change team"** (folder name `pr_merge`), built from
 GitHub's public Copilot customization collection
-(github.com/github/awesome-copilot, MIT licensed):
+([github.com/github/awesome-copilot](https://github.com/github/awesome-copilot), MIT licensed):
 
-- an **Author** using the `address-comments` agent file (prepares a code
+- an **Author** using the [`address-comments`](https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md) agent file (prepares a code
   change and works the review loop),
-- a **CodeReviewer** using the `code-review-generic` instructions
+- a **CodeReviewer** using the [`code-review-generic`](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md) instructions
   (line-level quality review, can block a merge),
-- a **SecurityReviewer** using the `se-security-reviewer` agent file
+- a **SecurityReviewer** using the [`se-security-reviewer`](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md) agent file
   (a security review against OWASP, a standard checklist of common
   security risks),
-- a **Merger** using the `principal-software-engineer` agent file (the
+- a **Merger** using the [`principal-software-engineer`](https://github.com/github/awesome-copilot/blob/main/agents/principal-software-engineer.agent.md) agent file (the
   tech lead who makes the ship call).
 
 The rule: **the change must not be merged before the security review has
@@ -69,8 +82,9 @@ passed, and must not be merged twice.**
 The key property of the originals: **each file describes one job well, and
 none of them says anything about the order the team must work in.** That
 ordering normally lives in a human's head. Download details, exact source
-URLs and licenses: `experiments/cases/skills_safety/doc_pipeline/SOURCES.md`
-and `experiments/cases/skills_safety/pr_merge/SOURCES.md`. (Anthropic's
+URLs and licenses:
+[`experiments/cases/skills_safety/doc_pipeline/SOURCES.md`](../../experiments/cases/skills_safety/doc_pipeline/SOURCES.md)
+and [`experiments/cases/skills_safety/pr_merge/SOURCES.md`](../../experiments/cases/skills_safety/pr_merge/SOURCES.md). (Anthropic's
 document-file skills — docx, pdf, pptx, xlsx — were deliberately *not*
 used: their license forbids copying. The three we used are Apache-2.0.)
 
@@ -256,10 +270,10 @@ benchmark's four cases it showed up as both.)
 - Full trial-by-trial state, every message and every deviation:
   `*.state.json` in the same folder (copied from the live run directory)
 - The two team definitions (skills, corrected skills, verified plan,
-  safety rules): `experiments/cases/skills_safety/doc_pipeline/` and
-  `experiments/cases/skills_safety/pr_merge/`
+  safety rules): [`experiments/cases/skills_safety/doc_pipeline/`](../../experiments/cases/skills_safety/doc_pipeline/) and
+  [`experiments/cases/skills_safety/pr_merge/`](../../experiments/cases/skills_safety/pr_merge/)
 - The downloaded source skills with full provenance and licenses:
-  `experiments/cases/skills_safety/_incoming/`
+  [`experiments/cases/skills_safety/_incoming/`](../../experiments/cases/skills_safety/_incoming/)
 - How the runs were driven: `experiments/subagent_trials/dispatch_helper.py`
   (round batching) — each role-batch was answered by an independently
   spawned Claude subagent of the group's model. Note: the harness code lives

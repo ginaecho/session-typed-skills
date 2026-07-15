@@ -32,6 +32,22 @@ AutoGen" claim holds but should cite `LICENSE-CODE` specifically.
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [0. A framing rule this report follows throughout](#0-a-framing-rule-this-report-follows-throughout)
+- [1. What was built](#1-what-was-built)
+- [2. Harvest, source by source](#2-harvest-source-by-source)
+- [3. The coordination-filter funnel](#3-the-coordination-filter-funnel)
+- [4. Two-track assessment over the 29 coordination-requiring teams](#4-two-track-assessment-over-the-29-coordination-requiring-teams)
+  - [4.1 Track (a): deterministic, all 29](#41-track-a-deterministic-all-29)
+  - [4.2 Track (b): model-read, n=19 of 29 assessed](#42-track-b-model-read-n19-of-29-assessed)
+  - [4.3 The category the project owner asked for: coordination stated in orchestration config, not in agent files](#43-the-category-the-project-owner-asked-for-coordination-stated-in-orchestration-config-not-in-agent-files)
+  - [4.4 `test-real` dataset](#44-test-real-dataset)
+- [5. What these numbers do to the n=2 problem](#5-what-these-numbers-do-to-the-n2-problem)
+- [6. Artifacts](#6-artifacts)
+<!-- MENU:END -->
+
 ## 0. A framing rule this report follows throughout
 
 Before the numbers: this miner measures what is **written down** in public,

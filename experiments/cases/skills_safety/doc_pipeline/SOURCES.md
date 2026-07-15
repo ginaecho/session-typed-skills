@@ -15,9 +15,9 @@ team together — exactly the gap STJP closes.
 
 | File | Source | Basis | License | Retrieved |
 |---|---|---|---|---|
-| Writer.md | anthropics/skills `skills/internal-comms/SKILL.md` | internal comms writing workflow (3P updates, newsletters, status reports) | Apache-2.0 | 2026-07-08 |
-| BrandReviewer.md | anthropics/skills `skills/brand-guidelines/SKILL.md` | official brand colors/typography compliance | Apache-2.0 | 2026-07-08 |
-| DocLead.md | anthropics/skills `skills/doc-coauthoring/SKILL.md` | three-stage doc workflow, ship on completion | Apache-2.0 | 2026-07-08 |
+| Writer.md | anthropics/skills [`skills/internal-comms/SKILL.md`](https://github.com/anthropics/skills/blob/main/skills/internal-comms/SKILL.md) | internal comms writing workflow (3P updates, newsletters, status reports) | Apache-2.0 | 2026-07-08 |
+| BrandReviewer.md | anthropics/skills [`skills/brand-guidelines/SKILL.md`](https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md) | official brand colors/typography compliance | Apache-2.0 | 2026-07-08 |
+| DocLead.md | anthropics/skills [`skills/doc-coauthoring/SKILL.md`](https://github.com/anthropics/skills/blob/main/skills/doc-coauthoring/SKILL.md) | three-stage doc workflow, ship on completion | Apache-2.0 | 2026-07-08 |
 | Requester.md | (derived) | the user request the internal-comms skill answers | — | 2026-07-08 |
 
 Safety review: benign document-production coordination only. No secrets, no

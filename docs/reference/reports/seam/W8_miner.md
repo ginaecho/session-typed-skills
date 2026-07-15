@@ -20,6 +20,19 @@ flagged a license inconsistency on the `crewAIInc/crewAI-examples`-derived
 
 ---
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [1. Probe results (verbatim)](#1-probe-results-verbatim)
+- [2. What was built](#2-what-was-built)
+- [3. The funnel (real counts, full run: 6 vendored teams + 3 remote repos)](#3-the-funnel-real-counts-full-run-6-vendored-teams--3-remote-repos)
+  - [Drop reasons](#drop-reasons)
+- [4. Why the yield is 0% under `--no-llm`, and why that is expected](#4-why-the-yield-is-0-under---no-llm-and-why-that-is-expected)
+- [5. Tests](#5-tests)
+- [6. Honest projection: R3's 120–260 candidates → test-real yield](#6-honest-projection-r3s-120260-candidates--test-real-yield)
+- [7. Artifacts](#7-artifacts)
+<!-- MENU:END -->
+
 ## 1. Probe results (verbatim)
 
 Run 2026-07-11, from this worker's assigned worktree.

@@ -18,6 +18,22 @@ never touch `experiments/seam_bench/data/`), so it carries both W3's code
 and the latest plan docs. Flagging this so the eventual `main` merge order
 is deliberate, not a surprise.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [What exists](#what-exists)
+- [Design — studied the 4 real recursive protocols in the repo first](#design--studied-the-4-real-recursive-protocols-in-the-repo-first)
+- [A real bug found (and fixed) during development](#a-real-bug-found-and-fixed-during-development)
+- [Signature correctness on recursion — verified, not assumed](#signature-correctness-on-recursion--verified-not-assumed)
+- [D1-integration bug found and fixed (found because of this work)](#d1-integration-bug-found-and-fixed-found-because-of-this-work)
+- [Numbers — recursion-focused build (well past the ≥60 target)](#numbers--recursion-focused-build-well-past-the-60-target)
+- [Mixed-build integration (the operator as it lives in `d1_expand.py`)](#mixed-build-integration-the-operator-as-it-lives-in-d1_expandpy)
+- [Sample protocols (one per shape, from `samples/d1_recursive.jsonl`)](#sample-protocols-one-per-shape-from-samplesd1_recursivejsonl)
+- [Tests](#tests)
+- [Exact build commands (reproduction)](#exact-build-commands-reproduction)
+- [Done-criteria vs task card](#done-criteria-vs-task-card)
+<!-- MENU:END -->
+
 ## What exists
 
 New file `experiments/seam_bench/data/recursion_gen.py`, imported by
