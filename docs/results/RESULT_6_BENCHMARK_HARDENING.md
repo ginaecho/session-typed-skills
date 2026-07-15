@@ -19,10 +19,19 @@ harness with real anchors and clearly-tagged synthetic placeholders.
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [The three findings that matter most](#the-three-findings-that-matter-most)
 - [What is still pending (honestly)](#what-is-still-pending-honestly)
 - [Where everything lives](#where-everything-lives)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Earlier results proved STJP works, but the benchmark measuring it needed its own hardening so every number is attributable to one component and honest about what is real vs. still pending.
+- **Task** — Run seven experiments plus a verdict corpus, each isolating ONE component of STJP, using real deterministic computation wherever possible and clearly tagging anything still synthetic.
+- **Action** — Deterministic runs against the Scribble compiler: a 40-trace hand-derived verdict corpus, mutation-tested checker soundness, a layered adversarial gate test (12 exfiltration attempts), Wilson-interval reliability analysis at n=10, a 90-pair equivalence scorer, and a 2-to-10-role coordination-cost scaling check.
+- **Result** — Monitor + severity grader correct on **40/40** traces; checker catches **95.6%** of malformed protocols at **0%** false positives; gate blocks rise **0% → 41.7% → 91.7% → 100%** across layered defenses; a 10/10 arm's real 95% CI is **[72%, 100%]**; equivalence scorer **100%** over 90 pairs; global-text coordination cost is **9x→17x** STJP's from 2→10 roles.
 
 ## The three findings that matter most
 
@@ -67,3 +76,7 @@ measurement pending" so nothing ships accidentally.
 - Runnable harnesses: `experiments/scripts/{mutation_bench,adversarial_bench,stats,translation_fidelity,efsm_equiv,roles_sweep,capability_sweep,cross_runtime,make_figs_v2}.py`
 - Verdict corpus: `experiments/tests/verdict_corpus/`
 - Results + figures + tables: `experiments/reports/`
+
+## Run it on Azure AI Foundry (later)
+
+This run's real numbers came from deterministic scripts against the Scribble compiler (no Azure AI Foundry involved); the still-pending experiments (E3, E5, E6, E7) are the ones that will need a live LLM loop or Azure. To connect any of these to Azure AI Foundry-hosted agents, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

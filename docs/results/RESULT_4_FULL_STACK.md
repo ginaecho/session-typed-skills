@@ -11,6 +11,7 @@ Run directory: `experiments/cases/finance/runs/20260702T093703-n10-dual`.
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. The headline table](#1-the-headline-table)
 - [2. What each setting adds (reading the table top to bottom)](#2-what-each-setting-adds-reading-the-table-top-to-bottom)
 - [3. Grading the pre-registered predictions (the honest part)](#3-grading-the-pre-registered-predictions-the-honest-part)
@@ -19,7 +20,15 @@ Run directory: `experiments/cases/finance/runs/20260702T093703-n10-dual`.
 - [6. Infrastructure incidents (recorded for reproducibility)](#6-infrastructure-incidents-recorded-for-reproducibility)
 - [7. Honest limits, unchanged](#7-honest-limits-unchanged)
 - [8. Where the raw data is](#8-where-the-raw-data-is)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — On the `finance` case, run on real Azure AI Foundry hosted agents, seven settings are compared with predictions written and committed *before* the run so the grading is honest.
+- **Task** — Determine whether the full STJP stack — projected per-agent contract + enforcement gate + protocol-driven scheduler — is simultaneously the safest and the cheapest way to run the case, against 6 other settings including intent-only and validated-text baselines.
+- **Action** — 7 settings x 10 trials, gpt-5.4, real Azure AI Foundry hosted agents, pre-registered predictions graded against the resulting data.
+- **Result** — Full STJP stack: **100%** completion, **0** disasters, **13,300 tokens**, **11.4** model calls, **32 seconds** per delivered report — **9x cheaper** than the same validated protocol pasted as text on the same runtime, with the same perfect outcome.
 
 ## 1. The headline table
 
@@ -97,3 +106,7 @@ Azure AI Foundry portal (see `../reference/FOUNDRY_VISIBILITY.md` and `../1_TECH
 
 - Run directory: `experiments/cases/finance/runs/20260702T093703-n10-dual/` — per-message logs (`events_<setting>.jsonl`), metrics (`summary.json`, `summary_eval.json`), severity and criticality grading, and the full per-role prompts under `prompts/<setting>/`
 - Pre-registered design (written before the run): `../archive/EXPERIMENT_DESIGN_V3_EXECUTION.md`
+
+## Run it on Azure AI Foundry (later)
+
+This run already used real Azure AI Foundry-hosted agents directly as its harness (see "Where to see the traces" above and `../reference/FOUNDRY_VISIBILITY.md`). The standard recipe for setting up or extending Foundry-hosted STJP runs is in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

@@ -12,6 +12,7 @@ Runs covered:
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+  - [The story at a glance (STAR)](#the-story-at-a-glance-star)
   - [1 · Live run (n=1, 2026-06-11, Azure AI Foundry, gpt-4o)](#1--live-run-n1-2026-06-11-azure-ai-foundry-gpt-4o)
     - [n=10 benchmark for context (2026-05-21)](#n10-benchmark-for-context-2026-05-21)
   - [2 · Anatomy of the 63k — it is NOT the contract that's long](#2--anatomy-of-the-63k--it-is-not-the-contract-thats-long)
@@ -26,7 +27,15 @@ Runs covered:
   - [3.3 Prose is not enforcement (LLM gap)](#33-prose-is-not-enforcement-llm-gap)
   - [The fix, layer by layer](#the-fix-layer-by-layer)
   - [So: do we really need the local monitor?](#so-do-we-really-need-the-local-monitor)
+  - [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — The WITH-local-types arm on the `finance` case was costing 63k tokens per trial, and it wasn't obvious how much of that was the contract itself versus the runner polling every role every round; separately, raw "violation" counts were known to overstate real harm.
+- **Task** — Diagnose where the 63k tokens actually go and identify concrete levers to cut it, then re-grade violations by real-world consequence (severity) on both finance and a new banking case, and trace why typed agents still committed a disaster.
+- **Action** — An n=1 live Azure AI Foundry gpt-4o run plus the existing n=10 finance benchmark for context; a new `severity_grader.py` re-scoring pass over existing events (no new LLM calls); a new n=2 live banking run with an LLM-drafted, Scribble-validated protocol.
+- **Result** — The live projected-local (`C`) arm cost **63,031 tokens/trial** vs. intent-only's 14,517, with 75% of that call volume just re-reading static text and polling; severity re-grading found the real damning number for intent-only is **"the report was filed before approval/audit 4 times in 30 attempts"**; the banking run found intent-only agents **moved money before authorization, twice in 6 attempts**.
 
 ## 1 · Live run (n=1, 2026-06-11, Azure AI Foundry, gpt-4o)
 
@@ -310,3 +319,7 @@ S0–S4 grading, the benchmark itself, and any compliance claim measurable.
 *Sources: `summary.json` / `summary_eval.json` / `severity.json` /
 `prompts/*/index.json` in the run dirs above; trace replays in
 `pitch/STJP_Benchmark_Demo.html`.*
+
+## Run it on Azure AI Foundry (later)
+
+This run's harness was already Azure AI Foundry-hosted agents (gpt-4o / gpt-5.4, via `experiments/scripts/case_runner.py` / `FoundryRunner`). To reproduce or extend it, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

@@ -9,6 +9,7 @@
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. What this result proves](#1-what-this-result-proves)
 - [2. The story — why this happens in real companies](#2-the-story--why-this-happens-in-real-companies)
 - [3. How the test was set up (one variable only)](#3-how-the-test-was-set-up-one-variable-only)
@@ -19,7 +20,15 @@
 - [6. What counts as "breaking the rules" here (the fine print)](#6-what-counts-as-breaking-the-rules-here-the-fine-print)
 - [7. Honest caveats](#7-honest-caveats)
 - [8. Where the raw data is](#8-where-the-raw-data-is)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — In an order-to-cash flow, a Payments agent and a Fulfilment agent each follow a rule that is correct on its own ("never pay before shipment confirms" / "never ship before payment confirms"), signed off by their own team — but nobody owns the interaction between the two rules, so together they can wait for each other forever.
+- **Task** — Show that this deadlock is invisible to runtime monitoring and can only be caught, before any agent runs, by a static checker (Scribble) — and measure what the unchecked version actually costs.
+- **Action** — 3 settings x 6 trials on the `trade_deadlock` case, gpt-5.4: unchecked hand-written rules vs. a Scribble-validated escrow-first protocol delivered as a full per-agent contract (`spec`) and a lean one (`min`); plus a separate check asking gpt-5.4 to author the protocol itself 10 independent times.
+- **Result** — Unchecked rules completed **0 / 6** trades (0 messages ever sent, 24,800 tokens burned per trial for nothing); both validated settings completed **6 / 6**, with the lean contract finishing at **12,000 tokens** per completed trade vs 24,800 for the full contract. The checker also caught **7 of 10** unsafe AI-authored drafts before any agent ran.
 
 ## 1. What this result proves
 
@@ -138,3 +147,7 @@ And a **deadlock is a different kind of failure from all of the above**: not a f
 - Run directory: `experiments/cases/trade_deadlock/runs/20260617T183345-n6-dual/` (per-message logs in `events_<setting>.jsonl`, metrics in `summary.json`)
 - Unchecked rule files: `experiments/cases/trade_deadlock/unchecked_skills/<role>.md`
 - Authoring-risk script: `experiments/scripts/authoring_risk.py`; probe: `experiments/scripts/deadlock_probe.py`
+
+## Run it on Azure AI Foundry (later)
+
+This run's harness was already Azure AI Foundry-hosted agents (`experiments/scripts/case_runner.py` / `FoundryRunner`), gpt-5.4. To reproduce or extend it, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

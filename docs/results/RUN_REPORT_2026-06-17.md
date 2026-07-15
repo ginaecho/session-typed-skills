@@ -8,12 +8,21 @@ conclusions (those need the larger runs noted as future work).
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. Drafting prompt — v1 vs v2 A/B (real gpt-5.4)](#1-drafting-prompt--v1-vs-v2-ab-real-gpt-54)
 - [2. Criticality gates — smoke on the grand n=10 traces](#2-criticality-gates--smoke-on-the-grand-n10-traces)
 - [3. Fresh n=10 stability run + cost/time-to-goal](#3-fresh-n10-stability-run--costtime-to-goal)
 - [4. v3 roadmap built this session (steps 1, 2, 4, 5)](#4-v3-roadmap-built-this-session-steps-1-2-4-5)
 - [5. Artifacts written this session](#5-artifacts-written-this-session)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Several new design changes (a v2 drafting prompt, criticality gates, four v3 roadmap steps) had just been built and needed a real-infrastructure check before any larger claim was made about them.
+- **Task** — Run quick smoke tests (not full statistical runs) to verify each change actually computes and behaves correctly on real data, not to draw final conclusions.
+- **Action** — A 3-trial-per-arm A/B of the drafting prompt (v1 vs v2) on real gpt-5.4; a post-hoc criticality-gate smoke over existing n=10 finance traces (no new LLM calls); a fresh n=10 stability run across 5 arms; four v3 roadmap steps built and offline-smoke-tested.
+- **Result** — v2 cut re-draft loops **2.33 → 1.00** and reached **3/3** eventual validity vs. v1's 2/3; the fresh n=10 run found B (global text) and C+ (gate) tie on outcome — both **100%** complete, 0 disasters — but B cheaper (**27k** vs **79k** cost-to-goal); the offline v3 EFSM scheduler cut **−83% agent calls** vs. round-robin.
 
 ## 1. Drafting prompt — v1 vs v2 A/B (real gpt-5.4)
 
@@ -153,3 +162,7 @@ While the n=10 ran, four v3 roadmap steps were implemented and verified offline
 Code: `prompts.py` (v2 prompts), `architect.py` (toggle),
 `smoke_draft_prompt.py`, `criticality_gate.py`, `finance/protocols/criticality.yaml`.
 Docs: see the 2026-06-17 entry in `../diary/DIARY.md`.
+
+## Run it on Azure AI Foundry (later)
+
+This session's live smoke tests already used Azure AI Foundry-hosted agents (gpt-5.4, via `experiments/scripts/case_runner.py` / `FoundryRunner`); the v3 roadmap steps were verified offline. To reproduce or extend the live parts, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

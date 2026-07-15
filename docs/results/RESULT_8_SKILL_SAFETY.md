@@ -11,10 +11,18 @@ binary, `STJP_NUSCR_BIN`) — see
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [At a glance](#at-a-glance)
 - [The story](#the-story)
 - [Setup (reproducible in this repo)](#setup-reproducible-in-this-repo)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Four cases use real agent skills copied nearly verbatim from trusted public repos (OpenAI Agents SDK, CrewAI, AutoGen, LangGraph) — each file reads fine alone, but composed together the bottom-up pipeline rejects every case as jointly unsafe (circular waits, missing-role traffic, ordering gaps).
+- **Task** — Measure, in a cloud sandbox with cheap Haiku-class subagents, whether unvalidated real skills, the same skills corrected and pasted as text, and full STJP differ on goal completion, safety, and cost — then check whether the answer holds on a stronger model at 10x the sample size.
+- **Action** — 3 arms (R-orig unchecked, R-C-min local contract as text, R-STJP contract + gate + scheduler) x 4 cases x n=10 trials, Claude Haiku 4.5 subagents, Scribble + nuscr compilers; an addendum reran all 4 cases at n=100 per arm with Claude Sonnet in strict per-role isolation.
+- **Result** — R-orig: **0%** GCR (all 4 protocols rejected at design time); R-C-min: **100%** GCR but only **50%** CGC with **20** disasters; R-STJP: **100%** GCR, **100%** CGC, **0** disasters at **1.52k** cost-to-goal. The n=100 Sonnet addendum confirmed it: STJP **100% [99.0–100]** vs. unchecked/bare both **75%**.
 
 ## At a glance
 
@@ -259,3 +267,7 @@ committed `state.json` (matches the reported numbers exactly). A plain-language 
 [`reference/HOW_TO_USE_TRACES.md`](../reference/HOW_TO_USE_TRACES.md).
 How to run the nuscr backend:
 [`reference/NUSCR_CLOUD_INSTALL.md`](../reference/NUSCR_CLOUD_INSTALL.md).
+
+## Run it on Azure AI Foundry (later)
+
+This run used Claude subagents (Haiku, then Sonnet) in a Claude Code cloud sandbox, driven by `experiments/subagent_trials/engine.py` — no Azure AI Foundry anywhere in the loop. To reproduce it with Azure AI Foundry-hosted agents instead, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

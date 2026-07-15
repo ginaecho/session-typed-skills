@@ -12,6 +12,7 @@ project. Every technical word is explained where it first appears.
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. What question does this experiment answer?](#1-what-question-does-this-experiment-answer)
 - [2. The two teams we built (from real public files)](#2-the-two-teams-we-built-from-real-public-files)
 - [3. How one test run works](#3-how-one-test-run-works)
@@ -20,7 +21,15 @@ project. Every technical word is explained where it first appears.
 - [6. What this means](#6-what-this-means)
 - [7. Honest limits](#7-honest-limits)
 - [8. Where everything is](#8-where-everything-is)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Two teams were built from real skill files fetched live from Anthropic's public skills repo and GitHub's public Copilot collection; each file describes one job well but none of them says anything about the order the team must work in.
+- **Task** — Find out whether a team built from real, well-written public skill files but no coordination plan actually works, whether adding an STJP contract fixes it, and whether the answer changes when the model playing each role is swapped for a smarter one.
+- **Action** — 2 teams x 3 settings x 2 models x 10 trials (120 trials), run entirely on `experiments/subagent_trials/engine.py` (deterministic code, no cloud services), each role played by a freshly spawned independent Claude Haiku 4.5 or Sonnet subagent.
+- **Result** — Without a plan, success is a coin flip that a smarter model does not fix, it just moves the failure: Haiku shipped the announcement **10/10** but the code change **0/10**; Sonnet flipped to **0/10** / **10/10**. Full STJP was flawless and identical on both models: **10/10** for both teams at **4.0** AI calls/trial and ~1,800 tokens — **3x cheaper** than no-plan and **2.4x cheaper** than plan-as-text.
 
 ## 1. What question does this experiment answer?
 
@@ -279,3 +288,7 @@ benchmark's four cases it showed up as both.)
   spawned Claude subagent of the group's model. Note: the harness code lives
   on the compiler branch (`gc/stjp-skill-validation-bench`) until that branch
   merges; the reports and traces here are self-contained.
+
+## Run it on Azure AI Foundry (later)
+
+This run used the deterministic subagent trial engine (`experiments/subagent_trials/engine.py`) with independent Claude Haiku/Sonnet subagents — no cloud services and no Azure AI Foundry. To reproduce it with Azure AI Foundry-hosted agents instead, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

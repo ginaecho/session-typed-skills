@@ -21,10 +21,19 @@ n=100, the Wilson 95% CI for the STJP arm narrows from [72%, 100%] to
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [The three findings that matter most](#the-three-findings-that-matter-most)
 - [Method](#method)
 - [Where everything lives](#where-everything-lives)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Result 6's deterministic benchmarks were run at n=10/30, which leaves wide statistical uncertainty even when every trial passes.
+- **Task** — Rescale every benchmark that can run without a live LLM loop or Azure from n=10/30 to n=100, and measure how much deployment confidence improves.
+- **Action** — Same codebase, same Scribble compiler, same deterministic seeds as Result 6, scaled to n=100 across the integration stress suite, mutation testing, gate defense, equivalence scorer, coordination cost, monitor portability, and subagent interaction trials.
+- **Result** — Wilson 95% CI for the STJP arm narrows from **[72%, 100%]** to **[96.3%, 100%]**, pass^10 at the CI floor jumps from **0.039** to **0.686** (a **17.6x improvement**); interaction trials read **100/100 success, 0 violations** (STJP) vs **0/100 success, 100/100 deadlock** (unchecked).
 
 ## The three findings that matter most
 
@@ -68,3 +77,7 @@ subagent responses).
 - Subagent trial data: `experiments/reports/n100/subagent/`
 - Runner script: `experiments/subagent_trials/run_n100.py`
 - 100-protocol corpus: `experiments/reports/n100/e1/_corpus/`
+
+## Run it on Azure AI Foundry (later)
+
+This run used deterministic scripts against the Scribble compiler and a contract-following subagent strategy (`experiments/subagent_trials/run_n100.py`), not Azure AI Foundry or a live LLM loop. To reproduce the interaction-trial portion with real Azure AI Foundry-hosted agents instead, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

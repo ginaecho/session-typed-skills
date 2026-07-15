@@ -11,6 +11,7 @@
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. The result](#1-the-result)
 - [2. What was held constant (why the comparison is fair)](#2-what-was-held-constant-why-the-comparison-is-fair)
 - [3. How we scored "did they follow the rules?" (with real traces)](#3-how-we-scored-did-they-follow-the-rules-with-real-traces)
@@ -18,7 +19,15 @@
 - [5. Reading the ladder](#5-reading-the-ladder)
 - [6. The honest correction: grading by consequence, not by letter](#6-the-honest-correction-grading-by-consequence-not-by-letter)
 - [7. Where the raw data is](#7-where-the-raw-data-is)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — On the `finance` case, agents can be given anything from nothing at all up to a fully validated, per-agent projected contract with a runtime monitor — and this is the run that first showed the whole ladder working end to end, with real traces of what "an error" and "success" mean.
+- **Task** — Show that each added piece of STJP (validation, then projection) moves the success rate, and back that up with real message-level examples of violations and goal passes/fails, not just aggregate numbers.
+- **Action** — 8 settings x 10 trials on `finance`, gpt-5.4 (Azure AI Foundry agents plus 3 other frameworks for the no-protocol baselines): nothing, a checker-rejected protocol, a validated protocol pasted as text, and validated projected per-agent contracts (full and lean).
+- **Result** — No protocol → **0%** trials succeed; checker-rejected protocol → **10%**; validated protocol as text → **40%**; validated projected per-agent contract + monitor → **60–100%**.
 
 ## 1. The result
 
@@ -142,3 +151,7 @@ Three things this taught us:
 - Consequence grading: `experiments/scripts/severity_grader.py`; per-run output `runs/<ts>/severity.json`; severity rules `experiments/cases/finance/protocols/severity.yaml`
 - Full setting definitions: `experiments/baselines/README.md`; matched-control design: `../archive/EXPERIMENT_DESIGN_v2.md`
 - Banking companion run (disaster = money moved before authorization): `RUN_REPORT_2026-06-11.md` Part 2
+
+## Run it on Azure AI Foundry (later)
+
+This run's harness was already Azure AI Foundry-hosted agents (`experiments/scripts/case_runner.py` / `FoundryRunner`) for the STJP settings, gpt-5.4 (plus 3 other frameworks for the no-protocol baselines). To reproduce or extend it, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

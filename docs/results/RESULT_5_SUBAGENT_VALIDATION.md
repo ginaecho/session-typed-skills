@@ -24,10 +24,19 @@ improvised an off-vocabulary message, nothing ever completed.
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [The story](#the-story)
 - [Where everything lives](#where-everything-lives)
 - [Honest caveats](#honest-caveats)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — Three new 2026-07 STJP components (Critic/Revisor, skill compaction, incremental sub-protocol extension) needed validation without depending on Azure AI Foundry.
+- **Task** — Confirm the components work both in a deterministic stress suite and with live agents playing roles, and show the classic unchecked-vs-STJP ladder reproduces end-to-end with no Foundry anywhere in the loop.
+- **Action** — A deterministic integration stress suite over generated complex protocols (10 seeded iterations), plus three n=10 agent-in-the-loop experiments where independent Claude subagents played the roles against the deterministic STJP machinery.
+- **Result** — Unchecked prose skills: **0/10** success, **10/10** deadlock; STJP contract + gate + scheduler: **10/10** success, **0** violations, at the protocol-minimum **7.0** agent calls/trial; the incrementally extended protocol also reached **10/10**; the stress suite passed **211/211** checks.
 
 ## The story
 
@@ -80,3 +89,7 @@ stress suite's job); in the extended case, decision points already sampled
 live 20/20 in the base case were replayed rather than re-sampled (the
 incremental philosophy applied to the experiment itself — disclosed in the
 full report).
+
+## Run it on Azure AI Foundry (later)
+
+This run used independent Claude subagents playing the roles against the deterministic STJP engine (`experiments/subagent_trials/engine.py`), with no Azure AI Foundry anywhere in the loop. To reproduce this validation against Azure AI Foundry-hosted agents instead, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).

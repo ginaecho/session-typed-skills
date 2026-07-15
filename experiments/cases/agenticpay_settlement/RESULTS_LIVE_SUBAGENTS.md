@@ -1,5 +1,12 @@
 # Live subagent benchmark — agenticpay_settlement (2026-07-12)
 
+## The story at a glance (STAR)
+
+- **Situation** — AgenticPay's real, MIT-licensed `BuyerAgent`/`SellerAgent` skills reproduce a classic escrow deadlock: each side's rule ("don't pay until goods arrive" / "don't ship until paid") is reasonable alone, but together they wait for each other forever.
+- **Task** — Check whether this deadlock, and the STJP fix for it, reproduce on real upstream open-source-grounded agent skills across multiple subscription model tiers, as a fast bounded precursor to the metered Azure AI Foundry run.
+- **Action** — One bounded run per tier (Opus 4.8, Sonnet 5, Haiku 4.5) comparing unchecked skills (capped at 4 polling rounds) vs. the Scribble-validated escrow-first protocol, using subscription subagents playing Buyer/Seller/Escrow/Carrier.
+- **Result** — Every tier deadlocked unchecked (**"no — deadlock"**, 0 progress messages, 8 role-turns all "WAIT"); every tier completed the STJP protocol (**"yes"**, 7 steps to `SettlementComplete`).
+
 A first, bounded run of this case using **subscription subagents** playing the
 four roles (Buyer, Seller, Escrow, Carrier). Not the Azure AI Foundry run — that
 is the precise, per-model-metered version (see `foundry_run.md`). This run
@@ -75,3 +82,7 @@ been received yet, so per the settlement rule I must not ship."*
 Reproduce (subscription path): the orchestration script is
 `agenticpay_bench.js` (kept with the session artifacts). Reproduce (metered,
 per-model): follow `foundry_run.md`.
+
+## Run it on Azure AI Foundry (later)
+
+This run used subscription subagents, not Azure AI Foundry — the metered, per-model Azure AI Foundry version of this exact case is documented step by step in the sibling file [`foundry_run.md`](foundry_run.md).

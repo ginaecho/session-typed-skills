@@ -11,6 +11,7 @@ Companion to [`RESULT_1_DEADLOCK.md`](RESULT_1_DEADLOCK.md): that result showed 
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
 - [1. The story — where the money actually goes in multi-agent systems](#1-the-story--where-the-money-actually-goes-in-multi-agent-systems)
 - [2. How the test was set up (a fair efficiency test)](#2-how-the-test-was-set-up-a-fair-efficiency-test)
 - [3. The numbers](#3-the-numbers)
@@ -18,7 +19,15 @@ Companion to [`RESULT_1_DEADLOCK.md`](RESULT_1_DEADLOCK.md): that result showed 
 - [5. The second lever: scheduling (measured later, in Result 4)](#5-the-second-lever-scheduling-measured-later-in-result-4)
 - [6. Honest caveats](#6-honest-caveats)
 - [7. Where the raw data is](#7-where-the-raw-data-is)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
 <!-- MENU:END -->
+
+## The story at a glance (STAR)
+
+- **Situation** — In multi-agent frameworks, a large share of the spend goes not to doing the work but to agents re-figuring out the coordination every single turn — "has the research happened yet? is it my turn?" — even on tasks that never fail.
+- **Task** — On a task where every setting completes 100% of the time (so it is a pure cost test), measure how much a per-agent contract actually saves versus giving agents only the task description.
+- **Action** — 3 settings x 6 trials on the `report_pipeline` case (a six-role linear pipeline), gpt-5.4, same runner: no contract, full contract (`spec`), and lean contract (`min`).
+- **Result** — No-contract cost **24,100 tokens/trial**; the lean contract reaches the same finished report at **8,800 tokens — a 63% reduction** — driven by thinking tokens per call dropping from **1,534 to 552**.
 
 ## 1. The story — where the money actually goes in multi-agent systems
 
@@ -95,3 +104,7 @@ On this short pipeline the scheduler has little to save (6–7 calls for 6 messa
 - Case: `experiments/cases/report_pipeline/` (protocol, contracts, goals)
 - Run outputs: `experiments/cases/report_pipeline/runs/` (per-message logs, `summary.json` with token counts)
 - Offline scheduler simulation: `stjp_core/runtime/delm_runner.py` + `experiments/scripts/smoke_delm_runtime.py`
+
+## Run it on Azure AI Foundry (later)
+
+This run's harness was already Azure AI Foundry-hosted agents (`experiments/scripts/case_runner.py` / `FoundryRunner`), gpt-5.4. To reproduce or extend it, follow the standard recipe in [`1_TECH_SETUP.md` section 5](../1_TECH_SETUP.md#5-running-stjp-with-azure-ai-foundry-hosted-agents) plus the four registration points listed in [`experiments/CLAUDE.md`](../../experiments/CLAUDE.md) (`registry.py` SCENARIOS, `case_runner.py` `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`, `evaluate_run.py` `VOCABULARY_ARMS`).
