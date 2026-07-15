@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STJP — PR Review → Merge, corrected (loop + concurrency + join)</title>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --panel2:#0e1117; --border:#232838;
+    --text:#e6ebf2; --dim:#8b93a7; --dim2:#5b6377;
+    --red:#ff5d5d; --red-dim:#3a1c1c;
+    --green:#7cffb2; --green-dim:#123a28;
+    --blue:#5dd6ff; --purple:#c4a8ff; --yellow:#ffd166;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--mono);
+    font-size:14px; line-height:1.5; padding:20px 20px 60px;
+  }
+  a{ color:var(--blue); }
+  a:hover{ color:var(--purple); }
+
+  header{ max-width:1180px; margin:0 auto 18px; }
+  header h1{ font-size:20px; margin:0 0 6px; letter-spacing:.3px; }
+  header h1 .tag{ color:var(--blue); }
+  header p.sub{ margin:0 0 14px; color:var(--dim); max-width:900px; }
+
+  .controls{ display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    border:1px solid var(--border); background:var(--panel); border-radius:10px;
+    padding:10px 14px; }
+  .controls button{
+    font-family:var(--mono); font-size:13px; background:#1a2030; color:var(--text);
+    border:1px solid var(--border); border-radius:6px; padding:8px 16px; cursor:pointer;
+  }
+  .controls button:hover{ border-color:var(--blue); }
+  .controls button:disabled{ opacity:.4; cursor:default; }
+  .controls button#resetBtn{ background:#241417; }
+  .controls .speedwrap{ display:flex; align-items:center; gap:8px; color:var(--dim); }
+  .controls input[type=range]{ width:160px; accent-color:var(--blue); }
+  .controls .speedval{ color:var(--blue); min-width:38px; display:inline-block; }
+
+  main.grid{ max-width:1180px; margin:18px auto 0; display:grid;
+    grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width: 880px){ main.grid{ grid-template-columns:1fr; } }
+
+  .panel{ position:relative; border:1px solid var(--border); border-radius:12px;
+    background:var(--panel); overflow:hidden; }
+  .panel.left{ border-top:3px solid var(--red); }
+  .panel.right{ border-top:3px solid var(--green); }
+  .panel-head{ padding:12px 14px 6px; }
+  .panel-head h2{ margin:0; font-size:14px; }
+  .panel-head h2 .k{ color:var(--dim); font-weight:normal; }
+  .panel.left .panel-head h2{ color:var(--red); }
+  .panel.right .panel-head h2{ color:var(--green); }
+
+  .stepper{ display:flex; gap:6px; padding:0 14px 10px; }
+  .stepper .step{ flex:1; text-align:center; font-size:11px; color:var(--dim2);
+    border:1px solid var(--border); border-radius:6px; padding:5px 2px; background:var(--panel2); }
+  .stepper .step.current{ color:var(--bg); background:var(--green); border-color:var(--green); font-weight:bold; }
+  .stepper .step.done{ color:var(--green); border-color:var(--green); }
+
+  .phase-content{ margin:0 14px 10px; min-height:34px; font-size:13px; color:var(--yellow); }
+  .protocol-block{ display:none; margin:0 14px 10px; background:var(--panel2); border:1px solid var(--border);
+    border-radius:8px; padding:10px 12px; font-size:11.5px; line-height:1.45; color:#c9d3e6;
+    white-space:pre; overflow-x:auto; }
+
+  .netwrap{ position:relative; margin:0 14px; border:1px solid var(--border); border-radius:8px;
+    background:var(--panel2); }
+  svg.net{ display:block; width:100%; height:auto; }
+  .node circle.body{ fill:#1a2030; stroke:var(--dim2); stroke-width:1.5; }
+  .node text{ fill:var(--text); font-family:var(--mono); font-size:11px; text-anchor:middle; }
+  .node .ring{ fill:none; stroke:var(--blue); stroke-width:2; opacity:0; transform-box:fill-box; transform-origin:center; }
+  .node.active circle.body{ stroke:var(--blue); }
+  .node.active .ring{ opacity:.85; animation:pulse 1.1s ease-out infinite; }
+  .node.concurrent circle.body{ stroke:var(--purple); }
+  .node.concurrent .ring{ stroke:var(--purple); opacity:.85; animation:pulse 1.1s ease-out infinite; }
+  @keyframes pulse{
+    0%{ transform:scale(1); opacity:.8; }
+    100%{ transform:scale(1.7); opacity:0; }
+  }
+  .edge-static{ stroke:#232838; stroke-width:1; }
+  .packet.red{ fill:var(--red); }
+  .packet.green{ fill:var(--blue); }
+  text.edge-label{ font-family:var(--mono); font-size:10.5px; fill:var(--yellow); text-anchor:middle; transition:opacity .15s linear; }
+
+  .tokenmeter{ margin:8px 14px 0; font-size:11.5px; color:var(--dim); }
+  .tokenbar{ height:6px; background:#1a2030; border-radius:3px; overflow:hidden; margin-top:4px; }
+  .tokenbar > div{ height:100%; background:var(--red); width:0%; transition:width .25s linear; }
+
+  .gate{ margin:8px 14px 0; font-size:11.5px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .gate .gate-item{ border:1px solid var(--border); border-radius:6px; padding:4px 8px; color:var(--dim); }
+  .gate .gate-item.done{ color:var(--green); border-color:var(--green); }
+  .gate .gate-lock{ margin-left:auto; font-weight:bold; color:var(--yellow); }
+  .gate .gate-lock.unlocked{ color:var(--green); }
+
+  .log{ margin:10px 14px 14px; height:150px; overflow-y:auto; background:#090b10;
+    border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:11.5px; color:#a9b3c6; }
+  .log .logline{ padding:1px 0; white-space:pre-wrap; }
+  .log .logline.warn{ color:var(--red); }
+  .log .logline.ok{ color:var(--green); }
+
+  .overlay{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:24px; font-size:16px; font-weight:bold; opacity:0; pointer-events:none;
+    transition:opacity .25s linear; z-index:5; }
+  .overlay.show{ opacity:1; }
+  .overlay.red{ background:rgba(58,20,20,.92); color:var(--red); }
+  .overlay.green{ background:rgba(15,50,35,.92); color:var(--green); }
+
+  .caption-strip{ max-width:1180px; margin:14px auto 0; border:1px solid var(--border); background:var(--panel);
+    border-radius:10px; padding:10px 16px; font-size:13px; color:var(--blue); min-height:20px; }
+  .caption-strip .lbl{ color:var(--dim2); margin-right:8px; }
+
+  section.cards{ max-width:1180px; margin:26px auto 0; }
+  section.cards h2{ font-size:15px; color:var(--dim); font-weight:normal; margin:0 0 10px; }
+  .cardgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:980px){ .cardgrid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:560px){ .cardgrid{ grid-template-columns:1fr; } }
+  .card{ border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:12px 14px; }
+  .card h3{ margin:0 0 6px; font-size:13px; color:var(--blue); }
+  .card .src{ font-size:10.5px; color:var(--dim2); margin-bottom:8px; }
+  .card blockquote{ margin:0 0 8px; padding-left:10px; border-left:2px solid var(--border);
+    font-size:12px; color:#c9d3e6; font-style:normal; }
+  .card .gap{ font-size:11.5px; color:var(--yellow); }
+
+  footer{ max-width:1180px; margin:26px auto 0; color:var(--dim); font-size:12px;
+    border-top:1px solid var(--border); padding-top:14px; }
+  footer ul{ margin:6px 0 10px; padding-left:18px; }
+  footer .tagline{ color:var(--text); margin-top:10px; }
+
+  :root[data-theme="light"] body,
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]) body{
+      --bg:#f5f6f8; --panel:#ffffff; --panel2:#f0f1f5; --border:#dde1ea;
+      --text:#1b1f2a; --dim:#5b6377; --dim2:#8b93a7;
+    }
+  }
+  :root[data-theme="light"] body{
+    --bg:#f5f6f8; --panel:#ffffff; --panel2:#f0f1f5; --border:#dde1ea;
+    --text:#1b1f2a; --dim:#5b6377; --dim2:#8b93a7;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="tag">STJP</span> — PR Review → Merge, corrected</h1>
+  <p class="sub">Four real files from <code>github/awesome-copilot</code> (MIT) describe an Author, a CodeReviewer,
+  a SecurityReviewer and a Merger. Left: what those four files, read literally and run as-is, actually permit.
+  Right: the same four roles under one small written protocol — a multi-round <b>loop</b>, two reviewers working
+  <b>concurrently</b>, and a merge that is a <b>join</b> gated on both approvals.</p>
+  <div class="controls">
+    <button id="runBtn">▶ Run</button>
+    <button id="resetBtn">⟲ Reset</button>
+    <div class="speedwrap">
+      <label for="speed">speed</label>
+      <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+      <span class="speedval" id="speedval">1.0×</span>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- ============ LEFT PANEL ============ -->
+  <div class="panel left" id="panel-left">
+    <div class="panel-head">
+      <h2>No protocol <span class="k">— the four files as-is</span></h2>
+    </div>
+    <div class="netwrap">
+      <svg class="net" id="left-svg" viewBox="0 0 440 260" xmlns="http://www.w3.org/2000/svg">
+        <line class="edge-static" x1="60" y1="130" x2="220" y2="45"/>
+        <line class="edge-static" x1="60" y1="130" x2="220" y2="215"/>
+        <line class="edge-static" x1="220" y1="45" x2="220" y2="215"/>
+        <line class="edge-static" x1="220" y1="45" x2="380" y2="130"/>
+        <line class="edge-static" x1="220" y1="215" x2="380" y2="130"/>
+        <line class="edge-static" x1="60" y1="130" x2="380" y2="130"/>
+        <g class="node" id="left-node-Author"><circle class="ring" cx="60" cy="130" r="24"/><circle class="body" cx="60" cy="130" r="22"/><text x="60" y="134">Author</text></g>
+        <g class="node" id="left-node-CodeReviewer"><circle class="ring" cx="220" cy="45" r="24"/><circle class="body" cx="220" cy="45" r="22"/><text x="220" y="41">Code</text><text x="220" y="53">Reviewer</text></g>
+        <g class="node" id="left-node-SecurityReviewer"><circle class="ring" cx="220" cy="215" r="24"/><circle class="body" cx="220" cy="215" r="22"/><text x="220" y="211">Security</text><text x="220" y="223">Reviewer</text></g>
+        <g class="node" id="left-node-Merger"><circle class="ring" cx="380" cy="130" r="24"/><circle class="body" cx="380" cy="130" r="22"/><text x="380" y="134">Merger</text></g>
+      </svg>
+      <div class="overlay" id="left-overlay"></div>
+    </div>
+    <div class="tokenmeter">
+      tokens burned: <span id="left-token-num">0</span> / ~2400 (4 polls × ~600)
+      <div class="tokenbar"><div id="left-token-bar"></div></div>
+    </div>
+    <div class="log" id="left-log"></div>
+  </div>
+
+  <!-- ============ RIGHT PANEL ============ -->
+  <div class="panel right" id="panel-right">
+    <div class="panel-head">
+      <h2>STJP <span class="k">— the intent, written once as a machine-checked protocol</span></h2>
+    </div>
+    <div class="stepper" id="right-stepper">
+      <div class="step" data-phase="intent">1 intent</div>
+      <div class="step" data-phase="protocol">2 protocol</div>
+      <div class="step" data-phase="check">3 check</div>
+      <div class="step" data-phase="run">4 run</div>
+    </div>
+    <div class="phase-content" id="right-phase-content"></div>
+    <pre class="protocol-block" id="right-protocol-block">global protocol PrReviewMerge(role Author, role CodeReviewer, role SecurityReviewer, role Merger) {
+    ReadyForReview(String) from Author to CodeReviewer;
+    ReadyForReview(String) from Author to SecurityReviewer;
+
+    rec ROUND {
+        choice at CodeReviewer {
+            ReviewComments(String) from CodeReviewer to Author;
+            ReviewComments(String) from CodeReviewer to SecurityReviewer;
+            ReviewComments(String) from CodeReviewer to Merger;
+            Revision(String) from Author to CodeReviewer;
+            Revision(String) from Author to SecurityReviewer;
+            continue ROUND;
+        } or {
+            QualityClean(String) from CodeReviewer to SecurityReviewer;
+            QualityClean(String) from CodeReviewer to Author;
+            QualityClean(String) from CodeReviewer to Merger;
+            choice at SecurityReviewer {
+                SecurityFindings(String) from SecurityReviewer to Author;
+                SecurityFindings(String) from SecurityReviewer to CodeReviewer;
+                SecurityFindings(String) from SecurityReviewer to Merger;
+                Revision(String) from Author to CodeReviewer;
+                Revision(String) from Author to SecurityReviewer;
+                continue ROUND;
+            } or {
+                SecurityApproved(String) from SecurityReviewer to Merger;
+                SecurityApproved(String) from SecurityReviewer to CodeReviewer;
+                SecurityApproved(String) from SecurityReviewer to Author;
+                QualityApproved(String) from CodeReviewer to Merger;
+            }
+        }
+    }
+
+    MergeDone(String) from Merger to Author;
+}</pre>
+    <div class="netwrap">
+      <svg class="net" id="right-svg" viewBox="0 0 440 260" xmlns="http://www.w3.org/2000/svg">
+        <line class="edge-static" x1="60" y1="130" x2="220" y2="45"/>
+        <line class="edge-static" x1="60" y1="130" x2="220" y2="215"/>
+        <line class="edge-static" x1="220" y1="45" x2="220" y2="215"/>
+        <line class="edge-static" x1="220" y1="45" x2="380" y2="130"/>
+        <line class="edge-static" x1="220" y1="215" x2="380" y2="130"/>
+        <line class="edge-static" x1="60" y1="130" x2="380" y2="130"/>
+        <g class="node" id="right-node-Author"><circle class="ring" cx="60" cy="130" r="24"/><circle class="body" cx="60" cy="130" r="22"/><text x="60" y="134">Author</text></g>
+        <g class="node" id="right-node-CodeReviewer"><circle class="ring" cx="220" cy="45" r="24"/><circle class="body" cx="220" cy="45" r="22"/><text x="220" y="41">Code</text><text x="220" y="53">Reviewer</text></g>
+        <g class="node" id="right-node-SecurityReviewer"><circle class="ring" cx="220" cy="215" r="24"/><circle class="body" cx="220" cy="215" r="22"/><text x="220" y="211">Security</text><text x="220" y="223">Reviewer</text></g>
+        <g class="node" id="right-node-Merger"><circle class="ring" cx="380" cy="130" r="24"/><circle class="body" cx="380" cy="130" r="22"/><text x="380" y="134">Merger</text></g>
+      </svg>
+      <div class="overlay" id="right-overlay"></div>
+    </div>
+    <div class="gate">
+      <span class="gate-item" id="gate-quality">☐ QualityApproved</span>
+      <span class="gate-item" id="gate-security">☐ SecurityApproved</span>
+      <span class="gate-lock" id="gate-lock">🔒 LOCKED — 0/2</span>
+    </div>
+    <div class="log" id="right-log"></div>
+  </div>
+
+</main>
+
+<div class="caption-strip"><span class="lbl">▸</span><span id="caption-text">Press Run to watch the same four files, unmanaged on the left and protocol-governed on the right.</span></div>
+
+<section class="cards">
+  <h2>The four real files this demo is built from (MIT-licensed, github/awesome-copilot)</h2>
+  <div class="cardgrid">
+    <div class="card">
+      <h3>Author</h3>
+      <div class="src">agents/address-comments.agent.md</div>
+      <blockquote>"Your job is to address comments on your pull request. Fix each comment, add tests, commit.
+      You are done when your change has been merged."</blockquote>
+      <div class="gap">⚠ Never told to whom revisions go, or who must approve what.</div>
+    </div>
+    <div class="card">
+      <h3>CodeReviewer</h3>
+      <div class="src">instructions/code-review-generic.instructions.md</div>
+      <blockquote>"Review line-by-line with severity triage; 🔴 CRITICAL findings block the merge."</blockquote>
+      <div class="gap">⚠ "Block merge" — but nothing wires its verdict to the Merger.</div>
+    </div>
+    <div class="card">
+      <h3>SecurityReviewer</h3>
+      <div class="src">agents/se-security-reviewer.agent.md</div>
+      <blockquote>"Review against the OWASP Top 10; report Ready for Production: Yes/No."</blockquote>
+      <div class="gap">⚠ Writes a report file — no recipient is ever named.</div>
+    </div>
+    <div class="card">
+      <h3>Merger</h3>
+      <div class="src">agents/principal-software-engineer.agent.md</div>
+      <blockquote>"Make the ship call; bias to delivery, keep the team unblocked."</blockquote>
+      <div class="gap">⚠ Nothing says the two reviews must come first.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>Source files (real, MIT-licensed, github/awesome-copilot):</div>
+  <ul>
+    <li><a href="https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md" target="_blank" rel="noopener">agents/address-comments.agent.md</a></li>
+    <li><a href="https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md" target="_blank" rel="noopener">instructions/code-review-generic.instructions.md</a></li>
+    <li><a href="https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md" target="_blank" rel="noopener">agents/se-security-reviewer.agent.md</a></li>
+    <li><a href="https://github.com/github/awesome-copilot/blob/main/agents/principal-software-engineer.agent.md" target="_blank" rel="noopener">agents/principal-software-engineer.agent.md</a></li>
+  </ul>
+  <div class="tagline">The four files are real and good — what they never contained is the line between them. That line is the protocol.</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const NODE_POS = {
+    Author:{x:60,y:130}, CodeReviewer:{x:220,y:45},
+    SecurityReviewer:{x:220,y:215}, Merger:{x:380,y:130}
+  };
+
+  // =====================================================================
+  // ---- STJP tiny protocol interpreter (pure functions) ----
+  // Node shapes after compile():
+  //   {type:'msg', label, from, to, next}
+  //   {type:'choice', at, branches:{name:node}}
+  //   {type:'rec', label, next}
+  //   {type:'continue', target}   // target is the 'rec' node
+  //   {type:'end'}
+  function compile(node, next, recMap) {
+    if (node.seq) {
+      let n = next;
+      for (let i = node.seq.length - 1; i >= 0; i--) n = compile(node.seq[i], n, recMap);
+      return n;
+    }
+    if (node.msg) {
+      return { type:'msg', label:node.msg.label, from:node.msg.from, to:node.msg.to, next };
+    }
+    if (node.rec) {
+      const marker = { type:'rec', label:node.rec, next:null };
+      recMap[node.rec] = marker;
+      marker.next = compile(node.body, next, recMap);
+      return marker;
+    }
+    if (node.choice) {
+      const branches = {};
+      for (const key in node.choice.branches) branches[key] = compile(node.choice.branches[key], next, recMap);
+      return { type:'choice', at:node.choice.at, branches };
+    }
+    if (node.continue) {
+      return { type:'continue', target:recMap[node.continue] };
+    }
+    throw new Error('bad protocol node: ' + JSON.stringify(node));
+  }
+
+  // The PrReviewMerge global protocol, transcribed from the block shown above
+  // (which is verbatim the repo's scribble-java-validated protocols/v1.scr).
+  // Note the two things the checker itself forced onto the draft:
+  //  - every branch decision is BROADCAST to all roles (choice knowledge), and
+  //  - MergeDone sits OUTSIDE the rec loop, so the Merger acts exactly once.
+  const commentsBranch = { seq:[
+    { msg:{ label:'ReviewComments', from:'CodeReviewer', to:'Author' } },
+    { msg:{ label:'ReviewComments', from:'CodeReviewer', to:'SecurityReviewer' } },
+    { msg:{ label:'ReviewComments', from:'CodeReviewer', to:'Merger' } },
+    { msg:{ label:'Revision', from:'Author', to:'CodeReviewer' } },
+    { msg:{ label:'Revision', from:'Author', to:'SecurityReviewer' } },
+    { continue:'ROUND' }
+  ]};
+  const findingsBranch = { seq:[
+    { msg:{ label:'SecurityFindings', from:'SecurityReviewer', to:'Author' } },
+    { msg:{ label:'SecurityFindings', from:'SecurityReviewer', to:'CodeReviewer' } },
+    { msg:{ label:'SecurityFindings', from:'SecurityReviewer', to:'Merger' } },
+    { msg:{ label:'Revision', from:'Author', to:'CodeReviewer' } },
+    { msg:{ label:'Revision', from:'Author', to:'SecurityReviewer' } },
+    { continue:'ROUND' }
+  ]};
+  const approvedBranch = { seq:[
+    { msg:{ label:'SecurityApproved', from:'SecurityReviewer', to:'Merger' } },
+    { msg:{ label:'SecurityApproved', from:'SecurityReviewer', to:'CodeReviewer' } },
+    { msg:{ label:'SecurityApproved', from:'SecurityReviewer', to:'Author' } },
+    { msg:{ label:'QualityApproved', from:'CodeReviewer', to:'Merger' } }
+  ]};
+  const securityChoice = { choice:{ at:'SecurityReviewer', branches:{ findings:findingsBranch, approved:approvedBranch } } };
+  const cleanBranch = { seq:[
+    { msg:{ label:'QualityClean', from:'CodeReviewer', to:'SecurityReviewer' } },
+    { msg:{ label:'QualityClean', from:'CodeReviewer', to:'Author' } },
+    { msg:{ label:'QualityClean', from:'CodeReviewer', to:'Merger' } },
+    securityChoice
+  ]};
+  const codeReviewerChoice = { choice:{ at:'CodeReviewer', branches:{ comments:commentsBranch, clean:cleanBranch } } };
+  const round = { rec:'ROUND', body:codeReviewerChoice };
+  const PR_REVIEW_MERGE_AST = { seq:[
+    { msg:{ label:'ReadyForReview', from:'Author', to:'CodeReviewer' } },
+    { msg:{ label:'ReadyForReview', from:'Author', to:'SecurityReviewer' } },
+    round,
+    { msg:{ label:'MergeDone', from:'Merger', to:'Author' } }
+  ]};
+
+  function buildProtocol(){
+    const recMap = {};
+    const end = { type:'end', next:null };
+    return compile(PR_REVIEW_MERGE_AST, end, recMap);
+  }
+
+  function initialState(){
+    return {
+      cursor: buildProtocol(),
+      messages: [],
+      approvals: { quality:false, security:false },
+      concurrent: null,
+      done: false
+    };
+  }
+
+  // 'rec' (loop entry marker) and 'continue' (loop back-edge) are structural,
+  // silent transitions with no communication and no choice attached to them,
+  // so they are resolved transparently whenever the cursor is read.
+  function realNode(c){
+    while (c) {
+      if (c.type === 'rec') { c = c.next; continue; }
+      if (c.type === 'continue') { c = c.target.next; continue; }
+      break;
+    }
+    return c;
+  }
+
+  function enabledSenders(state){
+    if (state.done) return [];
+    if (state.concurrent) return state.concurrent.slice();
+    const c = realNode(state.cursor);
+    if (!c) return [];
+    if (c.type === 'choice') return [c.at];
+    if (c.type === 'msg') return [c.from];
+    return [];
+  }
+
+  // step(state, branchChoice?) -> { state, violation }
+  function step(state, branchChoice){
+    const c = realNode(state.cursor);
+    if (!c || c.type === 'end') return { state:{ ...state, done:true }, violation:null };
+
+    if (c.type === 'choice') {
+      if (!branchChoice || !c.branches[branchChoice]) {
+        return { state, violation:'no such branch: ' + branchChoice };
+      }
+      return { state:{ ...state, cursor:c.branches[branchChoice], concurrent:null }, violation:null };
+    }
+
+    if (c.type === 'msg') {
+      if (c.label === 'MergeDone' && !(state.approvals.quality && state.approvals.security)) {
+        return { state, violation:'MergeDone requires both QualityApproved and SecurityApproved' };
+      }
+      const messages = state.messages.concat([{ label:c.label, from:c.from, to:c.to }]);
+      const approvals = { ...state.approvals };
+      if (c.label === 'QualityApproved') approvals.quality = true;
+      if (c.label === 'SecurityApproved') approvals.security = true;
+
+      let concurrent = state.concurrent;
+      if (c.label === 'Revision' && c.to === 'SecurityReviewer') {
+        // The fan-out to both reviewers just completed: from this instant both
+        // reviewers hold the same revision and are free to examine it at once.
+        concurrent = ['CodeReviewer', 'SecurityReviewer'];
+      }
+
+      const nextCursor = realNode(c.next);
+      const done = !!(nextCursor && nextCursor.type === 'end');
+      return { state:{ cursor:nextCursor, messages, approvals, concurrent, done }, violation:null };
+    }
+
+    return { state, violation:'unknown node type: ' + c.type };
+  }
+  // ==================== end of protocol interpreter ====================
+
+  // ------------------------- UI plumbing -------------------------
+  let speed = 1;
+  let runToken = 0;
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms / speed)); }
+
+  function setCaption(text){ document.getElementById('caption-text').textContent = text; }
+
+  function log(panel, text, cls){
+    const box = document.getElementById(panel + '-log');
+    const line = document.createElement('div');
+    line.className = 'logline' + (cls ? ' ' + cls : '');
+    line.textContent = text;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function clearLog(panel){ document.getElementById(panel + '-log').innerHTML = ''; }
+
+  function setNodeState(panel, role, state){
+    // state: null | 'active' | 'concurrent'
+    const g = document.getElementById(panel + '-node-' + role);
+    if (!g) return;
+    g.classList.remove('active', 'concurrent');
+    if (state) g.classList.add(state);
+  }
+
+  function clearAllNodes(panel){
+    ['Author','CodeReviewer','SecurityReviewer','Merger'].forEach(r => setNodeState(panel, r, null));
+  }
+
+  function animateEdge(panel, fromRole, toRole, label, ms, colorClass){
+    const svg = document.getElementById(panel + '-svg');
+    const p1 = NODE_POS[fromRole], p2 = NODE_POS[toRole];
+    const packet = document.createElementNS(SVGNS, 'circle');
+    packet.setAttribute('r', '5');
+    packet.setAttribute('class', 'packet ' + (colorClass || 'green'));
+    packet.setAttribute('cx', p1.x);
+    packet.setAttribute('cy', p1.y);
+    packet.style.transition = 'cx ' + ms + 'ms linear, cy ' + ms + 'ms linear, opacity 200ms linear';
+    svg.appendChild(packet);
+
+    const badge = document.createElementNS(SVGNS, 'text');
+    badge.setAttribute('class', 'edge-label');
+    const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2 - 10;
+    badge.setAttribute('x', mx);
+    badge.setAttribute('y', my);
+    badge.textContent = label;
+    badge.style.opacity = '0';
+    svg.appendChild(badge);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      packet.setAttribute('cx', p2.x);
+      packet.setAttribute('cy', p2.y);
+      badge.style.opacity = '1';
+    }));
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        badge.style.opacity = '0';
+        packet.style.opacity = '0';
+        setTimeout(() => { packet.remove(); badge.remove(); resolve(); }, 220);
+      }, ms);
+    });
+  }
+
+  function showOverlay(panel, kind, text){
+    const ov = document.getElementById(panel + '-overlay');
+    ov.className = 'overlay show ' + kind;
+    ov.textContent = text;
+  }
+  function hideOverlay(panel){
+    const ov = document.getElementById(panel + '-overlay');
+    ov.className = 'overlay';
+    ov.textContent = '';
+  }
+
+  function setPhase(name){
+    document.querySelectorAll('#right-stepper .step').forEach(el => {
+      const p = el.getAttribute('data-phase');
+      el.classList.remove('current', 'done');
+      const order = ['intent','protocol','check','run'];
+      if (p === name) el.classList.add('current');
+      else if (order.indexOf(p) < order.indexOf(name)) el.classList.add('done');
+    });
+  }
+
+  function setGate(approvals){
+    const q = document.getElementById('gate-quality');
+    const s = document.getElementById('gate-security');
+    const lock = document.getElementById('gate-lock');
+    q.textContent = (approvals.quality ? '☑' : '☐') + ' QualityApproved';
+    s.textContent = (approvals.security ? '☑' : '☐') + ' SecurityApproved';
+    q.classList.toggle('done', approvals.quality);
+    s.classList.toggle('done', approvals.security);
+    const n = (approvals.quality ? 1 : 0) + (approvals.security ? 1 : 0);
+    if (n === 2) { lock.textContent = '🔓 UNLOCKED — 2/2 ✓'; lock.classList.add('unlocked'); }
+    else { lock.textContent = '🔒 LOCKED — ' + n + '/2 approvals…'; lock.classList.remove('unlocked'); }
+  }
+
+  function resetGate(){ setGate({ quality:false, security:false }); }
+
+  // -------------------- LEFT PANEL: no-protocol disaster --------------------
+  async function runLeft(myRun, dur){
+    let tokens = 0;
+    function bumpTokens(){
+      tokens += 600;
+      document.getElementById('left-token-num').textContent = tokens;
+      document.getElementById('left-token-bar').style.width = Math.min(100, tokens / 2400 * 100) + '%';
+    }
+
+    setCaption('Author is polled: it has an open PR and wants it shipped. Its file never says who must approve first.');
+    log('left', 'Author polled — has an open PR, wants it shipped; no routing specified.');
+    setNodeState('left', 'Author', 'active');
+    await sleep(dur);
+    if (myRun !== runToken) return;
+    bumpTokens();
+    await animateEdge('left', 'Author', 'Merger', 'ChangeReady', dur, 'red');
+    if (myRun !== runToken) return;
+    log('left', '→ sends ChangeReady straight to Merger.');
+    setNodeState('left', 'Author', null);
+
+    setCaption('CodeReviewer is polled next. Nothing was ever routed to it, so there is nothing for it to do.');
+    setNodeState('left', 'CodeReviewer', 'active');
+    log('left', 'CodeReviewer polled — nothing routed to it.');
+    await sleep(dur);
+    if (myRun !== runToken) return;
+    bumpTokens();
+    log('left', '→ WAIT (idle poll).');
+    setNodeState('left', 'CodeReviewer', null);
+
+    setCaption('SecurityReviewer is polled next. Same story — nothing was ever routed to it either.');
+    setNodeState('left', 'SecurityReviewer', 'active');
+    log('left', 'SecurityReviewer polled — nothing routed to it.');
+    await sleep(dur);
+    if (myRun !== runToken) return;
+    bumpTokens();
+    log('left', '→ WAIT (idle poll).');
+    setNodeState('left', 'SecurityReviewer', null);
+
+    setCaption('Merger is polled last. Its file says: bias to delivery, keep the team unblocked — so it merges.');
+    setNodeState('left', 'Merger', 'active');
+    log('left', 'Merger polled — holds the change; file says bias-to-delivery, keep team unblocked.');
+    await sleep(dur);
+    if (myRun !== runToken) return;
+    bumpTokens();
+    log('left', '→ MERGES.');
+    await sleep(dur * 0.6);
+    if (myRun !== runToken) return;
+
+    showOverlay('left', 'red', 'UNSAFE MERGE — 0 of 2 required reviews happened');
+    log('left', '✗ DISASTER: MergeDone with zero approvals', 'warn');
+    setCaption('Zero of two required reviews happened before merge. Nothing in any of the four files prevented this.');
+    setNodeState('left', 'Merger', null);
+  }
+
+  // -------------------- RIGHT PANEL: STJP-governed run --------------------
+  const CAPTIONS = {
+    'ReadyForReview>CodeReviewer': 'Author tells CodeReviewer the change is ready to look at.',
+    'ReadyForReview>SecurityReviewer': 'Author tells SecurityReviewer the same thing, at the same time.',
+    'ReviewComments>Author': 'CodeReviewer sends its comments back to Author: 3 findings — naming, missing test, injection risk.',
+    'ReviewComments>SecurityReviewer': 'CodeReviewer copies SecurityReviewer, so it knows a new round is coming.',
+    'ReviewComments>Merger': 'CodeReviewer also tells Merger a new round is starting. Merger only listens here — it never has to act, and is never called, until both approvals have arrived.',
+    'Revision>CodeReviewer': 'Author fixes the issues and sends revision 2 to CodeReviewer.',
+    'Revision>SecurityReviewer': 'Author sends the same revision 2 to SecurityReviewer.',
+    'QualityClean>SecurityReviewer': 'Round 2: CodeReviewer is satisfied this time — it tells SecurityReviewer the quality bar is met.',
+    'QualityClean>Author': 'CodeReviewer tells Author the same: no more quality comments are coming.',
+    'QualityClean>Merger': 'And it tells Merger too — Merger keeps listening, still without acting: the gate is still locked.',
+    'SecurityApproved>Merger': 'SecurityReviewer checked revision 2 against the OWASP Top 10 and found nothing wrong — it tells Merger: security approved.',
+    'SecurityApproved>CodeReviewer': 'SecurityReviewer also confirms the approval to CodeReviewer.',
+    'SecurityApproved>Author': 'And to Author — everyone now knows security signed off.',
+    'QualityApproved>Merger': 'CodeReviewer tells Merger: quality is approved too.',
+    'MergeDone>Author': 'Merger acts for the first and only time: it merges the change and tells Author it is done.'
+  };
+
+  // Compute one message transition (pure engine step) and narrate it, without animating yet.
+  function computeMsgStep(state){
+    const r = step(state);
+    if (r.violation) { log('right', '✗ ' + r.violation, 'warn'); return { state, msg:null }; }
+    const newState = r.state;
+    const msg = newState.messages[newState.messages.length - 1];
+    const key = msg.label + '>' + msg.to;
+    setCaption(CAPTIONS[key] || (msg.label + ': ' + msg.from + ' → ' + msg.to));
+    log('right', msg.label + '  ' + msg.from + ' → ' + msg.to);
+    return { state:newState, msg };
+  }
+
+  // Animate a single already-computed message on the right panel's diagram.
+  async function animateMsgStep(myRun, msg, dur, colorClass){
+    if (!msg) return;
+    setNodeState('right', msg.from, 'active');
+    await animateEdge('right', msg.from, msg.to, msg.label, dur, colorClass);
+    if (myRun !== runToken) return;
+    setNodeState('right', msg.from, null);
+  }
+
+  // Compute + animate one message transition, sequentially (the common case).
+  async function driveMsgStep(myRun, state, dur, colorClass){
+    const { state:newState, msg } = computeMsgStep(state);
+    if (!msg) return newState;
+    await animateMsgStep(myRun, msg, dur, colorClass);
+    if (myRun !== runToken) return newState;
+    setGate(newState.approvals);
+    return newState;
+  }
+
+  async function runRight(myRun, dur){
+    resetGate();
+    hideOverlay('right');
+    document.getElementById('right-protocol-block').style.display = 'none';
+    document.getElementById('right-phase-content').textContent = '';
+
+    // Phase 1: intent
+    setPhase('intent');
+    setCaption('First, write the intent down in one plain sentence, before any protocol exists.');
+    document.getElementById('right-phase-content').textContent =
+      '"Review the change until quality AND security are assured — then, and only then, merge."';
+    await sleep(dur * 2.2);
+    if (myRun !== runToken) return;
+
+    // Phase 2: protocol
+    setPhase('protocol');
+    document.getElementById('right-phase-content').textContent = '';
+    document.getElementById('right-protocol-block').style.display = 'block';
+    setCaption('That sentence becomes one written, machine-checked protocol — a single source of truth for all four roles.');
+    await sleep(dur * 3.4);
+    if (myRun !== runToken) return;
+    document.getElementById('right-protocol-block').style.display = 'none';
+
+    // Phase 3: check
+    setPhase('check');
+    const checks = [
+      ['✓ no deadlock — someone can always act', 'ok'],
+      ['✓ MergeDone unreachable without BOTH SecurityApproved and QualityApproved', 'ok'],
+      ['✓ loop cannot run away (every round re-enters through a checked choice)', 'ok']
+    ];
+    setCaption('Before anyone runs it, the protocol itself is checked — not just trusted.');
+    for (const [text, cls] of checks) {
+      log('right', text, cls);
+      await sleep(dur * 1.1);
+      if (myRun !== runToken) return;
+    }
+
+    // Phase 4: run (the interpreter drives this)
+    setPhase('run');
+    let state = initialState();
+
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // ReadyForReview -> CR
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // ReadyForReview -> SR
+
+    setCaption('Round 1: CodeReviewer looks at the change and finds problems, so it sends comments instead of an approval.');
+    { const r = step(state, 'comments'); state = r.state; }
+    await sleep(dur * 0.6); if (myRun !== runToken) return;
+
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // ReviewComments -> Author
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // ReviewComments -> SecurityReviewer
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // ReviewComments -> Merger (decision broadcast)
+    log('right', 'ℹ the checker itself demanded these extra notifications — every role must always know which branch the team took (that is what makes the protocol provably unambiguous).', 'ok');
+    await sleep(dur * 1.2); if (myRun !== runToken) return;
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // Revision -> CodeReviewer
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // Revision -> SecurityReviewer (opens concurrency window)
+
+    // Concurrency window: both reviewers are enabled at once.
+    const en = enabledSenders(state).slice().sort();
+    setNodeState('right', 'CodeReviewer', 'concurrent');
+    setNodeState('right', 'SecurityReviewer', 'concurrent');
+    setCaption('Both reviewers are examining revision 2 CONCURRENTLY — the protocol fixes no order between them. (enabled: ' + en.join(', ') + ')');
+    log('right', '⇄ concurrent: both ' + en.join(' and ') + ' are enabled to act next.');
+    await sleep(dur * 2.2);
+    if (myRun !== runToken) return;
+    setNodeState('right', 'CodeReviewer', null);
+    setNodeState('right', 'SecurityReviewer', null);
+
+    setCaption('Round 2: CodeReviewer is satisfied with the fix and clears it for security review.');
+    { const r = step(state, 'clean'); state = r.state; }
+    await sleep(dur * 0.6); if (myRun !== runToken) return;
+
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // QualityClean -> SecurityReviewer
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // QualityClean -> Author (decision broadcast)
+    state = await driveMsgStep(myRun, state, dur); if (myRun !== runToken) return; // QualityClean -> Merger (decision broadcast; Merger still only listens)
+
+    setCaption('SecurityReviewer checks the same revision against the OWASP Top 10 and finds nothing wrong — it approves.');
+    { const r = step(state, 'approved'); state = r.state; }
+    await sleep(dur * 0.6); if (myRun !== runToken) return;
+
+    // The two messages that carry approval TO the Merger (SecurityApproved and, three
+    // steps later, QualityApproved) are animated so their arrivals visibly overlap —
+    // the protocol allows either order, so the picture should not imply one. The
+    // SecurityApproved broadcasts to CodeReviewer and Author ride along in the same window.
+    setCaption('SecurityReviewer approved, then CodeReviewer approved — either order is legal; both edges arrive at Merger together.');
+    const secApprovedToMerger  = computeMsgStep(state); state = secApprovedToMerger.state;
+    const secApprovedToCR      = computeMsgStep(state); state = secApprovedToCR.state;
+    const secApprovedToAuthor  = computeMsgStep(state); state = secApprovedToAuthor.state;
+    const qualityApprovedToMerger = computeMsgStep(state); state = qualityApprovedToMerger.state;
+    if (myRun !== runToken) return;
+    await Promise.all([
+      animateMsgStep(myRun, secApprovedToMerger.msg, dur, 'green'),
+      animateMsgStep(myRun, secApprovedToCR.msg, dur * 1.15, 'green'),
+      animateMsgStep(myRun, secApprovedToAuthor.msg, dur * 1.3, 'green'),
+      (async () => { await sleep(dur * 0.35); return animateMsgStep(myRun, qualityApprovedToMerger.msg, dur, 'green'); })()
+    ]);
+    if (myRun !== runToken) return;
+    setGate(state.approvals);
+
+    setCaption('Merger now has both approvals — the gate unlocks.');
+    await sleep(dur * 0.8); if (myRun !== runToken) return;
+
+    state = await driveMsgStep(myRun, state, dur, 'green'); if (myRun !== runToken) return; // MergeDone -> Author
+
+    showOverlay('right', 'green',
+      'MERGED — after 2 review rounds, both approvals present. ' +
+      state.messages.length + ' messages, ' + state.messages.length + ' calls, zero rule-breaking.');
+    log('right', '✓ MERGED — ' + state.messages.length + ' messages total, both approvals present, zero rule-breaking.', 'ok');
+    setCaption('Merged — after 2 review rounds, both approvals were present. ' + state.messages.length +
+      ' messages, ' + state.messages.length + ' calls, zero rule-breaking.');
+  }
+
+  // -------------------- Run / Reset wiring --------------------
+  const BASE_MS = 900;
+
+  function resetVisuals(){
+    clearLog('left'); clearLog('right');
+    hideOverlay('left'); hideOverlay('right');
+    clearAllNodes('left'); clearAllNodes('right');
+    document.getElementById('left-token-num').textContent = '0';
+    document.getElementById('left-token-bar').style.width = '0%';
+    document.getElementById('right-phase-content').textContent = '';
+    document.getElementById('right-protocol-block').style.display = 'none';
+    resetGate();
+    setPhase('');
+    document.querySelectorAll('#right-svg .edge-label, #right-svg .packet, #left-svg .edge-label, #left-svg .packet')
+      .forEach(el => el.remove());
+    setCaption('Press Run to watch the same four files, unmanaged on the left and protocol-governed on the right.');
+  }
+
+  async function runAll(){
+    runToken++;
+    const myRun = runToken;
+    resetVisuals();
+    document.getElementById('runBtn').disabled = true;
+    setCaption('Run started — watch the disaster on the left, then the fix on the right.');
+    await sleep(BASE_MS * 0.4);
+    if (myRun !== runToken) return;
+    await runLeft(myRun, BASE_MS);
+    if (myRun !== runToken) return;
+    await sleep(BASE_MS * 1.6);
+    if (myRun !== runToken) return;
+    await runRight(myRun, BASE_MS);
+    if (myRun === runToken) document.getElementById('runBtn').disabled = false;
+  }
+
+  document.getElementById('runBtn').addEventListener('click', runAll);
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    runToken++;
+    document.getElementById('runBtn').disabled = false;
+    resetVisuals();
+  });
+  document.getElementById('speed').addEventListener('input', function(e){
+    speed = parseFloat(e.target.value);
+    document.getElementById('speedval').textContent = speed.toFixed(1) + '×';
+  });
+
+  resetVisuals();
+})();
+</script>
+</body>
+</html>
