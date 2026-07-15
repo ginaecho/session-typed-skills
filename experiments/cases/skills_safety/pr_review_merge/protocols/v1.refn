@@ -1,0 +1,22 @@
+# Refinement contracts for PrReviewMerge (v1)
+# Revisions must carry real content; the two gating approvals that the
+# Merger relies on must carry an explicit affirmative verdict. (A positive
+# "APPROVED" requirement is used instead of checking for the absence of
+# words like "CRITICAL": an honest approval often reads "no CRITICAL
+# findings", and a negation-blind keyword ban would falsely reject it.)
+
+[Author -> CodeReviewer : Revision]
+type: str
+require: len(x) > 0
+
+[Author -> SecurityReviewer : Revision]
+type: str
+require: len(x) > 0
+
+[CodeReviewer -> Merger : QualityApproved]
+type: str
+require: "APPROVED" in x.upper()
+
+[SecurityReviewer -> Merger : SecurityApproved]
+type: str
+require: "APPROVED" in x.upper()
