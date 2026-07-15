@@ -248,7 +248,7 @@ one side of the line. A paraphrase straddling the split is silent leakage;
 the signature makes it mechanically impossible.
 
 **D5 — Mined real-world set.** Precedent already in-repo: the
-`skills_safety/pr_merge` case adapted from [`github/awesome-copilot`](https://github.com/github/awesome-copilot) (MIT),
+[`skills_safety/pr_merge`](../../experiments/cases/skills_safety/pr_merge/) case adapted from [`github/awesome-copilot`](https://github.com/github/awesome-copilot) (MIT),
 RESULT_9 ran real Anthropic+Copilot skills. Scale that recipe:
 harvest `.claude/skills/**`, `SKILL.md`, agent-role sections of
 CLAUDE.md/AGENTS.md, CrewAI/AutoGen/LangGraph role+handoff configs from

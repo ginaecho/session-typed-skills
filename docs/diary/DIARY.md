@@ -617,7 +617,7 @@ proposal for a more concrete demo view.
 ## 1. New `.github/copilot-instructions.md`
 
 Authored a first-class onboarding doc for future Copilot/agent sessions at
-`.github/copilot-instructions.md` (none existed before). It captures what can't
+[`.github/copilot-instructions.md`](../../.github/copilot-instructions.md) (none existed before). It captures what can't
 be learned from a single file:
 
 - **Repo shape** — `stjp_core/` (library), `experiments/` (8-arm benchmark),

@@ -17,10 +17,10 @@ call happen before the security gate.
 
 | File | Source | Basis | License | Retrieved |
 |---|---|---|---|---|
-| Author.md | github/awesome-copilot `agents/address-comments.agent.md` | PR author working the review loop | MIT | 2026-07-08 |
-| CodeReviewer.md | github/awesome-copilot `instructions/code-review-generic.instructions.md` | severity-triaged review with "Block merge" gate | MIT | 2026-07-08 |
-| SecurityReviewer.md | github/awesome-copilot `agents/se-security-reviewer.agent.md` | OWASP Top 10 / Zero Trust security review | MIT | 2026-07-08 |
-| Merger.md | github/awesome-copilot `agents/principal-software-engineer.agent.md` | principal-engineer ship decision | MIT | 2026-07-08 |
+| Author.md | github/awesome-copilot [`agents/address-comments.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md) | PR author working the review loop | MIT | 2026-07-08 |
+| CodeReviewer.md | github/awesome-copilot [`instructions/code-review-generic.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md) | severity-triaged review with "Block merge" gate | MIT | 2026-07-08 |
+| SecurityReviewer.md | github/awesome-copilot [`agents/se-security-reviewer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md) | OWASP Top 10 / Zero Trust security review | MIT | 2026-07-08 |
+| Merger.md | github/awesome-copilot [`agents/principal-software-engineer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/principal-software-engineer.agent.md) | principal-engineer ship decision | MIT | 2026-07-08 |
 
 Safety review: benign code-review coordination only. No secrets, no
 exfiltration, no jailbreak content.

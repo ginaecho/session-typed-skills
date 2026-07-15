@@ -171,5 +171,5 @@ simple STJP is overkill; no current case is rated Low.)
 | `travel` | All-or-nothing travel booking with rollback | Good | A "saga": a workflow that undoes (compensates) completed steps when a later step fails — suits protocol enforcement |
 | `travel_saga` | 3-supplier booking happy path (rollback planned later) | Medium | Useful now; becomes stronger when the compensation branch is added |
 | `doc_pipeline` | Announcement team built from real Anthropic public skills | Good | Real-skills approval-ordering case (see [RESULT_9](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)) |
-| `pr_merge` | Code-change team built from real GitHub Copilot public files | Good | Real-skills merge-gating case (see [RESULT_9](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)) |
+| [`pr_merge`](../experiments/cases/skills_safety/pr_merge/) | Code-change team built from real GitHub Copilot public files | Good | Real-skills merge-gating case (see [RESULT_9](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)) |
 | `skills_safety/*` | 4 teams built from real OpenAI/CrewAI/AutoGen/LangGraph skills | Good | The RESULT_8 real-skills safety benchmark |

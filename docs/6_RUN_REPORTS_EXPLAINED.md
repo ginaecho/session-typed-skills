@@ -31,14 +31,15 @@ This document has two parts:
   column reads in *calls*, not *tokens*, and a
   [**dollar-cost estimate**](#what-this-reproduction-actually-cost-in-dollars) of
   the whole reproduction (**under $100**).
-- **Part 3 — the real-skills two-model run (2026-07-08), reported separately.**
+- **Part 3 — the real-skills two-model run (2026-07-08),
+  [summarized below](#part-3--the-real-skills-two-model-run-2026-07-08).**
   Two agent teams built from *real, publicly shared skill files* (Anthropic's
   [`anthropics/skills`](https://github.com/anthropics/skills) and GitHub's [`awesome-copilot`](https://github.com/github/awesome-copilot)), each run in three
   settings, once with a small model (Haiku) and once with a mid-tier model
   (Sonnet) playing the team members — 120 trials. Which team fails without a
   coordination plan turns out to depend on the model; with full STJP both
-  models are flawless and indistinguishable at 3× lower cost. Full
-  plain-language report:
+  models are flawless and indistinguishable at 3× lower cost. The full
+  trial-by-trial report is
   [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
 
 ---
@@ -99,7 +100,11 @@ This document has two parts:
     - [What this reproduction actually cost (in dollars)](#what-this-reproduction-actually-cost-in-dollars)
   - [11. What Part 2 proves, in one paragraph](#11-what-part-2-proves-in-one-paragraph)
   - [12. Where the supporting data lives](#12-where-the-supporting-data-lives)
-  - [13. What to read next](#13-what-to-read-next)
+- [Part 3 — the real-skills two-model run (2026-07-08)](#part-3--the-real-skills-two-model-run-2026-07-08)
+  - [13. Why a third run — the motivation](#13-why-a-third-run--the-motivation)
+  - [14. What happened — the headline results](#14-what-happened--the-headline-results)
+  - [15. What Part 3 proves, in one paragraph](#15-what-part-3-proves-in-one-paragraph)
+  - [16. What to read next](#16-what-to-read-next)
 <!-- MENU:END -->
 
 ## Words this document uses (plain-English glossary)
@@ -1064,7 +1069,84 @@ The design rationale for each experiment (the deeper "why") is in
 
 ---
 
-## 13. What to read next
+# Part 3 — the real-skills two-model run (2026-07-08)
+
+Everything above used tasks and rulebooks this project wrote for itself. A
+fair reader will ask two things: **does any of this work on job
+instructions that real people actually published?** And **does the answer
+depend on which AI model plays the team members?** Part 3 answers both.
+The short version is below; every number, trace, and honest caveat is in
+the full report,
+[`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
+
+## 13. Why a third run — the motivation
+
+Two agent teams were built from real, publicly shared files, downloaded
+as-is (with their licenses checked):
+
+- **The "announcement team"** — three skills from Anthropic's public
+  collection ([anthropics/skills](https://github.com/anthropics/skills)):
+  a Writer using [`internal-comms`](https://github.com/anthropics/skills/blob/main/skills/internal-comms/SKILL.md), a
+  BrandReviewer using [`brand-guidelines`](https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md),
+  and a DocLead using [`doc-coauthoring`](https://github.com/anthropics/skills/blob/main/skills/doc-coauthoring/SKILL.md).
+  The rule that matters: the announcement must not go out before the brand
+  review approves it, and must not go out twice.
+- **The "code-change team"** — four files from GitHub's public Copilot
+  collection ([github/awesome-copilot](https://github.com/github/awesome-copilot)):
+  an Author using [`address-comments`](https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md),
+  a CodeReviewer using [`code-review-generic`](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md),
+  a SecurityReviewer using [`se-security-reviewer`](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md),
+  and a Merger using [`principal-software-engineer`](https://github.com/github/awesome-copilot/blob/main/agents/principal-software-engineer.agent.md).
+  The rule: the change must not be merged before the security review
+  passes, and must not be merged twice.
+
+The key property of these files — and the reason they make a good test —
+is that **each one describes a single job well, and none of them says
+anything about the order the team must work in.** That ordering normally
+lives in a human's head. Each team was run in the same three settings as
+the earlier parts (no plan / plan written into the instructions / full
+STJP), and the whole thing was done **twice**: once with a small model
+(Haiku) playing every team member, once with a smarter, more expensive
+model (Sonnet). 10 trials per setting per model — 120 trials in all.
+
+## 14. What happened — the headline results
+
+| Setting | Announcement team (small / smarter model) | Code-change team (small / smarter model) | Rule-breaking messages per run | AI calls per trial | Text cost per trial |
+|---|---:|---:|---:|---:|---:|
+| Original files, no plan | 10/10 · **0/10** | **0/10** · 10/10 | 120–180 | 16 | ~5,300–5,900 tokens |
+| Plan written as text | 10/10 · 10/10 | 10/10 · 10/10 | 120 | 16 | ~4,200–4,400 tokens |
+| **Full STJP** | **10/10 · 10/10** | **10/10 · 10/10** | **0** | **4** | **~1,800 tokens** |
+
+Three things to notice, in plain words:
+
+1. **Without a coordination plan, which team fails depends on which model
+   you use — and you cannot predict it.** The small model delivered the
+   announcement every time but never once delivered the code change; the
+   smarter model did the exact opposite. Same files, same instructions,
+   same budget. Paying for the smarter model did not fix the problem — it
+   just moved the failure to the other team.
+2. **Writing the plan into everyone's instructions fixes completion, but
+   not discipline.** Both models then delivered 20/20 — but members still
+   sent 120 messages per run that broke the agreed order (mostly re-sending
+   things while waiting), because nothing stops them.
+3. **Full STJP was flawless and identical on both models.** 40/40
+   deliveries, zero rule-breaking messages, and exactly 4 AI calls per
+   trial — the minimum possible, since the job takes exactly 4 messages.
+   Cost: about 3× cheaper than no plan and 2.4× cheaper than plan-as-text.
+
+## 15. What Part 3 proves, in one paragraph
+
+On real, published job instructions — not ones this project wrote — a team
+of AI agents with no coordination plan fails silently about half the time,
+and *which* half depends on the model, so you can't buy your way out with
+a more expensive one. With the full STJP setup, the cheapest model
+performed exactly like the expensive one: every trial delivered, no rule
+was ever broken, and each delivery cost a third of the uncoordinated
+attempt. The structure, not the model, did the work.
+
+---
+
+## 16. What to read next
 
 - **To understand how this benchmark is designed:** Read `3_BENCHMARK_DESIGN_EXPLAINED.md`
 - **To learn about testing strategies:** Read `2_TESTING_STRATEGIES.md`
