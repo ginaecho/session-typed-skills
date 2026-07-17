@@ -1,6 +1,10 @@
-STJP paper v10 -- "Compile the Conversation: Multiparty Session Types Make
-Multi-Agent Coordination Provably Safe -- and Cheaper than Failure"
+STJP paper v10 -- "Compile the Conversation of Multi-Agent Coordination:
+Provably Safe and More Token-Efficient"
 ============================================================================
+NOTE: retitled 2026-07-17 (was "Compile the Conversation: Multiparty Session
+Types Make Multi-Agent Coordination Provably Safe -- and Cheaper than
+Failure") and the abstract rewritten in the token-efficiency direction; v6-v9
+directories removed from the tree the same day (history remains in git).
 SUPERSEDES: v9 (same structure and claims; new title + real-skills live-run
 integration). Full per-edit detail in CHANGELOG_v10.md; macro fill map in
 TEMPLATE_HOWTO.md (unchanged from v9).

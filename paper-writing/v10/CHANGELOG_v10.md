@@ -111,3 +111,27 @@ Static sanity pass (superseded by the compile above, kept for the record):
 `\begin`/`\end` 41/41 balanced; braces 1172/1172; citations 49 used/49
 defined/0 undefined; all `\seam*` macros defined; `tab:realcases` 10
 rows × 5 columns.
+
+## Update 2026-07-17 — second retitle + abstract rewrite; v6–v9 removed
+
+- **Title (final)**: *"Compile the Conversation of Multi-Agent
+  Coordination: Provably Safe and More Token-Efficient"* — replacing the
+  interim v10 title ("... Provably Safe — and Cheaper than Failure").
+  Direction set by the author: lead with token efficiency alongside
+  provable safety. (Grammar lightly normalized from the requested
+  "Provable Safe and More Token Efficiency".)
+- **Abstract rewritten** in the same direction. Same opening (missing
+  compiler) and same closing cadence, but the empirical middle is now
+  organized around the three token classes the compiler removes:
+  (i) prose re-reading → projection (63% fewer tokens; 9.2×→17.1×
+  structural gap from 2→10 roles); (ii) polling → scheduling (−73% LLM
+  calls, 9× cost-to-goal, 4–22× cost-to-clean-goal, zero unauthorized
+  irreversible acts at every tier vs up to 95/100 unenforced);
+  (iii) failure itself → enforcement (nine real-skills cases where found
+  files deadlock/stall/coin-flip; the 3.6× plan-as-text livelock; the
+  zero-token static rejection — "the cheapest failure is the one that
+  never runs"). Closing line updated: "...and the property spends fewer
+  tokens."
+- **v6–v9 removed** from the working tree (git history retains them);
+  paper-writing/README.md rewritten for the single-version layout.
+- Recompiled: two pdflatex passes, 0 undefined references/citations.
