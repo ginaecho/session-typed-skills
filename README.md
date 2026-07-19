@@ -29,8 +29,8 @@ Multi-agent systems fail in the spaces *between* agents: one agent acts before a
 
 ```bash
 # Clone the repo
-git clone https://github.com/ginaecho/session-typed-skills
-cd session-typed-skills
+git clone https://github.com/ginaecho/session-typed-agents
+cd session-typed-agents
 
 # Clone Scribble (the static checker)
 git clone https://github.com/scribble/scribble-java
@@ -119,9 +119,10 @@ python scripts/case_runner.py finance 3 \
 | Tokens/trial | Highly variable | ~13k (optimized) |
 | Cost-to-goal | ∞ (fails) | 13k/success |
 
-### 3. Run the full 7-arm benchmark (1 hour)
+### 3. Run the full benchmark (1 hour)
 
-This runs all arms on a case with n=10 trials each (produces the results in `docs/results/RESULT_04_FULL_STACK.md`):
+This runs all arms on a case with n=10 trials each (the 2026-07-02 official
+run of this kind produced `docs/results/RESULT_04_FULL_STACK.md`):
 
 ```bash
 # Run all arms (this is the official benchmark)
@@ -132,18 +133,65 @@ python scripts/index_builder.py
 open INDEX.html
 ```
 
-**The 7 arms tested:**
-- **bare** — intent only (baseline)
-- **maf_groupchat_llmvalid** — global protocol text with orchestrator
-- **global_decentralized** — global protocol text, decentralized
-- **min_llmvalid** — per-agent contract (observer, no enforcement)
-- **spec_llmvalid_gate** — per-agent contract + enforcement gate
-- **min_llmvalid_gate** — lean contract + enforcement gate
+**The arms tested** (15 in the current registry, `experiments/baselines/registry.py`;
+each is one configuration being compared — like the treatment and control
+groups of a medical trial):
+
+- **bare**, **maf_native**, **maf_foundry**, **maf_groupchat** — intent only, on
+  different runtimes (baselines)
+- **maf_groupchat_unsafe** — a compiler-REJECTED protocol pasted as text
+- **maf_groupchat_llmvalid** — validated protocol text with an LLM orchestrator
+- **unchecked_skills** — human-written/downloaded skills, never compiler-checked
+- **global_decentralized** — validated protocol text, decentralized
+- **spec_llmvalid** / **min_llmvalid** — verbose / minimal per-agent contract
+  (observer, no enforcement)
+- **spec_llmvalid_gate** / **min_llmvalid_gate** — contract + enforcement gate
+- **min_llmvalid_gate_nohint** — gate without the per-turn state hint (isolates
+  how much the reminder itself contributes)
+- **min_llmvalid_gate_lastrecv** — gate + "ask whoever just received a message"
+  turn-taking (a protocol-free stand-in for the scheduler, so the scheduler's
+  win can't be credited to mere orderliness)
 - **min_llmvalid_sched** — lean contract + gate + EFSM scheduler (full STJP)
+
+Each arm is drawn as a one-line flow diagram in
+[`docs/5_ARMS_EXPLAINED.md`](docs/5_ARMS_EXPLAINED.md).
 
 ### 4. Run a different case
 
-Available cases: `finance`, `banking`, `trade_deadlock`, `report_pipeline`
+Every case is a directory under [`experiments/cases/`](experiments/cases/).
+The current set:
+
+| Case | One-line description |
+|---|---|
+| [`agenticpay_settlement`](experiments/cases/agenticpay_settlement/) | Payment settlement demo run on Azure AI Foundry (deadlock vs checked protocol) |
+| [`auction`](experiments/cases/auction/) | Sealed-bid multi-bidder auction with winner/outbid logic |
+| [`banking`](experiments/cases/banking/) | Transfer with amount-based approval/rejection branches |
+| [`clinical_enrollment`](experiments/cases/clinical_enrollment/) | Trial enrollment with screening, consent, lab, ethics approvals |
+| [`code_review`](experiments/cases/code_review/) | PR review with reviewer quorum and CI gating |
+| [`composition`](experiments/cases/composition/) | Composed (nested sub-protocol) workflow |
+| [`finance`](experiments/cases/finance/) | Quarterly revenue report with conditional audit (the flagship benchmark case) |
+| [`finance_nested`](experiments/cases/finance_nested/) | Nested 2×2 branching with payload-driven choices |
+| [`intel_report`](experiments/cases/intel_report/) | Multi-source intel fan-in, then review/publish pipeline |
+| [`iterative_polling`](experiments/cases/iterative_polling/) | Looping poll-and-log workflow |
+| [`nested_retry`](experiments/cases/nested_retry/) | Loop + nested branching editorial workflow |
+| [`planner_workers`](experiments/cases/planner_workers/) | Planner fanning work out to worker agents |
+| [`rag`](experiments/cases/rag/) | Multi-source retrieval + verification loop |
+| [`report_pipeline`](experiments/cases/report_pipeline/) | 6-role linear pipeline (token-efficiency demo) |
+| [`report_pipeline_large`](experiments/cases/report_pipeline_large/) | 10-role scaled linear pipeline |
+| [`retry_loop`](experiments/cases/retry_loop/) | Worker/manager retry-until-accept loop |
+| [`trade_deadlock`](experiments/cases/trade_deadlock/) | Intentional circular-wait deadlock demo |
+| [`trade_settlement`](experiments/cases/trade_settlement/) | Goods-for-payment with hidden circular dependency |
+| [`travel`](experiments/cases/travel/) | All-or-nothing travel booking with rollback |
+| [`travel_saga`](experiments/cases/travel_saga/) | 3-supplier booking happy path |
+| [`skills_safety/airline_seat`](experiments/cases/skills_safety/airline_seat/) | Real-skills safety case: seat change with payment |
+| [`skills_safety/booking_saga`](experiments/cases/skills_safety/booking_saga/) | Real-skills safety case: booking saga |
+| [`skills_safety/code_execution`](experiments/cases/skills_safety/code_execution/) | Real-skills safety case: gated code execution |
+| [`skills_safety/content_pipeline`](experiments/cases/skills_safety/content_pipeline/) | Real-skills safety case: content approval pipeline |
+| [`skills_safety/doc_pipeline`](experiments/cases/skills_safety/doc_pipeline/) | Announcement team from real Anthropic public skills |
+| [`skills_safety/doc_coauthor_ship`](experiments/cases/skills_safety/doc_coauthor_ship/) | Corrected announcement case (looping protocol) |
+| [`skills_safety/pr_merge`](experiments/cases/skills_safety/pr_merge/) | Code-change team from real GitHub Copilot public files |
+| [`skills_safety/pr_review_merge`](experiments/cases/skills_safety/pr_review_merge/) | Corrected code-review case (looping protocol) |
+| [`_corpus`](experiments/cases/_corpus/) | Generated protocol corpus used by the stress/mutation benchmarks |
 
 ```bash
 # Try the deadlock case (tests claim: "only static check catches deadlock")
@@ -461,6 +509,6 @@ Scribble (vendored in `scribble-java/`) is Apache 2.0 © Imperial College.
   author = {Chen, Tzu-Chun},
   title = {Session-Typed Skills: A static compiler for safe multi-agent interactions},
   year = {2026},
-  url = {https://github.com/ginaecho/session-typed-skills}
+  url = {https://github.com/ginaecho/session-typed-agents}
 }
 ```

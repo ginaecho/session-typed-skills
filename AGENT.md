@@ -2,6 +2,45 @@
 
 This file is for Claude and other AI agents working on the STJP codebase. It explains the project, where things live, common tasks, and the guidelines.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [🎯 What This Project Does](#-what-this-project-does)
+- [📁 Key Files & Directories](#-key-files--directories)
+  - [Core library (`stjp_core/`)](#core-library-stjp_core)
+  - [Experiments & benchmark (`experiments/`)](#experiments--benchmark-experiments)
+  - [Documentation (`docs/`)](#documentation-docs)
+  - [Configuration & meta](#configuration--meta)
+- [🧠 Understanding the 15-Arm Matrix](#-understanding-the-15-arm-matrix)
+- [🔧 Common Agent Tasks](#-common-agent-tasks)
+  - [1. Adding a new use case](#1-adding-a-new-use-case)
+  - [2. Fixing a broken protocol](#2-fixing-a-broken-protocol)
+  - [3. Adding a new arm (a new variant to test)](#3-adding-a-new-arm-a-new-variant-to-test)
+  - [4. Debugging a failing trial](#4-debugging-a-failing-trial)
+  - [5. Re-running a case with different parameters](#5-re-running-a-case-with-different-parameters)
+- [📋 Code Guidelines](#-code-guidelines)
+  - [1. Protocol files (Scribble)](#1-protocol-files-scribble)
+  - [2. Refinement files (.refn)](#2-refinement-files-refn)
+  - [3. case.yaml files](#3-caseyaml-files)
+  - [4. Python code](#4-python-code)
+  - [5. Plain-language writing rule (docs, reports, replies)](#5-plain-language-writing-rule-docs-reports-replies)
+- [🧪 Testing Your Changes](#-testing-your-changes)
+  - [Before committing:](#before-committing)
+- [🚫 Common Mistakes (Don't Repeat)](#-common-mistakes-dont-repeat)
+- [📖 Understanding the Codebase](#-understanding-the-codebase)
+  - [Architecture diagram](#architecture-diagram)
+  - [Key abstractions](#key-abstractions)
+- [🔗 Key Imports (for coding)](#-key-imports-for-coding)
+- [📊 What "Success" Looks Like](#-what-success-looks-like)
+- [🎯 Where to Ask Questions](#-where-to-ask-questions)
+- [🔐 Git identity — ALWAYS commit/push/PR as ginaecho](#-git-identity--always-commitpushpr-as-ginaecho)
+- [🚀 Publishing workflow — TWO hops, in this order](#-publishing-workflow--two-hops-in-this-order)
+  - [Hop 1 — commit & push to the source repo (`ginaecho/session-typed-agents`)](#hop-1--commit--push-to-the-source-repo-ginaechosession-typed-agents)
+  - [Hop 2 — mirror into the internal monorepo (`mcaps-microsoft/eag-innovation`)](#hop-2--mirror-into-the-internal-monorepo-mcaps-microsofteag-innovation)
+  - [Commit message shape (both hops)](#commit-message-shape-both-hops)
+- [🚀 Next Steps for New Contributors](#-next-steps-for-new-contributors)
+<!-- MENU:END -->
+
 ---
 
 ## 🎯 What This Project Does

@@ -305,7 +305,36 @@ class RoleMonitor:
         return None
 
     def check_termination(self) -> Violation | None:
-        """Check if the monitor ended in an accepting state."""
+        """Check if the monitor ended in an accepting state.
+
+        Also flags UNFULFILLED DEFERRED OBLIGATIONS: when the monitor
+        commutes past a different-channel action (async reordering, see
+        _match_commuting) that action becomes a debt the role must still
+        pay later in the trace. If the trace ends with the debt unpaid,
+        the session is incomplete even though the EFSM state may already
+        be accepting — e.g. a 2-role protocol "A sends X, B replies Y"
+        where the trace contains ONLY the reply Y: both monitors commute
+        to their accepting states, but X never happened. Without this
+        check such a trace was judged fully conformant (bug found in the
+        2026-07-19 code audit).
+        """
+        owed = getattr(self, "_skipped", [])
+        if owed:
+            v = Violation(
+                role=self.efsm.role,
+                violation_type=ViolationType.PREMATURE_TERMINATION,
+                step=self.steps_checked,
+                event=None,
+                state=self.current_state,
+                expected=[f"{peer}{'!' if d == 'send' else '?'}{label}"
+                          for (d, label, peer) in owed],
+                message=f"Role {self.efsm.role}: trace ended with unfulfilled "
+                        f"deferred obligation(s) "
+                        f"{[(d, label, peer) for (d, label, peer) in owed]} — "
+                        f"actions the role commuted past but never performed"
+            )
+            self.violations.append(v)
+            return v
         if not self.efsm.is_accepting(self.current_state):
             v = Violation(
                 role=self.efsm.role,

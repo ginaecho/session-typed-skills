@@ -23,12 +23,16 @@ and the figure in `testing_ideas/monitoring_tool_from_intent.png`.
 Refinement contracts existed in two places that did not talk to each other:
 
 1. **Global type / sidecar.** `protocols/P1_v2.scr` carried the structural
-   MPST protocol; `protocols/P1_v2.refn` carried the payload predicates,
+   MPST protocol (MPST — multiparty session types, the type theory that
+   writes a multi-agent conversation down as one checkable global type);
+   `protocols/P1_v2.refn` (a *sidecar*: a companion file beside the
+   protocol, same basename, different extension) carried the payload predicates,
    keyed by `(sender, receiver, label)`. Refinements were parsed by
    `refinement_checker.py`.
 
 2. **Projected agents.** `agent_generator.py` projected the EFSM of each
-   role into a Claude subagent markdown or a Python `Agent` stub. The stub's
+   role (EFSM — extended finite-state machine, the role's contract compiled
+   to states and allowed moves) into a Claude subagent markdown or a Python `Agent` stub. The stub's
    `act(direction, peer, label, payload=None)` validated only the *structural*
    triple (direction, peer, label) against the local automaton. **Payload
    was opaque to the agent.**

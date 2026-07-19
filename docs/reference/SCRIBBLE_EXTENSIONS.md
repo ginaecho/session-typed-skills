@@ -2,7 +2,7 @@
 
 How the STJP toolchain adds **conditional (refinement) contracts**, **sub-protocols / children protocols (composition)**, and **higher-order session passing** on top of Scribble — and, just as importantly, what it does *not* change.
 
-Companion docs: `SCRIBBLE.md` (why Scribble, what was installed, the fork-vs-extend decision), `MPST_STATIC.md` (the MPST semantics + runtime monitor), `ROADMAP.md` (phase plan), `GAP_CLOSED.md` (the refinement call-site closure). Drafted 2026-05-20.
+Companion docs: [`SCRIBBLE.md`](../../SCRIBBLE.md) (why Scribble, what was installed, the fork-vs-extend decision), [`MPST_STATIC.md`](../../MPST_STATIC.md) (the MPST semantics + runtime monitor; MPST — multiparty session types, the type theory that writes a multi-agent conversation down as one checkable global type), [`ROADMAP.md`](../../ROADMAP.md) (phase plan), [`GAP_CLOSED.md`](GAP_CLOSED.md) (the refinement call-site closure). Drafted 2026-05-20.
 
 ---
 
@@ -36,7 +36,7 @@ Every capability this project adds is a **layer**: companion files that sit *bes
 
 > **Layer on top of Scribble; do not fork.** Grammar forks burden maintenance for marginal benefit.
 
-Why this works: Scribble already gives the hard 20-year-engineered middle — parser, well-formedness checker (deadlock-freedom, choice-consistency), endpoint projection, EFSM emission. The project's contribution is a markdown frontend and agent-harness backends *around* that middle. Forking the grammar would put the project on a permanent rebase treadmill for features that are expressible as side-cars.
+Why this works: Scribble already gives the hard 20-year-engineered middle — parser, well-formedness checker (deadlock-freedom, choice-consistency), endpoint projection, EFSM emission (an EFSM — extended finite-state machine — is one role's contract compiled to states and allowed moves). The project's contribution is a markdown frontend and agent-harness backends *around* that middle. Forking the grammar would put the project on a permanent rebase treadmill for features that are expressible as side-cars.
 
 ```
         NL intent ──► architect.py ──► .scr  ───────────────┐
@@ -190,7 +190,7 @@ global protocol FinancePipeline(role Client, role Bank, role Auditor) {
 3. **Splice**: emit one composed `.scr` — deduplicated `data` decls, then every referenced `aux global protocol` block inlined, then the parent's `global protocol`.
 4. **Validate**: run the spliced whole through stock Scribble (`ScribbleValidator`). Rejection surfaces as `CompositionError` verbatim.
 
-The composed output is an ordinary `.scr` (see `experiments/cases/composition/pipeline/FinancePipeline_composed.scr` — the `aux` blocks now inline). Three tagged error classes: `ResolutionError`, `RoleMappingError`, `CompositionError`.
+The composed output is an ordinary `.scr` (see `FinancePipeline_composed.scr` in the [`composition`](../../experiments/cases/composition/) case — the `aux` blocks now inline). Three tagged error classes: `ResolutionError`, `RoleMappingError`, `CompositionError`.
 
 ### What composition proves — and what it does not
 
@@ -219,7 +219,7 @@ Stock Scribble's grammar **already supports this**: a message payload position c
 
 Therefore higher-order needs **no layer**: STJP uses the native grammar, and the same `validator.py` / `efsm_parser.py` path handles it. In agent terms, delegation is how an orchestrator hands a spawned sub-agent the remainder of a protocol role rather than mediating every message itself.
 
-A caveat worth stating: the current STJP benchmark protocols (`experiments/cases/*`) are flat — they exercise choice, recursion, and `do`-style nesting, but do **not** yet use payload-level delegation. The capability is available in the compiler; it is simply not yet stressed by a case. If a case needs it, add the delegation payload to the `.scr` directly — no STJP code change required.
+A caveat worth stating: the current STJP benchmark protocols ([`experiments/cases/*`](../../experiments/cases/)) are flat — they exercise choice, recursion, and `do`-style nesting, but do **not** yet use payload-level delegation. The capability is available in the compiler; it is simply not yet stressed by a case. If a case needs it, add the delegation payload to the `.scr` directly — no STJP code change required.
 
 **Research basis:** Honda, Yoshida, Carbone POPL'08 (delegation is core MPST); Mostrous & Yoshida (higher-order session processes).
 

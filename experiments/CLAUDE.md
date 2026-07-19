@@ -175,7 +175,8 @@ runs/<ISO-timestamp>-n<N>-dual/
                                  install_limit, truncated_on_install
 ```
 
-Foundry-stack arms (`bare`, `spec_llmvalid`, `min_llmvalid`) truncate the
+Foundry-stack arms (every `FoundryRunner` arm — `bare`, `unchecked_skills`,
+`global_decentralized`, and the `spec`/`min` family) truncate the
 installed copy at 8000 chars on `client.create_agent(instructions=...)`. The
 saved `.system.md` is the **pre-truncation** string; `index.json` records the
 character count and a `truncated_on_install` flag so reviewers can spot
@@ -204,7 +205,8 @@ The finance case used to ship a `skills/v1/` directory carried over from the
 earlier `stjp_core/apps/stjp_dual_demo.py` flow. It was stale on both the
 protocol filename (`P1_v2.scr` vs current `v1.scr`) and on the high-revenue
 threshold (`$10,000` vs `case.yaml`'s `> $50000`). It was also dead-coded in
-the 8-arm matrix (`instructions.py:240-244`). It was deleted on 2026-05-29
+the arm matrix (the skills-loading branch in `build_spec_instructions` only
+fires without a protocol override). It was deleted on 2026-05-29
 and the `v1.refn` header line that incorrectly referenced `P1_v2.scr` was
 corrected at the same time. Do not recreate the folder by accident.
 
@@ -233,17 +235,29 @@ update the matching `prompts_schema_version`.
 
 - `summary.json` — Set A (conformance + process cost). `violations`,
   `violation_types`, `success_rate_pct`, token/seconds totals.
-  `success_rate_pct` = % of trials where every goal predicate passed, under
-  the arm's own `success_rule` (also in the summary): `strict` (exact
-  anchor sender/receiver/label match) for arms whose prompt contained the
-  protocol vocabulary (`evaluate_run.VOCABULARY_ARMS`), `role_pair`
-  (label-free — right sender, right receiver, predicate-satisfying payload,
-  any label) for arms that never saw the protocol (bare, maf_*). Rationale
-  + history: `docs/BENCHMARK_FAIRNESS_REVIEW.md` Problem 1. Each arm also
-  carries `success_rate_ci95_pct` (95% Wilson interval — quote it, not just
-  the point estimate) and `prompt_truncated_roles` (non-empty = that arm's
-  installed prompt was clipped at Foundry's 8000-char limit; treat its
-  numbers as invalid for comparison).
+  `success_rate_pct` is **GOAL-based, not "zero monitor violations"**: it is
+  the % of trials where every goal predicate passed, under the per-arm success
+  rule recorded in `success_rule`. That rule is `strict` (exact anchor
+  sender/receiver/label match) for arms whose prompt contained the protocol
+  vocabulary (`evaluate_run.VOCABULARY_ARMS`), and `role_pair` (label-free —
+  right sender, right receiver, predicate-satisfying payload, any label) for
+  arms that never saw the protocol (bare, maf_*) and so cannot be expected to
+  use its labels. Example: a bare-arm trial that sends the right amount from
+  Fetcher to TaxSpecialist under a made-up label counts as a success; a
+  spec-arm trial doing the same thing fails, because its prompt named the
+  label. Rationale + history: `docs/BENCHMARK_FAIRNESS_REVIEW.md` Problem 1.
+  Each arm also carries:
+  - `success_rate_ci95_pct` — a 95% Wilson confidence interval (the plausible
+    range for the true rate given the sample size). Quote it, not just the
+    point estimate: 10/10 successes at n=10 still means "anywhere from 72% to
+    100%".
+  - `prompt_truncated_roles` — non-empty = that arm's installed prompt was
+    clipped at Foundry's 8000-char limit; treat its numbers as invalid for
+    comparison.
+  - `execution_mode` — `"sequential"` (arms ran one after another) or
+    `"parallel"` (arms shared one rate-limited endpoint at once). Seconds
+    from parallel runs include rate-limit contention, so do not compare
+    wall-clock across the two modes.
 - `summary_eval.json` — Set B (goal achievement). `strict_pct` /
   `role_pair_pct` / per-goal breakdowns. Strict = exact-anchor match; role_pair
   relaxes the label requirement (any message between the expected sender/
@@ -269,9 +283,9 @@ update the matching `prompts_schema_version`.
 
 | what | where |
 |---|---|
-| 8-arm registry | `experiments/baselines/registry.py` |
-| 4 instruction builders | `experiments/baselines/instructions.py` |
-| Foundry-stack runner (bare/spec/min) | `experiments/baselines/foundry_runner.py` |
+| arm registry (15 arms) | `experiments/baselines/registry.py` |
+| 5 instruction builders | `experiments/baselines/instructions.py` |
+| Foundry-stack runner (bare/unchecked/spec/min/gate/sched) | `experiments/baselines/foundry_runner.py` |
 | MAF runners | `experiments/baselines/maf_*.py` |
 | Case driver | `experiments/scripts/case_runner.py` |
 | Case loader | `experiments/scripts/case_loader.py` |
@@ -280,7 +294,7 @@ update the matching `prompts_schema_version`.
 | Refinement sidecar | `experiments/cases/<case>/protocols/v1.refn` |
 | LLM-drafted protocols | `experiments/cases/<case>/protocols/llm_drafts/{valid,unsafe}/v1.scr` |
 | Re-anchored goals for LLM drafts | `experiments/cases/<case>/protocols/llm_drafts/{valid,unsafe}/goals.yaml` |
-| (Stale) skills files | `experiments/cases/<case>/skills/v1/*_skills.md` — dead in 8-arm matrix |
+| (Stale) skills files | `experiments/cases/<case>/skills/v1/*_skills.md` — dead in the arm matrix |
 | Runtime monitor | `stjp_core/monitor/monitor.py` |
 | EFSM projection | `stjp_core/compiler/efsm_parser.py` (`get_all_efsms`) |
 | Refinement loader | `stjp_core/compiler/refinement_checker.py` |

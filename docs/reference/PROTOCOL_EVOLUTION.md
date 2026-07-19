@@ -5,11 +5,11 @@ policy, or a condition to an already-encoded workflow — into an **updated,
 re-validated global type**, by treating the change as a **sub-session (child
 protocol)** composed with the retained parts of the current protocol.
 
-Drafted 2026-05-21. Companion: `SCRIBBLE_EXTENSIONS.md` (the layering),
-`ROADMAP.md` (Phase 3.1 Hybrid MPST), `RESEARCH.md` (bibliography).
+Drafted 2026-05-21. Companion: [`SCRIBBLE_EXTENSIONS.md`](SCRIBBLE_EXTENSIONS.md) (the layering),
+[`ROADMAP.md`](../../ROADMAP.md) (Phase 3.1 Hybrid MPST), [`RESEARCH.md`](../../RESEARCH.md) (bibliography).
 
 > **Status 2026-06-12** — this concept now has a concrete benchmark/demo
-> design: `docs/EVOLUTION_DEMO_DESIGN.md` ("the demand changed on Tuesday",
+> design: [`docs/archive/EVOLUTION_DEMO_DESIGN.md`](../archive/EVOLUTION_DEMO_DESIGN.md) ("the demand changed on Tuesday",
 > banking + new ComplianceScreen role; metrics: disaster rate, half-landing
 > rate (trials where the new obligation fired on some but not all triggering
 > branches), regression rate, turnaround, blast radius). Not yet built; build
@@ -40,8 +40,10 @@ Drafted 2026-05-21. Companion: `SCRIBBLE_EXTENSIONS.md` (the layering),
 
 The figure shows an **Agentic Corrector**: a two-phase system.
 
-- **Build (offline)** — SOP / policy documents are ingested and *encoded* into
+- **Build (offline)** — SOP (standard operating procedure) / policy
+  documents are ingested and *encoded* into
   a structured per-scenario workflow ("Encoded Logic per Scenario"); an SME
+  (subject-matter expert — the human who knows the workflow)
   validates and deploys it.
 - **Runtime** — an incoming request email is classified, the matching encoded
   workflow is selected, its steps run (automated checks, manual approvals),

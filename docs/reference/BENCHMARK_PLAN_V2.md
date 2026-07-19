@@ -94,9 +94,11 @@ layered story is stronger than a bare "gate 100%".
 
 ## E4 — reliability operators actually need (pass^k)
 
-`stats.py` — Wilson score interval + pass^k (the probability that all of the
+`stats.py` — Wilson score interval (a confidence-interval formula for
+percentages that stays honest at small sample sizes) + pass^k (the probability that all of the
 next k runs succeed), no scipy. On the **real** n=10
-subagent-trial data, a 10/10 arm still has a Wilson lower bound of 72.2%, so
+subagent-trial data, a 10/10 arm (an *arm* is one configuration being
+compared — like a clinical trial's treatment and control groups) still has a Wilson lower bound of 72.2%, so
 `pass^10` at the CI floor is 0.039 — **this is the concrete "n=10 is too few"
 argument**, computed rather than asserted. The n=30 ladder in Table 5 is a
 tagged SYNTH placeholder to be replaced by real n=30 runs.

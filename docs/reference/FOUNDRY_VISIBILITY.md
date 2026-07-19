@@ -8,7 +8,7 @@ the underlying data is in the project.
 |---|---|---|
 | **Agents** | "Create and debug your agents" → My agents | `AgentsClient.create_agent()` with `model=` pointing to a deployment registered in the project |
 | **Threads** | same page → My threads tab | A **successful** run on a registered agent. Failed runs DO NOT make the thread visible. |
-| **Tracing** | Tracing tab (left nav, project scope) | OpenTelemetry spans exported to the project's connected Application Insights resource |
+| **Tracing** | Tracing tab (left nav, project scope) | OpenTelemetry spans (a *span* is one timed operation record in a trace; OpenTelemetry is the open standard for emitting them) exported to the project's connected Application Insights resource |
 
 Below: the exact code for each, all connected in this repo.
 
@@ -38,7 +38,9 @@ wsid=/subscriptions/ef669702-542a-4abc-95a6-edf9f972cd3c/resourceGroups/rg-tzuc0
 - Agents list: `https://ai.azure.com/resource/agentsList?wsid=<wsid>`
 - Tracing:     `https://ai.azure.com/resource/tracing?wsid=<wsid>`
 
-The Foundry-stack arms (`bare`/`spec_llmvalid`/`min_llmvalid`) appear under
+The Foundry-stack arms (`bare`/`spec_llmvalid`/`min_llmvalid` — an *arm* is
+one benchmark configuration being compared, like a clinical trial's
+treatment and control groups) appear under
 Agents/Threads; the MAF (Microsoft Agent Framework) arms bypass Agent Service and appear **only** in
 Tracing (OTel spans, `service.name = stjp-case-runner`, full message content
 captured via `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`).
