@@ -90,8 +90,8 @@ vendor's bug.
 
 - **(g)** — agents are driven by human-written skills/prompts that never went
   through the STJP checker. This measures how much risk remains when prompts
-  are handwritten rather than derived from a checked plan. (RESULT_8 and
-  RESULT_9 are this setting with *real, downloaded* public skills.)
+  are handwritten rather than derived from a checked plan. (RESULT_08 and
+  RESULT_09 are this setting with *real, downloaded* public skills.)
 
 ## Group 4 — each agent gets its own slice of the plan (contracts)
 
@@ -109,14 +109,28 @@ vendor's bug.
 ## Group 5 — contracts, now enforced
 
 ```
-(k) spec_llmvalid_gate   verbose contracts ──▶ Foundry agents ──▶ runtime gate
-(l) min_llmvalid_gate    minimal contracts ──▶ Foundry agents ──▶ runtime gate
+(k) spec_llmvalid_gate         verbose contracts ──▶ Foundry agents ──▶ runtime gate
+(l) min_llmvalid_gate          minimal contracts ──▶ Foundry agents ──▶ runtime gate
+(n) min_llmvalid_gate_nohint   minimal contracts ──▶ Foundry agents ──▶ runtime gate, NO per-turn state hint
+(o) min_llmvalid_gate_lastrecv minimal contracts ──▶ Foundry agents ──▶ runtime gate + "ask whoever just received" turn-taking
 ```
 
 - **(k)** — like (i) plus the gate: an off-plan message is rejected *before
   delivery*. Measures the value of enforcement on top of verbose contracts.
 - **(l)** — like (j) plus the gate. Isolates enforcement while keeping the
   prompt minimal.
+- **(n)** — like (l), but the gate stays silent between turns: agents never
+  get the little reminder of where in the plan the conversation currently is
+  (the per-turn state hint). This measures how much of (l)'s benefit comes
+  from the *hint* rather than the *blocking*. Example of why this matters:
+  if (l) succeeds and (n) stalls, the win came from telling agents "you are
+  at step 3, expect `Quote` next" — not from rejecting bad messages.
+- **(o)** — like (l), plus a simple turn-taking rule that needs no protocol:
+  after a message is delivered, ask the agent who just received it to act
+  next. This is the fair, protocol-free stand-in (control) for the EFSM
+  scheduler in (m): if (m) beats (o), the scheduler's win comes from
+  actually *reading the plan*, not merely from imposing any orderly
+  turn-taking at all.
 
 ## Group 6 — the full STJP execution stack
 
@@ -127,7 +141,7 @@ vendor's bug.
 
 - **(m)** — minimal local contracts + enforcement gate + the scheduler that
   only wakes agents whose turn it can be. The strongest "typed execution"
-  setting — and, per [RESULT_4](results/RESULT_4_FULL_STACK.md), simultaneously
+  setting — and, per [RESULT_04](results/RESULT_04_FULL_STACK.md), simultaneously
   the safest and the cheapest.
 
 ---
@@ -136,10 +150,12 @@ vendor's bug.
 
 Take the ladder top to bottom: (a) proves the problem exists, (e)–(f) prove
 text alone isn't the answer, (i)–(j) prove slicing the plan per agent cuts
-cost, (k)–(l) prove enforcement closes the honor-system gap, and (m) shows
-all three levers together. Whenever a report says "arm X vs arm Y", find the
-two flow lines above and look at the **one block that differs** — that block
-is what the comparison measures.
+cost, (k)–(l) prove enforcement closes the honor-system gap, (n)–(o) pin
+down *which part* of the winning setting does the work, and (m) shows all
+the levers together. That is 15 settings in total — the same 15 registered
+in `experiments/baselines/registry.py`. Whenever a report says "arm X vs
+arm Y", find the two flow lines above and look at the **one block that
+differs** — that block is what the comparison measures.
 
 ---
 
@@ -153,23 +169,23 @@ simple STJP is overkill; no current case is rated Low.)
 
 | Case | What it is (short) | STJP fit | Why |
 |---|---|---|---|
-| `auction` | Sealed-bid multi-bidder auction with winner/outbid logic | Good | Multiparty fan-in (several senders converging on one receiver) and value constraints; good protocol-check target |
-| `banking` | Transfer with amount-based approval/rejection branches | Good | Conditional branch safety and exception path are strong STJP use |
-| `clinical_enrollment` | Trial enrollment with screening, consent, lab, ethics approvals | Good | Multi-role sequencing with explicit approval dependencies |
-| `code_review` | PR review with reviewer quorum and CI (automated test-run) gating | Good | Coordination + threshold-style constraints map well to contracts |
-| `finance` | Finance report with audit branching | Good | Known sequencing + refinement failure case; excellent benchmark |
-| `finance_nested` | Nested 2×2 branching with payload-driven choices | Good | Complex branch structure is exactly where STJP helps most |
-| `intel_report` | Multi-source intel fan-in, then review/publish pipeline | Good | Parallel/fan-in ordering pressure benefits from typed sequencing |
-| `iterative_polling` | Looping poll-and-log workflow | Medium | Good for recursion behavior; less rich branching complexity |
-| `nested_retry` | Loop + nested branching editorial workflow | Good | Strong stress case for loops + nested choices |
-| `rag` | Multi-source retrieval + verification loop | Good | Multi-agent loop with correctness checks; strong STJP candidate |
-| `report_pipeline` | 6-role linear pipeline for the token-efficiency demo | Medium | Useful for cost/throughput claims; less about safety complexity |
-| `report_pipeline_large` | 10-role scaled linear pipeline | Medium | Good for scaling/token tests; lower structural risk than branch-heavy cases |
-| `retry_loop` | Worker/manager retry-until-accept loop | Good | Classic loop + decision-branch safety pattern |
-| `trade_deadlock` | Intentional circular-wait deadlock demo | Good | Canonical compile-time deadlock-detection showcase |
-| `trade_settlement` | Goods-for-payment with hidden circular dependency | Good | Strong deadlock + enforcement comparison case |
-| `travel` | All-or-nothing travel booking with rollback | Good | A "saga": a workflow that undoes (compensates) completed steps when a later step fails — suits protocol enforcement |
-| `travel_saga` | 3-supplier booking happy path (rollback planned later) | Medium | Useful now; becomes stronger when the compensation branch is added |
-| `doc_pipeline` | Announcement team built from real Anthropic public skills | Good | Real-skills approval-ordering case (see [RESULT_9](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)) |
-| [`pr_merge`](../experiments/cases/skills_safety/pr_merge/) | Code-change team built from real GitHub Copilot public files | Good | Real-skills merge-gating case (see [RESULT_9](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)) |
-| `skills_safety/*` | 4 teams built from real OpenAI/CrewAI/AutoGen/LangGraph skills | Good | The RESULT_8 real-skills safety benchmark |
+| [`auction`](../experiments/cases/auction/) | Sealed-bid multi-bidder auction with winner/outbid logic | Good | Multiparty fan-in (several senders converging on one receiver) and value constraints; good protocol-check target |
+| [`banking`](../experiments/cases/banking/) | Transfer with amount-based approval/rejection branches | Good | Conditional branch safety and exception path are strong STJP use |
+| [`clinical_enrollment`](../experiments/cases/clinical_enrollment/) | Trial enrollment with screening, consent, lab, ethics approvals | Good | Multi-role sequencing with explicit approval dependencies |
+| [`code_review`](../experiments/cases/code_review/) | PR review with reviewer quorum and CI (automated test-run) gating | Good | Coordination + threshold-style constraints map well to contracts |
+| [`finance`](../experiments/cases/finance/) | Finance report with audit branching | Good | Known sequencing + refinement failure case; excellent benchmark |
+| [`finance_nested`](../experiments/cases/finance_nested/) | Nested 2×2 branching with payload-driven choices | Good | Complex branch structure is exactly where STJP helps most |
+| [`intel_report`](../experiments/cases/intel_report/) | Multi-source intel fan-in, then review/publish pipeline | Good | Parallel/fan-in ordering pressure benefits from typed sequencing |
+| [`iterative_polling`](../experiments/cases/iterative_polling/) | Looping poll-and-log workflow | Medium | Good for recursion behavior; less rich branching complexity |
+| [`nested_retry`](../experiments/cases/nested_retry/) | Loop + nested branching editorial workflow | Good | Strong stress case for loops + nested choices |
+| [`rag`](../experiments/cases/rag/) | Multi-source retrieval + verification loop | Good | Multi-agent loop with correctness checks; strong STJP candidate |
+| [`report_pipeline`](../experiments/cases/report_pipeline/) | 6-role linear pipeline for the token-efficiency demo | Medium | Useful for cost/throughput claims; less about safety complexity |
+| [`report_pipeline_large`](../experiments/cases/report_pipeline_large/) | 10-role scaled linear pipeline | Medium | Good for scaling/token tests; lower structural risk than branch-heavy cases |
+| [`retry_loop`](../experiments/cases/retry_loop/) | Worker/manager retry-until-accept loop | Good | Classic loop + decision-branch safety pattern |
+| [`trade_deadlock`](../experiments/cases/trade_deadlock/) | Intentional circular-wait deadlock demo | Good | Canonical compile-time deadlock-detection showcase |
+| [`trade_settlement`](../experiments/cases/trade_settlement/) | Goods-for-payment with hidden circular dependency | Good | Strong deadlock + enforcement comparison case |
+| [`travel`](../experiments/cases/travel/) | All-or-nothing travel booking with rollback | Good | A "saga": a workflow that undoes (compensates) completed steps when a later step fails — suits protocol enforcement |
+| [`travel_saga`](../experiments/cases/travel_saga/) | 3-supplier booking happy path (rollback planned later) | Medium | Useful now; becomes stronger when the compensation branch is added |
+| [`doc_pipeline`](../experiments/cases/skills_safety/doc_pipeline/) | Announcement team built from real Anthropic public skills | Good | Real-skills approval-ordering case (see [RESULT_09](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md)) |
+| [`pr_merge`](../experiments/cases/skills_safety/pr_merge/) | Code-change team built from real GitHub Copilot public files | Good | Real-skills merge-gating case (see [RESULT_09](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md)) |
+| [`skills_safety/*`](../experiments/cases/skills_safety/) | 4 teams built from real OpenAI/CrewAI/AutoGen/LangGraph skills | Good | The RESULT_08 real-skills safety benchmark |

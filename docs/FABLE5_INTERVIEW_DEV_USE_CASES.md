@@ -68,10 +68,10 @@ polling of idle agents, and runtime discovery of statically-refutable design bug
 
 | Lever | Mechanism | Evidence |
 |---|---|---|
-| **Projection** — each agent gets only its local slice, not the global prose | Smaller prompt every call, plus far less "is it my turn?" deliberation (1,534 → 552 thinking tokens/turn) | [`RESULT_2_TOKEN_EFFICIENCY.md`](results/RESULT_2_TOKEN_EFFICIENCY.md): 24.1k → 8.8k tokens, **−63%**, same 100% completion |
-| **EFSM scheduler** — poll only agents that *can* act | Idle agents never burn a call saying "WAIT" | [`RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md): −66% calls; 13.3k vs 120.3k tokens for the same protocol pasted as text — **9× cheaper**, 4× faster |
-| **Static check before running** — Scribble + the Bocchi–Chen–Demangeon–Honda–Yoshida composition theorem (FORTE'13) | Deadlocks and orphan messages refuted in milliseconds instead of discovered after burning calls | [`trade_deadlock`](../experiments/cases/trade_deadlock/): unchecked skills **0/100** success, all deadlock (infinite cost-to-goal); the compaction gauntlet flags UNSAFE 10/10 with a pinpoint diagnosis ([`RESULT_5_SUBAGENT_VALIDATION.md`](results/RESULT_5_SUBAGENT_VALIDATION.md)) |
-| **Deterministic gate + monitor** — O(1) state-machine step, no LLM in the hot path | Conformance checking and evaluation cost ~zero tokens — no LLM-as-judge | [`RESULTS.md`](results/RESULTS.md): per-event cost is a microsecond FSM step plus a sandboxed predicate; the composition theorem gives the *global* guarantee from local checks alone |
+| **Projection** — each agent gets only its local slice, not the global prose | Smaller prompt every call, plus far less "is it my turn?" deliberation (1,534 → 552 thinking tokens/turn) | [`RESULT_02_TOKEN_EFFICIENCY.md`](results/RESULT_02_TOKEN_EFFICIENCY.md): 24.1k → 8.8k tokens, **−63%**, same 100% completion |
+| **EFSM scheduler** — poll only agents that *can* act | Idle agents never burn a call saying "WAIT" | [`RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md): −66% calls; 13.3k vs 120.3k tokens for the same protocol pasted as text — **9× cheaper**, 4× faster |
+| **Static check before running** — Scribble + the Bocchi–Chen–Demangeon–Honda–Yoshida composition theorem (FORTE'13) | Deadlocks and orphan messages refuted in milliseconds instead of discovered after burning calls | [`trade_deadlock`](../experiments/cases/trade_deadlock/): unchecked skills **0/100** success, all deadlock (infinite cost-to-goal); the compaction gauntlet flags UNSAFE 10/10 with a pinpoint diagnosis ([`RESULT_05_SUBAGENT_VALIDATION.md`](results/RESULT_05_SUBAGENT_VALIDATION.md)) |
+| **Deterministic gate + monitor** — O(1) state-machine step, no LLM in the hot path | Conformance checking and evaluation cost ~zero tokens — no LLM-as-judge | [`RESULT_00_SUMMARY.md`](results/RESULT_00_SUMMARY.md): per-event cost is a microsecond FSM step plus a sandboxed predicate; the composition theorem gives the *global* guarantee from local checks alone |
 | **Scale effect** — global-text cost grows with roles; the projected local contract stays flat | The more roles, the bigger the projection win | E6 roles sweep ([`REPORT_N100.md`](../experiments/reports/n100/REPORT_N100.md)): coordination-cost ratio grows **9.2× → 17.1×**; scale case [`report_pipeline_large`](../experiments/cases/report_pipeline_large/) (10 roles) |
 
 ### The developer use cases we already have — hyperlinked
@@ -98,9 +98,9 @@ The developer writes plausible per-agent skills; a hidden circular wait makes
 the fleet starve. The static check refutes it in milliseconds instead of after
 ~88 wasted agent calls; under the contract+gate+scheduler, real Claude
 subagents complete at the protocol-minimum call count — unchecked 0/100,
-STJP 100/100 ([`RESULT_1`](results/RESULT_1_DEADLOCK.md),
-[`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md),
-[`RESULT_7`](results/RESULT_7_N100_SCALE.md)).
+STJP 100/100 ([`RESULT_01`](results/RESULT_01_DEADLOCK.md),
+[`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md),
+[`RESULT_07`](results/RESULT_07_N100_SCALE.md)).
 
 **Grounded in real agents.** The deadlock demonstration is no longer only
 hand-authored. [`agenticpay_settlement`](../experiments/cases/agenticpay_settlement/)
@@ -127,9 +127,9 @@ per-model token/completion table is produced by the Azure AI Foundry run
 The everyday dev shape: produce → review → approve → merge/publish, with a
 branch on a value (CI coverage, revenue threshold). The ordering lives in the
 projected contract, so agents stop re-deriving it every turn: **8.8k vs 24.1k
-tokens** for the same report ([`RESULT_2`](results/RESULT_2_TOKEN_EFFICIENCY.md)),
+tokens** for the same report ([`RESULT_02`](results/RESULT_02_TOKEN_EFFICIENCY.md)),
 **13.3k/delivered, 9× cheaper** on the full stack
-([`RESULT_4`](results/RESULT_4_FULL_STACK.md)). Scale test:
+([`RESULT_04`](results/RESULT_04_FULL_STACK.md)). Scale test:
 [`report_pipeline_large`](../experiments/cases/report_pipeline_large/).
 
 #### UC3. Loops with budgets
@@ -147,13 +147,13 @@ is called each iteration.
 [`skills_safety`](../experiments/cases/skills_safety/).
 Compact a developer's prose skills into local types and check them *before*
 deployment: UNSAFE flagged 10/10 with an actionable diagnosis, repaired
-first-try 10/10 (E1 in [`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md)).
+first-try 10/10 (E1 in [`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md)).
 One static refutation at authoring time is the cheapest token saving there is.
 
 #### UC5. Growing the system without re-verifying everything
 
 [`composition`](../experiments/cases/composition/) + the incremental-extension
-pipeline (E3 in [`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md)).
+pipeline (E3 in [`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md)).
 Add a sub-protocol or a new role; only the touched roles get re-verified and
 re-prompted — the multi-agent analogue of an incremental build.
 
@@ -164,7 +164,7 @@ re-prompted — the multi-agent analogue of an incremental build.
 > coordination plan each model failed a different team 0/10; under full STJP
 > both models delivered 40/40 at the 4-call protocol minimum, 3× cheaper.
 > Plain-language write-up:
-> [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
+> [`results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md).
 
 The remaining cases ([`banking`](../experiments/cases/banking/),
 [`clinical_enrollment`](../experiments/cases/clinical_enrollment/),
@@ -200,7 +200,7 @@ tooling is an *informal, partial* version of what STJP formalizes:
   loop-until-dry that can starve — the exact "unreceivable message / circular
   wait" bugs the Scribble check refutes in milliseconds. Today I'd discover
   that by burning the tokens, which is precisely the unchecked arm of the
-  ladder in [`RESULT_5_SUBAGENT_VALIDATION.md`](results/RESULT_5_SUBAGENT_VALIDATION.md).
+  ladder in [`RESULT_05_SUBAGENT_VALIDATION.md`](results/RESULT_05_SUBAGENT_VALIDATION.md).
 
 Concretely, the STJP blueprint would help me in four ways:
 
@@ -213,18 +213,18 @@ Concretely, the STJP blueprint would help me in four ways:
    subagent a prose task description that includes context about the whole
    plan. Projecting a validated global protocol would give each subagent only
    its slice — "receive `Findings` from Finder, send `Verdict` to Synthesizer" —
-   which is the [`RESULT_2`](results/RESULT_2_TOKEN_EFFICIENCY.md) mechanism
+   which is the [`RESULT_02`](results/RESULT_02_TOKEN_EFFICIENCY.md) mechanism
    verbatim: smaller input per call, and the subagent stops spending output
    tokens reasoning about the overall coordination.
 3. **Typed message labels instead of LLM judging.** When results are anchored
    to protocol messages (the goal-anchoring insight in
-   [`RESULTS.md`](results/RESULTS.md)), I can check "did the verifier actually
+   [`RESULT_00_SUMMARY.md`](results/RESULT_00_SUMMARY.md)), I can check "did the verifier actually
    verify finding X" with an O(1) trace scan rather than another LLM call. The
    monitor's violation record `(role, step, state, expected)` is also exactly
    the audit trail I'd want when a multi-agent run goes wrong.
 4. **Safe incremental evolution.** When I add a stage mid-task (say, a new
    "security lens" verifier), the incremental-extension result (E3 in
-   [`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md): only Escrow + the new
+   [`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md): only Escrow + the new
    Auditor re-verified, everyone else untouched) is the right model — re-verify
    and re-prompt only the roles whose slice changed, instead of rewriting the
    whole orchestration.
@@ -249,8 +249,8 @@ subagents, governed by nothing but a projected lean contract + gate + EFSM
 scheduler, hit **10/10 (and 100/100 at n=100) success at the protocol-minimum
 call count** (7.0 calls for 7 messages) with zero violations — while the same
 agents with plausible prose skills deadlocked every single time
-([`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md),
-[`RESULT_7`](results/RESULT_7_N100_SCALE.md)). That is my exact operating mode
+([`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md),
+[`RESULT_07`](results/RESULT_07_N100_SCALE.md)). That is my exact operating mode
 — spawned, independent, prompt-only subagents — and it shows the blueprint
 substitutes *deterministic structure for model deliberation*, which is the
 cheapest token there is: the one never generated.
@@ -318,7 +318,7 @@ That is exactly the kind of structure STJP is built to handle, in three layers:
 2. **The per-company mini-pipeline is a reusable sub-plan** — and STJP already
    has the machinery to **check a sub-plan once and reuse it many times**
    (validated 10/10 with live subagents in
-   [`RESULT_5`](results/RESULT_5_SUBAGENT_VALIDATION.md)). Stamping out N verified
+   [`RESULT_05`](results/RESULT_05_SUBAGENT_VALIDATION.md)). Stamping out N verified
    copies of a fixed template is the easy case. The "N is unknown until run time"
    part has a name in the underlying theory — **parameterised multiparty session
    types** (a protocol written once but indexed over *n* workers; Yoshida,
@@ -331,27 +331,27 @@ That is exactly the kind of structure STJP is built to handle, in three layers:
    describes no mechanism that *enforces* these; it trusts the code to be right.
    That is precisely the gap this project measured: with real public skills and
    no enforcement, teams failed or acted unsafely; with the enforcing layer,
-   they went to 100% ([`RESULT_8`](results/RESULT_8_SKILL_SAFETY.md)).
+   they went to 100% ([`RESULT_08`](results/RESULT_08_SKILL_SAFETY.md)).
 
 **What STJP would concretely add to such a system:**
 
 - **Catch coordination bugs before the run, not during it.** The lesson from
-  [`RESULT_8`](results/RESULT_8_SKILL_SAFETY.md) transfers directly: each piece
+  [`RESULT_08`](results/RESULT_08_SKILL_SAFETY.md) transfers directly: each piece
   reads fine alone; the *combination* is where the dead-end or the wasted loop
   hides, and only a plan-level check sees it before you've spent anything.
 - **A cheap referee for research-specific rules** — "don't publish before the
   checker passed," "don't process the same company twice" — enforced by a small
   program, with no extra AI call. Without it, you get the publish-before-review
   and do-it-twice failures that hit 10 out of 10 unenforced trials in
-  [`RESULT_8`](results/RESULT_8_SKILL_SAFETY.md).
+  [`RESULT_08`](results/RESULT_08_SKILL_SAFETY.md).
 - **Big savings exactly at fan-out scale.** When you run many little pipelines in
   parallel, most agents are idle most of the time; STJP's scheduler simply never
   wakes an agent whose turn it can't be. That saving grows with the number of
   roles — from **9.2× to 17.1×** on coordination cost in our scaling test
-  ([`RESULT_7`](results/RESULT_7_N100_SCALE.md)).
+  ([`RESULT_07`](results/RESULT_07_N100_SCALE.md)).
 - **Let the cheapest model do it.** Our two-model run found that *with* the
   enforced plan, the small cheap model performed identically to the pricier one
-  ([`RESULT_9`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)). Across a
+  ([`RESULT_09`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md)). Across a
   hundred-company research fan-out, staffing it with the cheapest tier and
   letting the structure carry correctness is a real-money difference.
 
@@ -519,13 +519,13 @@ user.
 ## Appendix — the sources this interview drew on
 
 - [`docs/README.md`](README.md) — documentation index
-- [`docs/results/RESULTS.md`](results/RESULTS.md) — monitor mechanics + the composition theorem
-- [`docs/results/RESULT_1_DEADLOCK.md`](results/RESULT_1_DEADLOCK.md) — the catastrophic-failure case
-- [`docs/results/RESULT_2_TOKEN_EFFICIENCY.md`](results/RESULT_2_TOKEN_EFFICIENCY.md) — the −63% contract-size lever
-- [`docs/results/RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md) — the 9×-cheaper full-stack headline
-- [`docs/results/RESULT_5_SUBAGENT_VALIDATION.md`](results/RESULT_5_SUBAGENT_VALIDATION.md) — Claude subagents under STJP governance
-- [`docs/results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md) — real Anthropic + GitHub Copilot skills run by Haiku and Sonnet subagents (the experiment the Q1 update refers to)
-- [`docs/results/RESULT_7_N100_SCALE.md`](results/RESULT_7_N100_SCALE.md) — n=100 confirmation
+- [`docs/results/RESULT_00_SUMMARY.md`](results/RESULT_00_SUMMARY.md) — monitor mechanics + the composition theorem
+- [`docs/results/RESULT_01_DEADLOCK.md`](results/RESULT_01_DEADLOCK.md) — the catastrophic-failure case
+- [`docs/results/RESULT_02_TOKEN_EFFICIENCY.md`](results/RESULT_02_TOKEN_EFFICIENCY.md) — the −63% contract-size lever
+- [`docs/results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) — the 9×-cheaper full-stack headline
+- [`docs/results/RESULT_05_SUBAGENT_VALIDATION.md`](results/RESULT_05_SUBAGENT_VALIDATION.md) — Claude subagents under STJP governance
+- [`docs/results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md) — real Anthropic + GitHub Copilot skills run by Haiku and Sonnet subagents (the experiment the Q1 update refers to)
+- [`docs/results/RESULT_07_N100_SCALE.md`](results/RESULT_07_N100_SCALE.md) — n=100 confirmation
 - [`experiments/reports/TABLES_v2.md`](../experiments/reports/TABLES_v2.md) — reliability (pass^k) + translation fidelity
 - [`experiments/reports/n100/REPORT_N100.md`](../experiments/reports/n100/REPORT_N100.md) — full n=100 report incl. E6 roles sweep
 - [`experiments/subagent_trials/reports/SUBAGENT_TRIALS_REPORT.md`](../experiments/subagent_trials/reports/SUBAGENT_TRIALS_REPORT.md) — method: agent interaction without Foundry

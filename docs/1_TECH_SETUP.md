@@ -66,7 +66,7 @@ STJP can drive **two** interchangeable protocol compilers, selected with the
 Both go through the same `stjp_core/compiler/compiler_iface.get_compiler()`
 interface point, so the validator, the projected local types, and the EFSMs are produced
 the same way regardless of backend. We verified the two backends produce
-**isomorphic EFSMs** on all four RESULT_8 protocols, and the n=100 real-skills
+**isomorphic EFSMs** on all four RESULT_08 protocols, and the n=100 real-skills
 run (`6_RUN_REPORTS_EXPLAINED.md`) was projected through nuscr.
 
 **Full install + run instructions** (Docker route, CI-artifact native-binary

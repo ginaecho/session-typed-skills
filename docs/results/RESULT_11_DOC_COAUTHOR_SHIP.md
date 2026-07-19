@@ -26,7 +26,7 @@ project. Every technical word is explained where it first appears.
 
 ## The story at a glance (STAR)
 
-- **Situation** — An earlier case (`doc_pipeline`) had cast Anthropic's real
+- **Situation** — An earlier case ([`doc_pipeline`](../../experiments/cases/skills_safety/doc_pipeline/)) had cast Anthropic's real
   `brand-guidelines` skill file as an approval gate, even though the file
   contains zero approve/reject language and is a mechanical styling step;
   the actual loop-and-gate language sits in a different file,
@@ -154,7 +154,7 @@ a `choice at DocLead` inside it: every round the DocLead decides whether to
 broadcast `ReaderTestFeedback` (loop again) or broadcast `StyleRequest` and
 receive the `StyledDoc` (exit the loop), and every branch decision is
 broadcast to all three other roles — the same broadcast-everything lesson
-learned while building the sibling case `pr_review_merge` — so nobody can
+learned while building the sibling case [`pr_review_merge`](../../experiments/cases/skills_safety/pr_review_merge/) — so nobody can
 end up guessing which branch the team took. Applying that lesson before
 drafting meant the real `scribble-java` compiler accepted the protocol on
 the **first attempt** — `(True, '')` — with all four role projections
@@ -358,10 +358,10 @@ Source: `.report.json` files in
   differently for the same underlying reason (no named partner, no shared
   plan).
 - **This is not an engine artifact — it depends on the files' content.**
-  RESULT_9's `pr_merge` case shows unchecked teams can also *succeed*
+  RESULT_9's [`pr_merge`](../../experiments/cases/skills_safety/pr_merge/) case shows unchecked teams can also *succeed*
   purely on real files' own prose (confirmed:
   `sonnet__pr_merge__unchecked.report.json` `gcr_pct: 100.0`), and RESULT_8's
-  `airline_seat` unchecked run shows the opposite extreme — a true
+  [`airline_seat`](../../experiments/cases/skills_safety/airline_seat/) unchecked run shows the opposite extreme — a true
   zero-message deadlock, 10 of 10, with **zero** malformed replies
   (confirmed: `airline_seat_unchecked.state.json`, `malformed: 0` on every
   trial). Whether an unchecked team deadlocks, stalls, or succeeds depends

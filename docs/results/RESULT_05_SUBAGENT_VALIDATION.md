@@ -41,7 +41,7 @@ improvised an off-vocabulary message, nothing ever completed.
 
 ## How this experiment is set
 
-- **Case(s):** `escrow_trade` and its incrementally extended sibling `escrow_trade_ext` (defined in [`experiments/subagent_trials/cases.py`](../../experiments/subagent_trials/cases.py)); the compaction gauntlet reuses the `trade_deadlock` unchecked prose skills, [`experiments/cases/trade_deadlock/unchecked_skills/`](../../experiments/cases/trade_deadlock/unchecked_skills/)
+- **Case(s):** `escrow_trade` and its incrementally extended sibling `escrow_trade_ext` (defined in [`experiments/subagent_trials/cases.py`](../../experiments/subagent_trials/cases.py)); the compaction gauntlet reuses the [`trade_deadlock`](../../experiments/cases/trade_deadlock/) unchecked prose skills, [`experiments/cases/trade_deadlock/unchecked_skills/`](../../experiments/cases/trade_deadlock/unchecked_skills/)
 - **Arms/settings:** unchecked prose skills; STJP contract + gate + scheduler; STJP on the incrementally extended protocol (+ `SettlementAudit` child, new `Auditor` role)
 - **Trials:** 10 per arm (interaction trials); 10 seeded iterations (integration stress suite)
 - **Who plays the roles:** independent Claude subagents, one freshly spawned subagent per (arm, role, round) decision, played against the deterministic STJP engine (`experiments/subagent_trials/engine.py`) — no Azure AI Foundry

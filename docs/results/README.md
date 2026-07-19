@@ -4,13 +4,23 @@ This folder holds the evidence for every claim STJP (Session-Typed Judge
 Panel — this project's system for checking and enforcing a team of AI agents'
 coordination plan) makes. It is organized as **one story in four acts**
 (Situation → Task → Action → Result), and every act is backed by runnable
-demos and numbered reports (RESULT_1 … RESULT_11) — each report answers one
+demos and numbered reports (RESULT_00 … RESULT_11) — each report answers one
 question and follows the same layout, so if you can read one you can read
 them all.
+
+Two naming conventions keep the folder tidy, and each exists for a concrete
+reason. Report numbers have two digits because file listings sort names
+character by character: with one digit, `RESULT_10` would land between
+`RESULT_1` and `RESULT_2`; with `RESULT_01` … `RESULT_11` the listing reads
+in story order. And the dated write-ups live in their own `runs/` subfolder
+because they are a different kind of document: a numbered report answers one
+question for good, while a dated run note (like `runs/RUN_2026-06-11.md`)
+records everything one working day produced, warts included.
 
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
+- [Every file in this folder (the index)](#every-file-in-this-folder-the-index)
 - [The six words you need (everything else is explained inside each report)](#the-six-words-you-need-everything-else-is-explained-inside-each-report)
 - [The story in four acts (STAR)](#the-story-in-four-acts-star)
   - [Act 1 — Situation: teams of good agents fail, silently and expensively](#act-1--situation-teams-of-good-agents-fail-silently-and-expensively)
@@ -19,20 +29,43 @@ them all.
   - [Act 4 — Result: stress-tested, scaled, and run on every real case](#act-4--result-stress-tested-scaled-and-run-on-every-real-case)
 - [The real-case scoreboard (all nine, with benchmarks)](#the-real-case-scoreboard-all-nine-with-benchmarks)
 - [The reports, one question each](#the-reports-one-question-each)
-  - [RESULT_1 — Can anything except a compiler catch a deadlock?](#result_1--can-anything-except-a-compiler-catch-a-deadlock)
-  - [RESULT_2 — Does a per-agent contract make the same work cheaper?](#result_2--does-a-per-agent-contract-make-the-same-work-cheaper)
-  - [RESULT_3 — Does each added layer of protocol support help?](#result_3--does-each-added-layer-of-protocol-support-help)
-  - [RESULT_4 — Is the full STJP stack the safest AND the cheapest?](#result_4--is-the-full-stjp-stack-the-safest-and-the-cheapest)
-  - [RESULT_5 — Does it all work without Azure, with independent Claude agents?](#result_5--does-it-all-work-without-azure-with-independent-claude-agents)
-  - [RESULT_6 — Can we trust our own measuring instruments?](#result_6--can-we-trust-our-own-measuring-instruments)
-  - [RESULT_7 — Does everything hold at 100× the trials?](#result_7--does-everything-hold-at-100-the-trials)
-  - [RESULT_8 — What happens with REAL skills from public repositories?](#result_8--what-happens-with-real-skills-from-public-repositories)
-  - [RESULT_9 — Same real-skills test, run on two different models](#result_9--same-real-skills-test-run-on-two-different-models)
+  - [RESULT_01 — Can anything except a compiler catch a deadlock?](#result_01--can-anything-except-a-compiler-catch-a-deadlock)
+  - [RESULT_02 — Does a per-agent contract make the same work cheaper?](#result_02--does-a-per-agent-contract-make-the-same-work-cheaper)
+  - [RESULT_03 — Does each added layer of protocol support help?](#result_03--does-each-added-layer-of-protocol-support-help)
+  - [RESULT_04 — Is the full STJP stack the safest AND the cheapest?](#result_04--is-the-full-stjp-stack-the-safest-and-the-cheapest)
+  - [RESULT_05 — Does it all work without Azure, with independent Claude agents?](#result_05--does-it-all-work-without-azure-with-independent-claude-agents)
+  - [RESULT_06 — Can we trust our own measuring instruments?](#result_06--can-we-trust-our-own-measuring-instruments)
+  - [RESULT_07 — Does everything hold at 100× the trials?](#result_07--does-everything-hold-at-100-the-trials)
+  - [RESULT_08 — What happens with REAL skills from public repositories?](#result_08--what-happens-with-real-skills-from-public-repositories)
+  - [RESULT_09 — Same real-skills test, run on two different models](#result_09--same-real-skills-test-run-on-two-different-models)
   - [RESULT_10 — The corrected code-review case: a loop, two concurrent reviewers, and a livelock](#result_10--the-corrected-code-review-case-a-loop-two-concurrent-reviewers-and-a-livelock)
   - [RESULT_11 — The corrected announcement case: the loop lives where the files put it](#result_11--the-corrected-announcement-case-the-loop-lives-where-the-files-put-it)
 - [Older files kept for history](#older-files-kept-for-history)
 - [Where the raw numbers live](#where-the-raw-numbers-live)
 <!-- MENU:END -->
+
+## Every file in this folder (the index)
+
+Every document in `docs/results/` is listed here, so nothing is orphaned.
+The numbered reports are the polished evidence; the `runs/` notes are the
+raw day-of-run records they were distilled from.
+
+| File | What it shows, in one line |
+|---|---|
+| [`RESULT_00_SUMMARY.md`](RESULT_00_SUMMARY.md) | The earliest experiment (May 2026): a runtime monitor watching 6 agents shows a written spec lifts goal completion from 1% to 50% — the monitoring approach still used everywhere. |
+| [`RESULT_01_DEADLOCK.md`](RESULT_01_DEADLOCK.md) | Four agents each following a sound rule wait forever; only the pre-run check (static checker) catches it before money is spent. |
+| [`RESULT_02_TOKEN_EFFICIENCY.md`](RESULT_02_TOKEN_EFFICIENCY.md) | Giving each agent only its own slice of the plan (its contract) finishes the same task 63% cheaper. |
+| [`RESULT_03_PROTOCOL_LADDER.md`](RESULT_03_PROTOCOL_LADDER.md) | Each added layer of protocol support helps: 0% → 100% of trials completing as layers are added. |
+| [`RESULT_04_FULL_STACK.md`](RESULT_04_FULL_STACK.md) | The full stack is simultaneously the safest and the cheapest setting — 9× cheaper than the same plan pasted as text. |
+| [`RESULT_05_SUBAGENT_VALIDATION.md`](RESULT_05_SUBAGENT_VALIDATION.md) | The same guarantees hold with independent Claude agents and no cloud dependency. |
+| [`RESULT_06_BENCHMARK_HARDENING.md`](RESULT_06_BENCHMARK_HARDENING.md) | The measuring instruments were themselves tested: the checker catches 95.6% of injected faults with zero false alarms. |
+| [`RESULT_07_N100_SCALE.md`](RESULT_07_N100_SCALE.md) | Everything re-run at 100 trials; the n=10 findings were not luck. |
+| [`RESULT_08_SKILL_SAFETY.md`](RESULT_08_SKILL_SAFETY.md) | Real public skill files, individually fine, combine unsafely — and the compiler says so before any run. |
+| [`RESULT_09_REAL_SKILLS_TWO_MODELS.md`](RESULT_09_REAL_SKILLS_TWO_MODELS.md) | The same real-skills test on two different models: a smarter model moves the failure; the plan removes it. |
+| [`RESULT_10_PR_REVIEW_MERGE.md`](RESULT_10_PR_REVIEW_MERGE.md) | The corrected code-review case: on a looping protocol, a plan pasted as text livelocks (agents re-send forever); enforcement survives the loop. |
+| [`RESULT_11_DOC_COAUTHOR_SHIP.md`](RESULT_11_DOC_COAUTHOR_SHIP.md) | The corrected announcement case: the revision loop placed where the real files put it — same story, enforced plan wins on safety and cost. |
+| [`runs/RUN_2026-06-11.md`](runs/RUN_2026-06-11.md) | Raw run notes (June 11): why one setting cost 63k tokens, how it was slimmed, and the first consequence-graded scoring. |
+| [`runs/RUN_2026-06-17.md`](runs/RUN_2026-06-17.md) | Raw run notes (June 17): a drafting-prompt A/B test, criticality-gate smoke tests, and a fresh stability run. |
 
 ## The six words you need (everything else is explained inside each report)
 
@@ -67,18 +100,18 @@ from them fails in ways no file predicts:
 - **Deadlock** — everyone waits, forever, politely. Four agents each obeying
   a perfectly sound rule sent **zero messages** and burned ~25k tokens per
   attempt re-deciding "not my turn yet"
-  ([RESULT_1](RESULT_1_DEADLOCK.md); the same circle reproduced on real
+  ([RESULT_01](RESULT_01_DEADLOCK.md); the same circle reproduced on real
   AgenticPay-derived agents at three model tiers in the
   [live agenticpay run](../../experiments/cases/agenticpay_settlement/RESULTS_LIVE_SUBAGENTS.md)).
   Watch it happen: [the standalone demo](../../pitch/STJP%20Demo%20%28standalone%29.html).
 - **Silent disaster** — the team "succeeds" while double-charging a traveler
   or shipping an unreviewed change: real public skills produced 20
   double-charge/double-write disasters across 40 trials
-  ([RESULT_8](RESULT_8_SKILL_SAFETY.md)).
+  ([RESULT_08](RESULT_08_SKILL_SAFETY.md)).
 - **Unpredictable failure** — with no plan, a small model finished one team's
   job 0 times out of 10 while a smarter model finished the *other* team's job
   0 times out of 10, on identical files
-  ([RESULT_9](RESULT_9_REAL_SKILLS_TWO_MODELS.md)). Buying a better model
+  ([RESULT_09](RESULT_09_REAL_SKILLS_TWO_MODELS.md)). Buying a better model
   moves the failure; it does not remove it.
 - **Livelock** — the newest and subtlest: on a looping review protocol, a
   one-word label mismatch made a team re-send messages forever, burning
@@ -99,22 +132,22 @@ files**, not just cases we wrote ourselves; (4) the numbers survive
 
 The fix is a ladder, and every rung was measured separately: give each
 agent only its own slice of the checked plan (its **contract** —
-[RESULT_2](RESULT_2_TOKEN_EFFICIENCY.md): same work, **63% cheaper**); add
-each layer in turn ([RESULT_3](RESULT_3_PROTOCOL_LADDER.md): 0% → 100%
+[RESULT_02](RESULT_02_TOKEN_EFFICIENCY.md): same work, **63% cheaper**); add
+each layer in turn ([RESULT_03](RESULT_03_PROTOCOL_LADDER.md): 0% → 100%
 completion up the ladder); switch on the **gate** (blocks a wrong message
 before delivery) and the **scheduler** (only wakes the agent whose turn it
-can be) — [RESULT_4](RESULT_4_FULL_STACK.md): the full stack is
+can be) — [RESULT_04](RESULT_04_FULL_STACK.md): the full stack is
 simultaneously the **safest and the cheapest** setting, 9× cheaper than
 the same plan pasted as text. And the whole thing runs without any cloud
 dependency, on independent Claude agents
-([RESULT_5](RESULT_5_SUBAGENT_VALIDATION.md)).
+([RESULT_05](RESULT_05_SUBAGENT_VALIDATION.md)).
 
 ### Act 4 — Result: stress-tested, scaled, and run on every real case
 
 The instruments themselves were tested (checker catches 95.6% of injected
 plan faults with zero false alarms; the gate goes 0%→100% blocked as
-layers add — [RESULT_6](RESULT_6_BENCHMARK_HARDENING.md)); everything was
-re-run at n=100 ([RESULT_7](RESULT_7_N100_SCALE.md)); and **all nine real
+layers add — [RESULT_06](RESULT_06_BENCHMARK_HARDENING.md)); everything was
+re-run at n=100 ([RESULT_07](RESULT_07_N100_SCALE.md)); and **all nine real
 cases** — teams built from files mined from public repositories — now have
 executed benchmarks, including the two corrected looping cases run on
 2026-07-15 ([RESULT_10](RESULT_10_PR_REVIEW_MERGE.md),
@@ -130,12 +163,12 @@ contract + gate + scheduler.
 
 | # | Real case (source) | No plan | Plan as text | Full STJP | Report |
 |---|---|---|---|---|---|
-| 1 | [airline_seat](../../experiments/cases/skills_safety/airline_seat/) (OpenAI Agents SDK, MIT) | 0 of 10 finished — all 10 deadlocked | 10/10 but **10 double seat-writes** | **10/10, 0 disasters, cheapest** | [RESULT_8](RESULT_8_SKILL_SAFETY.md) |
-| 2 | [booking_saga](../../experiments/cases/skills_safety/booking_saga/) (LangGraph, MIT) | 0 of 10 finished — all 10 stalled | 10/10 but **10 double charges** | **10/10, 0 disasters** | [RESULT_8](RESULT_8_SKILL_SAFETY.md) |
-| 3 | [code_execution](../../experiments/cases/skills_safety/code_execution/) (AutoGen, MIT code license) | 0 of 10 finished — all 10 deadlocked | 10/10 | **10/10, cheapest** | [RESULT_8](RESULT_8_SKILL_SAFETY.md) |
-| 4 | [content_pipeline](../../experiments/cases/skills_safety/content_pipeline/) (CrewAI examples — pattern only, repo unlicensed) | 0 of 10 finished — all 10 stalled | 10/10 | **10/10, cheapest** | [RESULT_8](RESULT_8_SKILL_SAFETY.md) |
-| 5 | [doc_pipeline](../../experiments/cases/skills_safety/doc_pipeline/) (anthropics/skills, Apache-2.0) | model-dependent coin flip (Haiku finished 10/10; **Sonnet finished 0 of 10**) | 20/20 but 120 rule-breaking msgs/run | **20/20 both models, 0 rule-breaking, ~3× cheaper** | [RESULT_9](RESULT_9_REAL_SKILLS_TWO_MODELS.md) |
-| 6 | [pr_merge](../../experiments/cases/skills_safety/pr_merge/) (awesome-copilot, MIT) | coin flip (**Haiku finished 0 of 10**; Sonnet finished 10/10) | 20/20 but 120 rule-breaking msgs/run | **20/20 both models, 4 calls/trial** | [RESULT_9](RESULT_9_REAL_SKILLS_TWO_MODELS.md) |
+| 1 | [airline_seat](../../experiments/cases/skills_safety/airline_seat/) (OpenAI Agents SDK, MIT) | 0 of 10 finished — all 10 deadlocked | 10/10 but **10 double seat-writes** | **10/10, 0 disasters, cheapest** | [RESULT_08](RESULT_08_SKILL_SAFETY.md) |
+| 2 | [booking_saga](../../experiments/cases/skills_safety/booking_saga/) (LangGraph, MIT) | 0 of 10 finished — all 10 stalled | 10/10 but **10 double charges** | **10/10, 0 disasters** | [RESULT_08](RESULT_08_SKILL_SAFETY.md) |
+| 3 | [code_execution](../../experiments/cases/skills_safety/code_execution/) (AutoGen, MIT code license) | 0 of 10 finished — all 10 deadlocked | 10/10 | **10/10, cheapest** | [RESULT_08](RESULT_08_SKILL_SAFETY.md) |
+| 4 | [content_pipeline](../../experiments/cases/skills_safety/content_pipeline/) (CrewAI examples — pattern only, repo unlicensed) | 0 of 10 finished — all 10 stalled | 10/10 | **10/10, cheapest** | [RESULT_08](RESULT_08_SKILL_SAFETY.md) |
+| 5 | [doc_pipeline](../../experiments/cases/skills_safety/doc_pipeline/) (anthropics/skills, Apache-2.0) | model-dependent coin flip (Haiku finished 10/10; **Sonnet finished 0 of 10**) | 20/20 but 120 rule-breaking msgs/run | **20/20 both models, 0 rule-breaking, ~3× cheaper** | [RESULT_09](RESULT_09_REAL_SKILLS_TWO_MODELS.md) |
+| 6 | [pr_merge](../../experiments/cases/skills_safety/pr_merge/) (awesome-copilot, MIT) | coin flip (**Haiku finished 0 of 10**; Sonnet finished 10/10) | 20/20 but 120 rule-breaking msgs/run | **20/20 both models, 4 calls/trial** | [RESULT_09](RESULT_09_REAL_SKILLS_TWO_MODELS.md) |
 | 7 | [agenticpay_settlement](../../experiments/cases/agenticpay_settlement/) (AgenticPay benchmark, MIT) | deadlock at **all 3 model tiers** | — | **completes at all 3 tiers, 7 messages** | [live run](../../experiments/cases/agenticpay_settlement/RESULTS_LIVE_SUBAGENTS.md) |
 | 8 | [pr_review_merge](../../experiments/cases/skills_safety/pr_review_merge/) (awesome-copilot, MIT; corrected looping protocol) | 0 of 10 finished — all 10 deadlocked by round 2 | **0 of 10 finished — all 10 livelocked**, 42k tokens/trial burned | **10/10, 0 violations, 3.6× cheaper than the failing text arm** | [RESULT_10](RESULT_10_PR_REVIEW_MERGE.md) |
 | 9 | [doc_coauthor_ship](../../experiments/cases/skills_safety/doc_coauthor_ship/) (anthropics/skills, Apache-2.0; corrected looping protocol) | 0 of 10 finished — all 10 hit the round budget | 10/10 but 220 rule-breaking msgs | **10/10, 0 violations, ~40% cheaper** | [RESULT_11](RESULT_11_DOC_COAUTHOR_SHIP.md) |
@@ -144,11 +177,11 @@ One additional case, [trade_deadlock](../../experiments/cases/trade_deadlock/),
 is deliberately **not** counted as real: its skills were authored in-house
 (with documented lineage) — see its
 [`SOURCES.md`](../../experiments/cases/trade_deadlock/SOURCES.md). Its runs
-back RESULT_1 and RESULT_7.
+back RESULT_01 and RESULT_07.
 
 ## The reports, one question each
 
-### [RESULT_1 — Can anything except a compiler catch a deadlock?](RESULT_1_DEADLOCK.md)
+### [RESULT_01 — Can anything except a compiler catch a deadlock?](RESULT_01_DEADLOCK.md)
 **Why:** a deadlock (two agents each waiting forever for the other) burns money
 and delivers nothing — and it is invisible in the written instructions.
 **What it detects:** whether the static check — the compiler pass that
@@ -161,7 +194,7 @@ unsafe ones.
 **Takeaway:** the deadlock is caught in milliseconds before spending, or
 discovered at full price after. There is no middle option.
 
-### [RESULT_2 — Does a per-agent contract make the same work cheaper?](RESULT_2_TOKEN_EFFICIENCY.md)
+### [RESULT_02 — Does a per-agent contract make the same work cheaper?](RESULT_02_TOKEN_EFFICIENCY.md)
 **Why:** most multi-agent spend goes to agents *figuring out whose turn it is*,
 not doing work.
 **What it detects:** the pure cost effect of giving each agent only its own
@@ -171,7 +204,7 @@ slice of the plan (its "contract"), on a task every setting completes.
 **Takeaway:** a contract removes deliberation; the agent already knows what to
 send, to whom, when.
 
-### [RESULT_3 — Does each added layer of protocol support help?](RESULT_3_PROTOCOL_LADDER.md)
+### [RESULT_03 — Does each added layer of protocol support help?](RESULT_03_PROTOCOL_LADDER.md)
 **Why:** to see the whole staircase, not just its two ends.
 **What it detects:** how outcomes change step by step: no plan → rejected plan
 → plan pasted as text → per-agent contracts.
@@ -179,7 +212,7 @@ send, to whom, when.
 **Takeaway:** each layer pays; the best place to see, with real message
 traces, what a "violation" concretely looks like.
 
-### [RESULT_4 — Is the full STJP stack the safest AND the cheapest?](RESULT_4_FULL_STACK.md)
+### [RESULT_04 — Is the full STJP stack the safest AND the cheapest?](RESULT_04_FULL_STACK.md)
 **Why:** safety features usually cost extra; we tested whether these do.
 **What it detects:** whether contract + gate (a program that blocks a
 wrong message before delivery) + scheduler (a program that only wakes an agent
@@ -192,7 +225,7 @@ is honest.
 **Takeaway:** the structure does the work, so you stop paying agents to think
 about coordination.
 
-### [RESULT_5 — Does it all work without Azure, with independent Claude agents?](RESULT_5_SUBAGENT_VALIDATION.md)
+### [RESULT_05 — Does it all work without Azure, with independent Claude agents?](RESULT_05_SUBAGENT_VALIDATION.md)
 **Why:** to rule out that earlier results depended on one cloud stack or model.
 **What it detects:** the same machinery driven by independently spawned Claude
 agents, plus the newer components (skill compaction, protocol extension).
@@ -201,7 +234,7 @@ minimum possible number of AI calls; the compaction pipeline flagged the
 unsafe design 10/10 and an AI repaired it first-try 10/10.
 **Takeaway:** the guarantees travel across runtimes and models.
 
-### [RESULT_6 — Can we trust our own measuring instruments?](RESULT_6_BENCHMARK_HARDENING.md)
+### [RESULT_06 — Can we trust our own measuring instruments?](RESULT_06_BENCHMARK_HARDENING.md)
 **Why:** a benchmark is worthless if the checker misses bad plans or the gate
 can be talked around.
 **What it detects:** deliberately broken plans (does the checker catch them?),
@@ -212,14 +245,14 @@ the gate went 0% → 100% blocked as layers were added; the confidence math is
 worked out explicitly.
 **Takeaway:** the testers were tested.
 
-### [RESULT_7 — Does everything hold at 100× the trials?](RESULT_7_N100_SCALE.md)
+### [RESULT_07 — Does everything hold at 100× the trials?](RESULT_07_N100_SCALE.md)
 **Why:** 10 trials can hide luck; 100 trials pin the numbers down.
 **What it detects:** every deterministic benchmark re-run at n=100.
 **Result:** unchecked 0/100 vs STJP 100/100; the statistical confidence range
 narrows from "somewhere between 72–100%" to "96.3–100%".
 **Takeaway:** the n=10 findings were not luck.
 
-### [RESULT_8 — What happens with REAL skills from public repositories?](RESULT_8_SKILL_SAFETY.md)
+### [RESULT_08 — What happens with REAL skills from public repositories?](RESULT_08_SKILL_SAFETY.md)
 **Why:** all earlier cases were written by us; real developers download agent
 instructions from public repos (OpenAI Agents SDK, CrewAI, AutoGen, LangGraph
 examples) and combine them.
@@ -235,8 +268,8 @@ change.
 **Takeaway:** each skill can be individually fine and the *combination* still
 unsafe; only the plan-level check sees that.
 
-### [RESULT_9 — Same real-skills test, run on two different models](RESULT_9_REAL_SKILLS_TWO_MODELS.md)
-**Why:** the obvious objection to RESULT_8: "just use a smarter model."
+### [RESULT_09 — Same real-skills test, run on two different models](RESULT_09_REAL_SKILLS_TWO_MODELS.md)
+**Why:** the obvious objection to RESULT_08: "just use a smarter model."
 **What it detects:** two new teams built from **Anthropic's and GitHub
 Copilot's own public skill files**, the identical grid run twice — once with
 a small model (Haiku), once with a mid-tier model (Sonnet) playing every role.
@@ -252,8 +285,10 @@ With STJP the cheapest model performs like the expensive one.
 protocol was too simple — real review is a multi-round loop with two
 concurrent reviewers and a merge gated on both approvals. Does everything
 still hold on the *faithful* protocol shape?
-**What it detects:** the first live run of a looping (rec/choice) protocol
-through the trial engine, and a failure mode linear cases cannot show.
+**What it detects:** the first live run of a looping protocol — one that can
+repeat rounds and branch on a decision (written "rec/choice" in the protocol
+language) — through the trial engine, and a failure mode straight-line
+(linear) cases cannot show.
 **Result:** no plan: 0 of 10 finished (all 10 deadlocked in 2 rounds). Plan as text: **0 of 10 finished — a
 one-word label mismatch produced a stable livelock** burning 42k tokens per
 trial. Full STJP: 10/10, zero violations, with the gate visibly correcting
@@ -274,13 +309,14 @@ model, does the work.
 
 ## Older files kept for history
 
-- [`RUN_REPORT_2026-06-11.md`](RUN_REPORT_2026-06-11.md),
-  [`RUN_REPORT_2026-06-17.md`](RUN_REPORT_2026-06-17.md) — raw technical run
+- [`runs/RUN_2026-06-11.md`](runs/RUN_2026-06-11.md),
+  [`runs/RUN_2026-06-17.md`](runs/RUN_2026-06-17.md) — raw technical run
   notes from June; their findings were rewritten in plain language as
-  RESULT_3 and RESULT_4.
-- [`RESULTS.md`](RESULTS.md) — the earliest experiment (May), on a legacy
-  runner that has since been deleted. Kept because its monitoring approach is
-  still the one used everywhere.
+  RESULT_03 and RESULT_04.
+- [`RESULT_00_SUMMARY.md`](RESULT_00_SUMMARY.md) — the earliest experiment
+  (May), on a legacy runner that has since been deleted. Kept — and numbered
+  00, before the story starts — because its monitoring approach is still the
+  one used everywhere.
 
 ## Where the raw numbers live
 

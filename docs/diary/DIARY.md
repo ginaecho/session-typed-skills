@@ -147,9 +147,9 @@ history reads as it was.
 (Moved here from `docs/IMPLEMENTATION_2026-07-06.md` on 2026-07-08, per the
 diary convention. **Update 2026-07-08:** the "still pending" items at the
 bottom have since landed — the formal report is
-[`../results/RESULT_8_SKILL_SAFETY.md`](../results/RESULT_8_SKILL_SAFETY.md),
+[`../results/RESULT_08_SKILL_SAFETY.md`](../results/RESULT_08_SKILL_SAFETY.md),
 confirmed at n=100 and extended to Anthropic/Copilot skills in
-[`../results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](../results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).)
+[`../results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](../results/RESULT_09_REAL_SKILLS_TWO_MODELS.md).)
 
 What was implemented that day, the new additions, and how they map to the two
 requested deliverables.
@@ -283,7 +283,7 @@ pending explicit approval.**
   replicate for the other use cases.
 - Complete the remaining cheap-model runs (`airline_seat`, `content_pipeline`,
   `code_execution`, `booking_saga`) and write the formal
-  `docs/results/RESULT_8_SKILL_SAFETY.md`.
+  `docs/results/RESULT_08_SKILL_SAFETY.md`.
 
 ---
 

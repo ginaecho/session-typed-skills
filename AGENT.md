@@ -40,21 +40,21 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 
 | File | Purpose |
 |---|---|
-| `cases/` | Each subdirectory is a use case (finance, banking, trade_deadlock) |
+| `cases/` | Each subdirectory is a use case (e.g. [`finance`](experiments/cases/finance/), [`banking`](experiments/cases/banking/), [`trade_deadlock`](experiments/cases/trade_deadlock/)) |
 | `cases/<case>/case.yaml` | Task definition (roles, intent, goals, protocol path) |
 | `cases/<case>/protocols/v1.scr` | Canonical Scribble protocol |
 | `cases/<case>/protocols/v1.refn` | Value-level refinement guards (sidecar to .scr) |
 | `cases/<case>/protocols/llm_drafts/valid/` | LLM-drafted protocol that Scribble accepts |
 | `cases/<case>/protocols/llm_drafts/unsafe/` | LLM-drafted protocol Scribble rejects (for testing) |
 | `cases/<case>/runs/` | Benchmark results (events, summaries, prompts) |
-| `baselines/` | The 7 arms (runners for each variant) |
+| `baselines/` | The 15 arms (runners for each variant) |
 | `baselines/registry.py` | ARM DEFINITIONS — where to register new arms (4 places) |
 | `baselines/instructions.py` | Prompt builders for each arm |
 | `scripts/case_runner.py` | **THE** benchmark driver—run this to test |
 | `scripts/integration_stress.py` | Generated-protocol stress suite (10 seeded iterations over the round-trip / mutation / critic-oracle / revisor / incremental surface) — reports to `experiments/reports/stress/` |
-| `subagent_trials/` | Foundry-free agent-interaction harness (engine + cases + committed reports; see `docs/results/RESULT_5_SUBAGENT_VALIDATION.md`) |
+| `subagent_trials/` | Foundry-free agent-interaction harness (engine + cases + committed reports; see `docs/results/RESULT_05_SUBAGENT_VALIDATION.md`) |
 | `scripts/case_loader.py` | Loads case.yaml into a Case object |
-| `CLAUDE.md` | How the 8-arm matrix works (agents: read this!) |
+| `CLAUDE.md` | How the arm matrix works, mechanically (agents: read this!) — the registry has since grown to 15 arms |
 
 ### Documentation (`docs/`)
 
@@ -65,11 +65,13 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 | `2_TESTING_STRATEGIES.md` | How we benchmark STJP fairly; the 4 claims |
 | `3_BENCHMARK_DESIGN_EXPLAINED.md` | Metrics: GCR, CGC, cost-to-goal, severity grading |
 | `4_HOW_TO_CREATE_USE_CASES.md` | Step-by-step: create protocol, agents, test |
+| `5_ARMS_EXPLAINED.md` | Every arm drawn as one flow line; the case-fit table |
 | `6_RUN_REPORTS_EXPLAINED.md` | How to read results; 2026-07-02 run explained |
 | `7_USE_CASE_DEADLOCK_SAFETY.md` | Why safety matters—concrete examples |
-| `reference/` | Current technical deep-dives: `GLOSSARY.md` (canonical), `SCRIBBLE_EXTENSIONS.md`, `CHOICE_GUARDS_AND_GATE.md`, `FOUNDRY_VISIBILITY.md`, `GAP_CLOSED.md`, `PROTOCOL_EVOLUTION.md`, `STJP_V3_PLAN.md` |
-| `results/` | Current evidence: `RESULT_1_DEADLOCK.md`, `RESULT_2_TOKEN_EFFICIENCY.md`, `RESULT_3_PROTOCOL_LADDER.md`, `RESULT_4_FULL_STACK.md` (latest official result) |
-| `archive/` | Historical/superseded docs (reference only; nothing current) |
+| `8_INTENT_TO_PROTOCOL_TRAINING.md` | How intent → protocol drafting gets machine-learned |
+| `reference/` | Current technical deep-dives: `GLOSSARY.md` (canonical), `SCRIBBLE_EXTENSIONS.md`, `CHOICE_GUARDS_AND_GATE.md`, `FOUNDRY_VISIBILITY.md`, `GAP_CLOSED.md`, `PROTOCOL_EVOLUTION.md`, `STJP_V3_PLAN.md`, `COST_ESTIMATES.md` |
+| `results/` | Current evidence: `RESULT_00_SUMMARY.md` through `RESULT_11_DOC_COAUTHOR_SHIP.md` (numbered reports) plus `runs/` (dated run reports) |
+| `archive/` | Historical/superseded docs (reference only; nothing current) — indexed in `docs/archive/README.md` |
 
 ### Configuration & meta
 
@@ -83,26 +85,38 @@ This file is for Claude and other AI agents working on the STJP codebase. It exp
 
 ---
 
-## 🧠 Understanding the 7-Arm Matrix
+## 🧠 Understanding the 15-Arm Matrix
 
-When you run a benchmark, it tests 7 different "arms" (variants):
+When you run a benchmark, it can test up to 15 different "arms" (variants) —
+the full list lives in `experiments/baselines/registry.py`:
 
-| Arm | What agents get | Enforcement | Scheduler |
+| Arm | What agents get | Enforcement | Scheduling |
 |---|---|---|---|
 | **bare** | No protocol, just intent | None | None |
-| **global_text** | Whole protocol pasted as text | None | None |
-| **local_verbose** | Per-agent contract (long) | Monitor only | None |
-| **local_lean** | Per-agent contract (short) | Monitor only | None |
-| **local_lean_gate** | Per-agent contract + enforcer | Gate (blocks wrong messages) | None |
-| **local_lean_sched** | Per-agent contract + gate + scheduler | Gate | EFSM scheduler (only ask agents who can act) |
+| **maf_native** | Intent only, on the Microsoft Agent Framework runtime | None | None |
+| **maf_foundry** | Intent only, MAF with the Foundry chat client | None | None |
+| **maf_groupchat** | Intent only | None | LLM orchestrator picks next speaker |
+| **maf_groupchat_unsafe** | Compiler-REJECTED plan pasted as text | None | LLM orchestrator |
+| **maf_groupchat_llmvalid** | Validated plan pasted as text | None | LLM orchestrator |
+| **unchecked_skills** | Human-written/downloaded skills, never compiler-checked | None | None |
+| **global_decentralized** | Validated plan pasted as text | None | Decentralized rounds |
+| **spec_llmvalid** | Per-agent contract (verbose) | Monitor observes only | None |
+| **min_llmvalid** | Per-agent contract (minimal) | Monitor observes only | None |
+| **spec_llmvalid_gate** | Verbose contract | Gate (blocks wrong messages) | None |
+| **min_llmvalid_gate** | Minimal contract | Gate | None |
+| **min_llmvalid_gate_nohint** | Minimal contract | Gate, without the per-turn state hint | None |
+| **min_llmvalid_gate_lastrecv** | Minimal contract | Gate | "Ask whoever just received a message" heuristic (protocol-free control for the scheduler) |
+| **min_llmvalid_sched** | Minimal contract | Gate | EFSM scheduler (only ask agents who can act) — the full STJP stack |
 
 **Key insights:**
-- Bare = baseline (should fail or waste tokens)
-- Global text = "give them the spec as a string"
-- Local variants = "give them their role's slice + guards"
+- Bare and the MAF variants = baselines (should fail or waste tokens); several runtimes prove the failures are not one vendor's bug
+- Text arms = "give them the spec as a string" (honor system, no enforcement)
+- Contract arms = "give each agent its role's slice + guards"
+- The nohint/lastrecv arms = ablations — they remove one ingredient at a time so a win can be attributed to the right ingredient
 - The scheduler = "we know from the protocol who must act next—don't ask idle agents"
 
-The results show: `local_lean_sched` is safest, cheapest, fastest.
+The results show: `min_llmvalid_sched` (full STJP) is safest, cheapest, fastest.
+See [`docs/5_ARMS_EXPLAINED.md`](docs/5_ARMS_EXPLAINED.md) for each arm drawn as a flow line.
 
 ---
 
@@ -157,7 +171,7 @@ The results show: `local_lean_sched` is safest, cheapest, fastest.
 **Task:** Test a new idea—e.g., "what if we add a confidence score to the gate?"
 
 **What to do:**
-1. Read `experiments/CLAUDE.md` section "The 8 arms, mechanically"
+1. Read `experiments/CLAUDE.md` section "The 8 arms, mechanically" (the mechanics still apply; the registry has since grown to 15 arms)
 2. Add to `experiments/baselines/registry.py` (SCENARIOS dict) with a new key and factory
 3. Add a new builder in `experiments/baselines/instructions.py` (e.g., `build_my_new_variant`)
 4. Register in `case_runner.py` under `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`
@@ -525,7 +539,7 @@ Before jumping in, check:
 
 1. **Project README.md** — how to run experiments
 2. **docs/README.md** — which doc to read for your role
-3. **experiments/CLAUDE.md** — how the 8-arm matrix works
+3. **experiments/CLAUDE.md** — how the arm matrix works (now 15 arms)
 4. **stjp_core/CLAUDE.md** — Azure configuration
 
 If still stuck, look at existing cases (finance, banking) for examples.

@@ -47,7 +47,7 @@ Clean, organized guides to the Session-Typed Judge Panel (STJP) — a system tha
 - **How does intent → protocol drafting get machine-learned?** → See [`8_INTENT_TO_PROTOCOL_TRAINING.md`](8_INTENT_TO_PROTOCOL_TRAINING.md)
 - **WHY do we need STJP at all? The whole story, with demos** → [`results/README.md`](results/README.md) — four acts (Situation → Task → Action → Result) ending in the nine-real-case scoreboard, every act backed by a runnable demo and a numbered report
 - **What exactly is an "arm" / a "setting"?** → See [`5_ARMS_EXPLAINED.md`](5_ARMS_EXPLAINED.md) (every configuration drawn as one flow line, plus which test cases fit STJP)
-- **Real Anthropic + GitHub Copilot skills, run by two different models?** → See [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md)
+- **Real Anthropic + GitHub Copilot skills, run by two different models?** → See [`results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md)
 - **Running the nuscr / nuscribble compiler backend?** → See [`reference/NUSCR_CLOUD_INSTALL.md`](reference/NUSCR_CLOUD_INSTALL.md) (install routes + `STJP_COMPILER_BACKEND=nuscr`)
 - **Verifying the results from the raw traces?** → See [`reference/HOW_TO_USE_TRACES.md`](reference/HOW_TO_USE_TRACES.md) (re-derive every metric; read a trace by eye)
 - **Which developer use cases fit STJP (interview format)?** → See [`FABLE5_INTERVIEW_DEV_USE_CASES.md`](FABLE5_INTERVIEW_DEV_USE_CASES.md)
@@ -282,23 +282,23 @@ Each report follows the same template: at-a-glance summary → the story → how
 >   the safety rule); **cost-to-goal** = tokens per trial ÷ completion rate —
 >   what one successful delivery really costs once failures are paid for.
 
-- [`results/RESULT_1_DEADLOCK.md`](results/RESULT_1_DEADLOCK.md) — **Only a static checker catches a deadlock**: unchecked rules 0/6 trials, 0 messages, ∞ cost; validated 6/6 first try. Plus the authoring-risk measurement (unchecked AI-drafted protocols are safe only 3/10 times; the checker caught all 7 unsafe drafts).
-- [`results/RESULT_2_TOKEN_EFFICIENCY.md`](results/RESULT_2_TOKEN_EFFICIENCY.md) — **Same task, one-third the tokens**: everyone completes 100%; lean projected contract 8.8k tokens vs 24.1k with no contract (−63%). Mechanism: less deliberation + smaller prompts.
-- [`results/RESULT_3_PROTOCOL_LADDER.md`](results/RESULT_3_PROTOCOL_LADDER.md) — **More protocol support, better outcomes** (8 settings, n=10): no protocol 0% → rejected protocol 10% → validated text 40% → projected contracts 60–100%. Also the best place to see, with real traces, exactly what "a violation" and "success" mean.
-- [`results/RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md) — **The latest headline** (pre-registered, 2026-07-02): full STJP stack is simultaneously the safest (100%, 0 disasters) and the cheapest/fastest (13.3k tokens, 32s per delivered report — 9× cheaper than the same protocol as text).
-- [`results/RESULT_5_SUBAGENT_VALIDATION.md`](results/RESULT_5_SUBAGENT_VALIDATION.md) — **Foundry-free validation of the 2026-07 components** (Critic/Revisor, skill compaction, incremental extension): 211/211 stress checks over generated protocols; subagent-driven trials n=10 — unchecked prose skills 0/10 (all deadlock) vs STJP 10/10 at protocol-minimum cost, extended protocol 10/10, compaction gauntlet 10/10 detect + 10/10 repair.
-- [`results/RESULT_6_BENCHMARK_HARDENING.md`](results/RESULT_6_BENCHMARK_HARDENING.md) — **Benchmark Plan v2** (test the testers + mutation testing + adversarial gate + pass^k + translation fidelity + roles/portability): verdict corpus 40/40, checker 95.6% detection/0% FP, gate exfiltration ladder 0→41.7→91.7→100%, pass^10 CI story, equivalence scorer 100%. Design in [`reference/BENCHMARK_PLAN_V2.md`](reference/BENCHMARK_PLAN_V2.md).
-- [`results/RESULT_7_N100_SCALE.md`](results/RESULT_7_N100_SCALE.md) — **n=100 scale run** (all deterministic benchmarks): Wilson CI narrows from [72,100]% to [96.3,100]%; pass^10@floor jumps 0.039→0.686 (17.6×); integration stress 2105/2110; 100-protocol mutation corpus 95.1%/0% FP; subagent trials 0/100 unchecked vs 100/100 STJP; equivalence scorer 300/300.
-- [`results/RESULT_8_SKILL_SAFETY.md`](results/RESULT_8_SKILL_SAFETY.md) — **Real public skills, unvalidated vs STJP** (4 teams built from real OpenAI Agents SDK / CrewAI / AutoGen / LangGraph example skills — benign, MIT-licensed, provenance in each case's `SOURCES.md`). The compiler rejected all 4 combined plans at design time, and at runtime every unvalidated trial failed (40/40 stall or deadlock). Writing the contract in as text fixed completion but produced 20 double-charge/double-write disasters; full STJP: 100% success, 0 disasters, cheapest. An n=100 re-run with a stronger model (Sonnet) confirmed all of it — the weak settings fail *differently* under a different model, but the design-time rejection is model-independent.
-- [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md) — **Real Anthropic + GitHub Copilot skills, the same experiment run on two models** (2 teams built from [anthropics/skills](https://github.com/anthropics/skills) and [github/awesome-copilot](https://github.com/github/awesome-copilot) files × 3 settings × n=10, once with Haiku subagents and once with Sonnet subagents; written fully jargon-free, every term explained in place). Headline: with no coordination plan, *which* team fails is model-dependent — Haiku finished the code-change team's job 0 times out of 10, Sonnet finished the announcement team's job 0 times out of 10, on identical skills; with full STJP both models were flawless and indistinguishable (40/40, 0 rule-breaking messages, exactly 4 AI calls/trial, ~1.8k tokens = 3× cheaper than no-plan, 2.4× cheaper than plan-as-text). Evidence: `experiments/subagent_trials/reports/ss2026_new_skills/`.
+- [`results/RESULT_01_DEADLOCK.md`](results/RESULT_01_DEADLOCK.md) — **Only a static checker catches a deadlock**: unchecked rules 0/6 trials, 0 messages, ∞ cost; validated 6/6 first try. Plus the authoring-risk measurement (unchecked AI-drafted protocols are safe only 3/10 times; the checker caught all 7 unsafe drafts).
+- [`results/RESULT_02_TOKEN_EFFICIENCY.md`](results/RESULT_02_TOKEN_EFFICIENCY.md) — **Same task, one-third the tokens**: everyone completes 100%; lean projected contract 8.8k tokens vs 24.1k with no contract (−63%). Mechanism: less deliberation + smaller prompts.
+- [`results/RESULT_03_PROTOCOL_LADDER.md`](results/RESULT_03_PROTOCOL_LADDER.md) — **More protocol support, better outcomes** (8 settings, n=10): no protocol 0% → rejected protocol 10% → validated text 40% → projected contracts 60–100%. Also the best place to see, with real traces, exactly what "a violation" and "success" mean.
+- [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) — **The latest headline** (pre-registered, 2026-07-02): full STJP stack is simultaneously the safest (100%, 0 disasters) and the cheapest/fastest (13.3k tokens, 32s per delivered report — 9× cheaper than the same protocol as text).
+- [`results/RESULT_05_SUBAGENT_VALIDATION.md`](results/RESULT_05_SUBAGENT_VALIDATION.md) — **Foundry-free validation of the 2026-07 components** (Critic/Revisor, skill compaction, incremental extension): 211/211 stress checks over generated protocols; subagent-driven trials n=10 — unchecked prose skills 0/10 (all deadlock) vs STJP 10/10 at protocol-minimum cost, extended protocol 10/10, compaction gauntlet 10/10 detect + 10/10 repair.
+- [`results/RESULT_06_BENCHMARK_HARDENING.md`](results/RESULT_06_BENCHMARK_HARDENING.md) — **Benchmark Plan v2** (test the testers + mutation testing + adversarial gate + pass^k + translation fidelity + roles/portability): verdict corpus 40/40, checker 95.6% detection/0% FP, gate exfiltration ladder 0→41.7→91.7→100%, pass^10 CI story, equivalence scorer 100%. Design in [`reference/BENCHMARK_PLAN_V2.md`](reference/BENCHMARK_PLAN_V2.md).
+- [`results/RESULT_07_N100_SCALE.md`](results/RESULT_07_N100_SCALE.md) — **n=100 scale run** (all deterministic benchmarks): Wilson CI narrows from [72,100]% to [96.3,100]%; pass^10@floor jumps 0.039→0.686 (17.6×); integration stress 2105/2110; 100-protocol mutation corpus 95.1%/0% FP; subagent trials 0/100 unchecked vs 100/100 STJP; equivalence scorer 300/300.
+- [`results/RESULT_08_SKILL_SAFETY.md`](results/RESULT_08_SKILL_SAFETY.md) — **Real public skills, unvalidated vs STJP** (4 teams built from real OpenAI Agents SDK / CrewAI / AutoGen / LangGraph example skills — benign, MIT-licensed, provenance in each case's `SOURCES.md`). The compiler rejected all 4 combined plans at design time, and at runtime every unvalidated trial failed (40/40 stall or deadlock). Writing the contract in as text fixed completion but produced 20 double-charge/double-write disasters; full STJP: 100% success, 0 disasters, cheapest. An n=100 re-run with a stronger model (Sonnet) confirmed all of it — the weak settings fail *differently* under a different model, but the design-time rejection is model-independent.
+- [`results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md) — **Real Anthropic + GitHub Copilot skills, the same experiment run on two models** (2 teams built from [anthropics/skills](https://github.com/anthropics/skills) and [github/awesome-copilot](https://github.com/github/awesome-copilot) files × 3 settings × n=10, once with Haiku subagents and once with Sonnet subagents; written fully jargon-free, every term explained in place). Headline: with no coordination plan, *which* team fails is model-dependent — Haiku finished the code-change team's job 0 times out of 10, Sonnet finished the announcement team's job 0 times out of 10, on identical skills; with full STJP both models were flawless and indistinguishable (40/40, 0 rule-breaking messages, exactly 4 AI calls/trial, ~1.8k tokens = 3× cheaper than no-plan, 2.4× cheaper than plan-as-text). Evidence: `experiments/subagent_trials/reports/ss2026_new_skills/`.
 - [`results/RESULT_10_PR_REVIEW_MERGE.md`](results/RESULT_10_PR_REVIEW_MERGE.md) — **The corrected code-review case (looping protocol), first live rec/choice run** (3 settings × n=10, Haiku role subagents, 2026-07-15). Headline: with the plan only as text, 0 of 10 trials finished — all 10 LIVELOCKED, a one-word label mismatch burning 42k tokens/trial with zero deliveries — while full STJP finished 10/10 with zero violations and the gate visibly correcting 20 wrong-peer sends. Evidence: `experiments/subagent_trials/reports/ss2026_corrected_cases/`.
 - [`results/RESULT_11_DOC_COAUTHOR_SHIP.md`](results/RESULT_11_DOC_COAUTHOR_SHIP.md) — **The corrected announcement case (looping protocol), same three settings** (n=10, Haiku, 2026-07-15). Headline: with no plan, 0 of 10 trials finished (all 10 hit the round budget); plan-as-text finished 10/10 but sent 220 rule-breaking messages; full STJP finished 10/10, zero violations, ~40% cheaper and 2.6× fewer calls. Evidence: same folder.
 
 Earlier run reports, kept here for history (technical, not rewritten):
 
-- [`results/RUN_REPORT_2026-06-11.md`](results/RUN_REPORT_2026-06-11.md) — cost anatomy, severity re-scoring, the banking companion run
-- [`results/RUN_REPORT_2026-06-17.md`](results/RUN_REPORT_2026-06-17.md) — drafting prompt A/B, criticality-gate smoke (a quick end-to-end check) results
-- [`results/RESULTS.md`](results/RESULTS.md) — results from the deleted legacy runner (earliest run)
+- [`results/runs/RUN_2026-06-11.md`](results/runs/RUN_2026-06-11.md) — cost anatomy, severity re-scoring, the banking companion run
+- [`results/runs/RUN_2026-06-17.md`](results/runs/RUN_2026-06-17.md) — drafting prompt A/B, criticality-gate smoke (a quick end-to-end check) results
+- [`results/RESULT_00_SUMMARY.md`](results/RESULT_00_SUMMARY.md) — results from the deleted legacy runner (earliest run)
 
 ### `diary/` — the project journal
 
@@ -314,12 +314,12 @@ Earlier run reports, kept here for history (technical, not rewritten):
 | `BENCHMARK_DESIGN_V2_FROZEN.md` | Frozen snapshot behind the grand n=10 run (revert point) |
 | `EXPERIMENT_DESIGN.md` | v1 (4-scenario) design |
 | `EXPERIMENT_DESIGN_v2.md` | The 8-arm design (superseded by v3 execution design) |
-| `EXPERIMENT_DESIGN_V3_EXECUTION.md` | The pre-registered design graded by [`results/RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md) |
+| `EXPERIMENT_DESIGN_V3_EXECUTION.md` | The pre-registered design graded by [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) |
 | `WHY_B_MATCHES_C_ANALYSIS.md` | The honest confound analysis — its conclusions now live in [`2_TESTING_STRATEGIES.md`](2_TESTING_STRATEGIES.md) |
-| `RUN_REPORT_2026-07-02.md` | Technical original of the 2026-07-02 run — rewritten in plain English as [`results/RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md) |
-| `RESULTS_finance_n10.md` | Technical original of the n=10 finance run — rewritten as [`results/RESULT_3_PROTOCOL_LADDER.md`](results/RESULT_3_PROTOCOL_LADDER.md) |
-| `DEADLOCK_DEMO.md` | Technical original of the deadlock demo — rewritten as [`results/RESULT_1_DEADLOCK.md`](results/RESULT_1_DEADLOCK.md) |
-| `TOKEN_EFFICIENCY_DEMO.md` | Technical original of the efficiency demo — rewritten as [`results/RESULT_2_TOKEN_EFFICIENCY.md`](results/RESULT_2_TOKEN_EFFICIENCY.md) |
+| `RUN_REPORT_2026-07-02.md` | Technical original of the 2026-07-02 run — rewritten in plain English as [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) |
+| `RESULTS_finance_n10.md` | Technical original of the n=10 finance run — rewritten as [`results/RESULT_03_PROTOCOL_LADDER.md`](results/RESULT_03_PROTOCOL_LADDER.md) |
+| `DEADLOCK_DEMO.md` | Technical original of the deadlock demo — rewritten as [`results/RESULT_01_DEADLOCK.md`](results/RESULT_01_DEADLOCK.md) |
+| `TOKEN_EFFICIENCY_DEMO.md` | Technical original of the efficiency demo — rewritten as [`results/RESULT_02_TOKEN_EFFICIENCY.md`](results/RESULT_02_TOKEN_EFFICIENCY.md) |
 | `STJP_RESEARCH_REPORT.md` | The full technical report through the n=5 gate result |
 | `STJP_discussion_13May2025.md` | Meeting notes (the journal itself lives in `diary/`) |
 | `DRAFTING_IMPROVEMENTS.md` | Why early drafts failed + the fan-out normalizer fix |
@@ -372,8 +372,8 @@ docs/
 ├── reference/                       ← current technical deep-dives (glossary, Scribble
 │                                      extensions, gate internals, Foundry wiring, v3 plan,
 │                                      Benchmark Plan v2)
-├── results/                         ← current evidence, plain English: RESULT_1_DEADLOCK …
-│                                      RESULT_7_N100_SCALE (latest)
+├── results/                         ← current evidence, plain English: RESULT_01_DEADLOCK …
+│                                      RESULT_07_N100_SCALE (latest)
 ├── predictions/                     ← pre-registered predictions (written BEFORE a run,
 │                                      graded after) — e.g. BENCHMARK_V2_PREREGISTRATION
 ├── diary/                           ← the project journal (DIARY.md, newest-first)
@@ -393,7 +393,7 @@ Rules:
 ## 🔄 Where to get the latest
 
 - **Latest plan:** [`reference/STJP_V3_PLAN.md`](reference/STJP_V3_PLAN.md) (governance plane + execution plane; summarized in [`1_TECH_SETUP.md`](1_TECH_SETUP.md) section 7)
-- **Latest results:** [`results/RESULT_7_N100_SCALE.md`](results/RESULT_7_N100_SCALE.md) (all deterministic benchmarks at n=100) and [`results/RESULT_4_FULL_STACK.md`](results/RESULT_4_FULL_STACK.md) (finance case, gpt-5.4, n=10 — the pre-registered live-model run)
+- **Latest results:** [`results/RESULT_07_N100_SCALE.md`](results/RESULT_07_N100_SCALE.md) (all deterministic benchmarks at n=100) and [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) (finance case, gpt-5.4, n=10 — the pre-registered live-model run)
 - **Latest code status:** [`reference/GAP_CLOSED.md`](reference/GAP_CLOSED.md)
 - **Latest experiment design:** [`archive/EXPERIMENT_DESIGN_V3_EXECUTION.md`](archive/EXPERIMENT_DESIGN_V3_EXECUTION.md) (pre-registered; graded by the 2026-07-02 run report)
 

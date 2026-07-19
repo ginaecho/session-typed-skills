@@ -28,7 +28,7 @@ Run dates: 2026-05-07. Total: 20 trials / scenario × 2 scenarios = 80 trials.
 
 ## How this experiment is set
 
-- **Case(s):** the Quarterly Finance Report protocol (`P1_v2.scr`) — a pre-`experiments/cases/` convention setup; the driver script (`experiment_4_scenarios.py`) and protocol file referenced in this report are not present in the current repository checkout (this is the project's earliest committed result, 2026-05-07, superseded in structure by the later `experiments/cases/finance/` case)
+- **Case(s):** the Quarterly Finance Report protocol (`P1_v2.scr`) — a pre-`experiments/cases/` convention setup; the driver script (`experiment_4_scenarios.py`) and protocol file referenced in this report are not present in the current repository checkout (this is the project's earliest committed result, 2026-05-07, superseded in structure by the later [`experiments/cases/finance/`](../../experiments/cases/finance/) case)
 - **Arms/settings:** WITH spec markdown; WITHOUT spec markdown
 - **Trials:** 10 per arm per run, 2 independent runs (20 trials/arm total), × 2 scenarios (high / standard revenue) = 80 trials
 - **Who plays the roles:** gpt-5.4 via Azure OpenAI Chat Completions, 6 PromptAgent definitions registered in Azure AI Foundry (one per protocol role)

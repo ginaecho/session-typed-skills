@@ -1,13 +1,29 @@
 # experiments/ — project policy
 
 How the STJP benchmark is wired together. Read this before answering questions
-about the 8-arm matrix, the skills files, or where prompts come from.
+about the arm matrix (15 arms), the skills files, or where prompts come from.
 
-## The 8 arms, mechanically
+## Menu
 
-`baselines/registry.py:160-169` is the single source of truth. Each arm is
+- [The 15 arms, mechanically](#the-15-arms-mechanically)
+- ["Unsafe" means Scribble's deadlock-freedom check rejected it](#unsafe-means-scribbles-deadlock-freedom-check-rejected-it)
+- [Skills files — gone from the live path](#skills-files--gone-from-the-live-path-kept-for-authoring-only)
+- [Payload values are pure LLM output](#payload-values-the-numbers-are-pure-llm-output)
+- [Where prompts live — two layers](#where-prompts-live--two-layers)
+- [What lives in case.yaml vs. here](#what-lives-in-caseyaml-vs-here)
+- [Persistence policy](#persistence-policy--every-prompt-is-checkable-post-hoc-implemented)
+- [Skills files — do not regenerate without rechecking](#skills-files--do-not-regenerate-into-the-case-dirs-without-rechecking)
+- [Reading a trial trace](#reading-a-trial-trace)
+- [Reading a run summary](#reading-a-run-summary)
+- [Common pitfalls](#common-pitfalls-dont-repeat)
+- [File map you'll need](#file-map-youll-need)
+
+## The 15 arms, mechanically
+
+The `SCENARIOS` list at the bottom of `baselines/registry.py` is the single
+source of truth (line numbers drift; search for `SCENARIOS`). Each arm is
 `(scenario_key, scenario_name, factory)`. The factory builds a `BaselineRunner`
-that calls one of four instruction builders in `baselines/instructions.py`:
+that calls one of five instruction builders in `baselines/instructions.py`:
 
 | arm key | builder | protocol given to agent | monitor projects |
 |---|---|---|---|
@@ -17,8 +33,11 @@ that calls one of four instruction builders in `baselines/instructions.py`:
 | `maf_groupchat` | `build_bare_instructions` | none | canonical |
 | `maf_groupchat_unsafe` | `build_global_spec_instructions(override=unsafe)` | LLM-drafted unsafe global text | unprojectable → **no monitor** |
 | `maf_groupchat_llmvalid` | `build_global_spec_instructions(override=valid)` | LLM-drafted valid global text | LLM-drafted valid |
+| `unchecked_skills` | `build_unchecked_skills_instructions` | human-written per-role skills, never formally checked (the deadlock demo's no-checker arm) | canonical |
+| `global_decentralized` | `build_global_spec_instructions(override=valid)` | LLM-drafted valid global text, but on the decentralized round-robin `FoundryRunner` (no LLM orchestrator) — isolates "global text vs local contract" from "orchestrated vs decentralized" | LLM-drafted valid |
 | `spec_llmvalid` | `build_spec_instructions(override=valid)` | projected **local** type (verbose markdown) | LLM-drafted valid |
 | `min_llmvalid` | `build_spec_minimal_instructions(override=valid)` | projected **local** type (SEND/RECV table) | LLM-drafted valid |
+| `spec_llmvalid_gate` | `build_spec_instructions(override=valid)` | verbose projected local type + gate enforcement (off-contract sends are REJECTED before delivery and the role re-prompted) | LLM-drafted valid |
 | `min_llmvalid_gate` | `build_spec_minimal_instructions(override=valid)` | lean projected local type + gate enforcement | LLM-drafted valid |
 | `min_llmvalid_gate_nohint` | `build_spec_minimal_instructions(override=valid)` | same as `min_llmvalid_gate` but WITHOUT the per-turn liveness nudge (hints=False) — isolates pure enforcement from per-turn guidance | LLM-drafted valid |
 | `min_llmvalid_gate_lastrecv` | `build_spec_minimal_instructions(override=valid)` | same prompt + gate, scheduled by the protocol-free "ask whoever just received a message" heuristic (round-robin fallback) — the cheap-heuristic control for the EFSM scheduler | LLM-drafted valid |
@@ -39,9 +58,10 @@ local type plus refinement guards. They differ only in verbosity of the markdown
 `spec` = full Claude-subagent markdown via `generate_claude_subagent(...)`. `min`
 = one line per EFSM transition like `state 26: SEND NotificationBranch(String)
 to TaxSpecialist -> state 38`, plus a "Payload guards (HARD)" list. The minimal
-form was introduced after a smoke run showed it recovers ~54% of the verbose
-arm's token cost without losing protocol-correctness
-(`instructions.py:284-289`).
+form was introduced after a smoke run showed it reaches the same
+protocol-correctness at roughly 46% of the verbose arm's token cost — a ~54%
+saving (see the docstring of `build_spec_minimal_instructions` in
+`instructions.py`).
 
 ## "Unsafe" means Scribble's deadlock-freedom check rejected it
 
@@ -68,10 +88,13 @@ The legacy `stjp_core/skills/` directory and the per-case
 Skills files were never projected from the protocol — they were LLM-authored
 on top of it (see `stjp_core/generation/skills_generator.py`) and tended to
 drift (the finance case's pre-deletion skills files had a stale `P1_v2.scr`
-header and a `$10,000` threshold while `case.yaml:48-49` already said
-`float(x) > 50000`).
+header and a `$10,000` threshold while the G1 goal predicate in `case.yaml`
+already said `float(x) > 50000`).
 
-**In the 8-arm matrix, skills are never loaded.** `instructions.py:240-244`
+**In the arm matrix, the legacy `skills/v1` files are never loaded.** (The
+`unchecked_skills` arm reads hand-authored files, but from a different
+directory — `cases/<case>/unchecked_skills/<role>.md` — on purpose.) The
+skills-loading branch inside `build_spec_instructions` in `instructions.py`
 only reads `skills_dir/{role}_skills.md` when `protocol_path_override is None`;
 every WITH-arm factory in `registry.py` passes `protocol_path_override=path`
 (the llm-drafts/valid path). So even before deletion, `spec_llmvalid` and
@@ -81,13 +104,14 @@ every WITH-arm factory in `registry.py` passes `protocol_path_override=path`
 CLI accepts `--case <case_id>` and writes regenerated skills under
 `experiments/cases/<case_id>/skills/` using the current
 `protocols/v1.scr` + `case.yaml`. That directory does not need to exist on
-disk to drive the 8-arm benchmark; create it only when authoring resumes.
+disk to drive the arm-matrix benchmark; create it only when authoring resumes.
 
 ## Payload values (the numbers) are pure LLM output
 
 There is no data source. No tool calling. `case.intent` (prose) and the role
 description (prose) are the **only** things the Fetcher ever sees about "the
-data" — see `case.yaml:31` (`Fetcher: retrieves raw revenue data on request`).
+data" — see the `Fetcher` line in the finance case's `role_descriptions`
+(`Fetcher: retrieves raw revenue data on request`).
 When the trace shows `HighRevenue(75000)`, the `75000` was hallucinated by the
 LLM in the same call that emitted the message. This is why the **refinement
 guards** in `protocols/v1.refn` matter: without them compiled into the prompt

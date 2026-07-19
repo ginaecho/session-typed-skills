@@ -1,10 +1,10 @@
 # Result 2 — Same task, one-third the tokens
 
-**Measured 2026-06-17. Case: `report_pipeline`. Model: gpt-5.4. 6 trials per setting.**
+**Measured 2026-06-17. Case: [`report_pipeline`](../../experiments/cases/report_pipeline/). Model: gpt-5.4. 6 trials per setting.**
 
 > **At a glance:** A six-agent report pipeline finishes 100% of the time in every setting — so this test is purely about cost. With no contract, a finished report costs 24,100 tokens. With a lean per-agent contract projected from the validated protocol, the same finished report costs **8,800 tokens — a 63% reduction**. The saving comes from agents no longer having to *figure out* the coordination every turn: it's already written down.
 
-Companion to [`RESULT_1_DEADLOCK.md`](RESULT_1_DEADLOCK.md): that result showed an unchecked spec can fail *catastrophically* (deadlock → infinite cost). This one shows the *everyday* saving: even when everything works, a contract makes it much cheaper.
+Companion to [`RESULT_01_DEADLOCK.md`](RESULT_01_DEADLOCK.md): that result showed an unchecked spec can fail *catastrophically* (deadlock → infinite cost). This one shows the *everyday* saving: even when everything works, a contract makes it much cheaper.
 
 ---
 
@@ -99,7 +99,7 @@ The no-contract setting also needed one extra round (7 calls vs 6) — a bit of 
 This test still used a "round-robin" runner that polls **every** agent each round — so idle agents burn a call just to say "WAIT." The projected contract enables a better runtime: the protocol's state machine says exactly which agents *can* act at each moment, so only they get polled.
 
 - In an offline simulation this cut **83% of agent calls** versus round-robin.
-- Connected to real agents on the finance case, it produced the headline in [`RESULT_4_FULL_STACK.md`](RESULT_4_FULL_STACK.md): 13,300 tokens per delivered report — 9× cheaper than the same protocol pasted as text.
+- Connected to real agents on the [`finance`](../../experiments/cases/finance/) case, it produced the headline in [`RESULT_04_FULL_STACK.md`](RESULT_04_FULL_STACK.md): 13,300 tokens per delivered report — 9× cheaper than the same protocol pasted as text.
 
 On this short pipeline the scheduler has little to save (6–7 calls for 6 messages is already near-minimal); its saving compounds on wider protocols where many agents are idle at each step.
 

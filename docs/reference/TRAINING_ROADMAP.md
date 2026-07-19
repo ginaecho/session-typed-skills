@@ -1,5 +1,11 @@
 # Training roadmap — who does what, in what order
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [The same thing as a checklist](#the-same-thing-as-a-checklist)
+<!-- MENU:END -->
+
 One page, no insider terms. The goal: train a model that turns a
 plain-language request (the "intent") into a formal coordination
 contract between agents (the "global protocol") that the Scribble

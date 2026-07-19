@@ -9,7 +9,7 @@ Date: 2026-07-06. Status: in progress.
 > (see `NUSCR_CLOUD_INSTALL.md`). Phases 2.3–2.5 DONE: revised skills validate
 > through BOTH backends live; the cheap-LLM A/B ran as 4 cases x 3 arms x n=10
 > on Haiku-class subagents (`experiments/subagent_trials/skills_cases.py`);
-> results in `docs/results/RESULT_8_SKILL_SAFETY.md` (0% GCR unvalidated vs
+> results in [`docs/results/RESULT_08_SKILL_SAFETY.md`](../results/RESULT_08_SKILL_SAFETY.md) (0% GCR unvalidated vs
 > 100%/100% STJP at -45% tokens; contract-as-text arm exposes 20 duplicate
 > irreversible acts).
 
@@ -70,10 +70,15 @@ This plan covers two deliverables the user asked for:
   for a binary" — we need a small syntax adapter and a new backend, keeping
   `scribble-java` in place.
 - **The fork's value is coinductive projection** (`coinductive_projection`
-  branch, HEAD `cc7c72e`). Coinductive projection can project **recursive /
+  branch, HEAD `cc7c72e`; *coinductive* here means the projection algorithm
+  reasons about a loop as a whole rather than trying to unroll and merge it
+  step by step). Coinductive projection can project **recursive /
   looping** protocols that stock projection rejects at the merge step. That is
-  exactly what the loop-shaped cases (`retry_loop`, `iterative_polling`,
-  `nested_retry`) need — several were only made to pass by flattening the loop.
+  exactly what the loop-shaped cases
+  ([`retry_loop`](../../experiments/cases/retry_loop/),
+  [`iterative_polling`](../../experiments/cases/iterative_polling/),
+  [`nested_retry`](../../experiments/cases/nested_retry/)) need — several were
+  only made to pass by flattening the loop.
 - **Current compiler surface is tiny and well-isolated** — swapping is feasible:
   - [stjp_core/config.py](../../stjp_core/config.py) — `SCRIBBLE_PATH`, `JAVA_HOME`.
   - [stjp_core/compiler/validator.py](../../stjp_core/compiler/validator.py) —
@@ -88,7 +93,7 @@ This plan covers two deliverables the user asked for:
     same `EFSM`, nothing downstream changes.
 - **Never edit `scribble-java/`** (repo invariant) and, symmetrically, keep the
   vendored `nuscr_coinduction` a clean upstream checkout.
-- **"unsafe" already has a canonical example**: `experiments/cases/trade_deadlock`
+- **"unsafe" already has a canonical example**: [`experiments/cases/trade_deadlock`](../../experiments/cases/trade_deadlock/)
   (Buyer "don't pay until goods arrive" vs Seller "don't ship until paid") and
   the skill-compaction pipeline
   ([stjp_core/generation/skill_compactor.py](../../stjp_core/generation/skill_compactor.py))
@@ -124,8 +129,8 @@ This plan covers two deliverables the user asked for:
   5. `anthropics/skills` (buyer/seller pair) — deadlock (pay↔ship).
   Each gets a `SOURCES.md` (repo, commit, license) and a safety review before import.
 - **D5 — Deliverable location:** demo cases under
-  `experiments/cases/skills_safety/<name>/`; results under
-  `docs/results/RESULT_8_SKILL_SAFETY.md`.
+  [`experiments/cases/skills_safety/<name>/`](../../experiments/cases/skills_safety/); results under
+  [`docs/results/RESULT_08_SKILL_SAFETY.md`](../results/RESULT_08_SKILL_SAFETY.md).
 
 ---
 
@@ -208,7 +213,9 @@ This plan covers two deliverables the user asked for:
   - Escrow (a neutral third party that holds funds until both sides deliver) /
     marketplace buyer↔seller↔carrier flows.
   - "Approve-then-file" / "review-then-publish" agent pairs (order-sensitive).
-  - Booking/saga flows (reserve → pay → confirm, with compensation).
+  - Booking/saga flows (reserve → pay → confirm, with compensation — a
+    *saga* is a multi-step transaction where each completed step has an
+    undo action in case a later step fails).
   - Multi-agent code-review or RAG pipelines (fetch → analyse → report).
 - **Safety review each source** before import: no exfiltration/jailbreak/malware
   content; skills must be benign coordination logic only. Record provenance
@@ -242,7 +249,7 @@ This plan covers two deliverables the user asked for:
 ### Phase 2.4 — Run the A/B trials with a cheap LLM
 
 - Harness: reuse the subagent-driven trial pattern from
-  [docs/results/RESULT_5_SUBAGENT_VALIDATION.md](../results/RESULT_5_SUBAGENT_VALIDATION.md)
+  [docs/results/RESULT_05_SUBAGENT_VALIDATION.md](../results/RESULT_05_SUBAGENT_VALIDATION.md)
   (unchecked prose skills vs STJP). Per D3, drive each role with a **cheap Azure
   model (gpt-4o-mini class)** deployed as a **hosted agent** (§2.4b) so the trials
   are Foundry-visible.
@@ -301,10 +308,10 @@ Wiring notes:
 
 ### Phase 2.5 — Write it up
 
-- New `docs/results/RESULT_8_SKILL_SAFETY.md` following the results template
+- New `docs/results/RESULT_08_SKILL_SAFETY.md` following the results template
   (at-a-glance → story → setup → numbers → meaning → caveats → raw data path).
 - Index it in [docs/README.md](../README.md) and
-  [docs/results/RESULTS.md](../results/RESULTS.md).
+  [docs/results/RESULT_00_SUMMARY.md](../results/RESULT_00_SUMMARY.md).
 - Honest caveat to include: payload values are LLM output (no data source), and
   "cheaper" must be reported as tokens/cost-to-goal on the **cheap** model, not
   extrapolated to gpt-5.4.

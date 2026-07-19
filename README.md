@@ -121,7 +121,7 @@ python scripts/case_runner.py finance 3 \
 
 ### 3. Run the full 7-arm benchmark (1 hour)
 
-This runs all arms on a case with n=10 trials each (produces the results in `docs/results/RESULT_4_FULL_STACK.md`):
+This runs all arms on a case with n=10 trials each (produces the results in `docs/results/RESULT_04_FULL_STACK.md`):
 
 ```bash
 # Run all arms (this is the official benchmark)

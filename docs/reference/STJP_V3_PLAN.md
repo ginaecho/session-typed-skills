@@ -1,7 +1,7 @@
 # STJP v3 — plan: a governed, decentralized session-typed runtime
 
-**Drafted 2026-06-17.** Synthesizes `../archive/GOVERNANCE_TOOLKIT_ASSESSMENT.md` (MS Agent
-Governance Toolkit) and `../archive/RELATED_WORK_DELM.md` (DeLM — "Decentralized
+**Drafted 2026-06-17.** Synthesizes [`../archive/GOVERNANCE_TOOLKIT_ASSESSMENT.md`](../archive/GOVERNANCE_TOOLKIT_ASSESSMENT.md) (MS Agent
+Governance Toolkit) and [`../archive/RELATED_WORK_DELM.md`](../archive/RELATED_WORK_DELM.md) (DeLM — "Decentralized
 Language Models," an external paper/runtime for fast, controller-free multi-agent
 execution) into a concrete next-version architecture. The thesis in one line:
 
@@ -57,11 +57,12 @@ RMF, EU AI Act, SOC 2).
 ### A1. Policy export (`stjp_core/governance/policy_export.py`) — ✅ DONE 2026-06-17
 Project a case → a `PolicyDocument` in the toolkit's schema. **Implemented and
 verified:** `python -m stjp_core.governance.policy_export <case>` emits
-`protocols/policy.generated.json` — finance = 30 rules (4 refinement, 3 stateful
-choice-guard), banking = 44 rules (4 refinement, 4 choice-guard), default `deny`
+`protocols/policy.generated.json` — [`finance`](../../experiments/cases/finance/) = 30 rules (4 refinement, 3 stateful
+choice-guard), [`banking`](../../experiments/cases/banking/) = 44 rules (4 refinement, 4 choice-guard), default `deny`
 (fail-closed), `conflictResolution: DENY_OVERRIDES`, and an `stjpExtensions` block
 declaring the three condition types below. Mapping:
-- each EFSM transition → an `allow` rule (priority by state) keyed on
+- each EFSM transition (EFSM — extended finite-state machine, the role's
+  contract compiled to states and allowed moves) → an `allow` rule (priority by state) keyed on
   `(sender, receiver, label)` + the current session state;
 - each refinement/choice guard → a `condition` (field-op-value where possible;
   our richer predicate attached as `message`/metadata);
@@ -77,8 +78,11 @@ transition/guard`). A run then yields a **compliance audit trail**, not just a
 benchmark log — the enterprise story.
 
 ### A3. Identity binding (reuse SPIFFE/DID)
-Today the monitor trusts the role label in a message. Adopt the toolkit's
-attribution so "this message really came from the RevenueAnalyst agent" is
+Today the monitor trusts the role label in a message — nothing stops a
+compromised agent from *claiming* to be the TaxVerifier. Adopt the
+toolkit's attribution (SPIFFE and DID are existing standards for giving a
+workload or agent a cryptographically checkable identity) so "this message
+really came from the RevenueAnalyst agent" is
 cryptographic — closes a spoofing gap. Monitor consumes the identity in its
 `ExecutionContext`.
 
@@ -91,8 +95,10 @@ ecosystem.
 
 ## 3. Plane B — Decentralized execution (compose with DeLM)
 
-**Goal:** replace our round-robin `foundry_runner` (whose cost is dominated by
-polling every role each turn — `../results/RUN_REPORT_2026-06-11.md` §4.4) with a
+**Goal:** replace our round-robin `foundry_runner` (*round-robin* = it takes
+turns in a fixed circle, asking every role in order whether it wants to act;
+its cost is dominated by polling every role each turn —
+[`../results/runs/RUN_2026-06-11.md`](../results/runs/RUN_2026-06-11.md) §4.4) with a
 DeLM-style **shared-context + async-claim** substrate, made *safe* by STJP.
 
 **✅ Prototype DONE 2026-06-17** — `stjp_core/runtime/delm_runner.py` +
@@ -135,7 +141,10 @@ an unverified shared context invites.
 
 ## 4. The v3 benchmark (ties to criticality redesign)
 
-Run the **5 arms × {neutral, critical} variants** (BENCHMARK_DESIGN_V3) on **two
+Run the **5 arms × {neutral, critical} variants** (an *arm* is one
+configuration being compared — like a clinical trial's treatment and control
+groups; the variants are defined in
+[`../archive/BENCHMARK_DESIGN_V3_CRITICALITY.md`](../archive/BENCHMARK_DESIGN_V3_CRITICALITY.md)) on **two
 runtimes**: the current round-robin and the new DeLM-style substrate. New columns:
 - **cost-to-goal** and **time-to-goal** on each runtime (does decentralization
   cut the cost we identified, at equal CGC — Critical-Goal Completion?);

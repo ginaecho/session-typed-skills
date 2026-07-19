@@ -26,7 +26,7 @@ project. Every technical word is explained where it first appears.
 
 ## The story at a glance (STAR)
 
-- **Situation** — An earlier case (`pr_merge`) had cast GitHub's real
+- **Situation** — An earlier case ([`pr_merge`](../../experiments/cases/skills_safety/pr_merge/)) had cast GitHub's real
   `address-comments` agent file as a role that opens a brand-new pull
   request, even though the file's own first sentence says it only reacts
   to comments on a PR that already exists; it also modeled review as one
@@ -40,7 +40,7 @@ project. Every technical word is explained where it first appears.
 - **Action** — 3 settings × 10 trials = 30 trials, each round-batch answered
   by an independently spawned `claude-haiku-4.5` subagent (80 batches over
   16 rounds), on `experiments/subagent_trials/engine.py` — reusing the same
-  engine fix built for this case's sibling (`doc_coauthor_ship`), because
+  engine fix built for this case's sibling ([`doc_coauthor_ship`](../../experiments/cases/skills_safety/doc_coauthor_ship/)), because
   this is also a `rec`/`choice` protocol.
 - **Result** — Without a plan the team deadlocks in 2 rounds: 0/10.
   Writing the plan into the skill files as text does not just fail to
@@ -382,7 +382,7 @@ have something real to flag, forcing the loop branch to fire live.
   `haiku__pr_merge__unchecked.report.json` (`gcr_pct: 0.0`, budget-crawl
   with messages flowing, not deadlock) versus
   `sonnet__pr_merge__unchecked.report.json` (`gcr_pct: 100.0` — the smarter
-  model's unchecked team finished 10 of 10). And RESULT_8's `airline_seat`
+  model's unchecked team finished 10 of 10). And RESULT_8's [`airline_seat`](../../experiments/cases/skills_safety/airline_seat/)
   unchecked run deadlocked all 10 of 10 trials with **zero** malformed
   replies (confirmed: `airline_seat_unchecked.state.json`, `malformed: 0`
   on every trial) — whether an unchecked team deadlocks depends on what its

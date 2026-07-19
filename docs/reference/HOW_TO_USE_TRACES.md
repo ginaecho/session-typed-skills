@@ -1,7 +1,7 @@
 # How to use the committed traces (verify the results yourself)
 
 Every headline number in the real-skills benchmark
-([`docs/results/RESULT_8_SKILL_SAFETY.md`](../results/RESULT_8_SKILL_SAFETY.md),
+([`docs/results/RESULT_08_SKILL_SAFETY.md`](../results/RESULT_08_SKILL_SAFETY.md),
 [`docs/6_RUN_REPORTS_EXPLAINED.md`](../6_RUN_REPORTS_EXPLAINED.md) §Part 1) is
 backed by **raw per-trial traces committed in the repo**. You do not have to
 trust the summary tables — you can re-derive them, or read the actual agent
@@ -42,8 +42,13 @@ experiments/subagent_trials/reports/ss2026_n100_sonnet/
         └── <Protocol>.scr         ← the global protocol the arm projects from
 ```
 
-The 12 dirs are the four cases (`airline_seat`, `booking_saga`,
-`code_execution`, `content_pipeline`) × three arms (`unchecked`, `bare`,
+The 12 dirs are the four cases
+([`airline_seat`](../../experiments/cases/skills_safety/airline_seat/),
+[`booking_saga`](../../experiments/cases/skills_safety/booking_saga/),
+[`code_execution`](../../experiments/cases/skills_safety/code_execution/),
+[`content_pipeline`](../../experiments/cases/skills_safety/content_pipeline/))
+× three arms — an *arm* is one configuration being compared, like a
+clinical trial's treatment and control groups (`unchecked`, `bare`,
 `stjp`). Each `state.json` holds **100 trials**.
 
 ---
@@ -102,7 +107,7 @@ Each entry in `trials`:
 | `trial` | trial index |
 | `status` | terminal outcome: `success`, `deadlock`, or `max_rounds` |
 | `trace` | the ordered message log (the load-bearing field) |
-| `role_states` | each role's final EFSM state |
+| `role_states` | each role's final state in its EFSM (extended finite-state machine — the role's contract compiled to states and allowed transitions) |
 | `rejections` | gate rejections (STJP arm: blocked illegal sends) |
 | `agent_calls` | how many role decisions this trial consumed |
 | `malformed` | replies the harness couldn't parse |
@@ -120,8 +125,9 @@ Each event in `trace`:
 ## 4. Read a trace by eye
 
 You can see the actual failure without running anything. Example — the
-`booking_saga_bare` livelock (why that row is 0% GCR — goal-completion rate,
-defined in §6 — / 100 disasters):
+`booking_saga_bare` livelock (a *livelock* is a run that stays busy but
+never makes progress; this is why that row is 0% GCR — goal-completion
+rate, defined in §6 — / 100 disasters):
 
 ```bash
 python3 - <<'PY'
@@ -162,7 +168,7 @@ round (300 entries = 100 trials × 3 roles):
 `reply` is the action object as a JSON **string**. This is the audit trail of
 *what each role decided*, round by round, feeding the `trace` in `state.json`.
 (Under strict per-role isolation, all 100 trials of a role share one prompt, so
-one decision is replicated across the round — see the caveat in RESULT_8.)
+one decision is replicated across the round — see the caveat in RESULT_08.)
 
 ---
 
@@ -188,8 +194,9 @@ at-most-once acts) are defined in
 `experiments/subagent_trials/skills_cases.py`.
 
 The arm-level Wilson 95% confidence intervals in `AGGREGATE.json` come from
-pooling the four cases per arm (n=400) — the standard Wilson score interval for
-a binomial proportion.
+pooling the four cases per arm (n=400) — the standard Wilson score interval
+for a binomial proportion (a confidence-interval formula for percentages
+that stays honest at small sample sizes).
 
 ---
 
@@ -215,6 +222,6 @@ the harness (`engine.py init` → the `iso_*` round loop) with live agents.
 
 - `reports/ss2026_n100_sonnet/traces/VERIFY.md` — the terse in-tree companion.
 - [`6_RUN_REPORTS_EXPLAINED.md`](../6_RUN_REPORTS_EXPLAINED.md) — the plain-English results.
-- [`results/RESULT_8_SKILL_SAFETY.md`](../results/RESULT_8_SKILL_SAFETY.md) — the full report + caveats.
+- [`results/RESULT_08_SKILL_SAFETY.md`](../results/RESULT_08_SKILL_SAFETY.md) — the full report + caveats.
 - [`NUSCR_CLOUD_INSTALL.md`](NUSCR_CLOUD_INSTALL.md) — installing the compiler backend `report` uses.
 - `experiments/CLAUDE.md` — how the benchmark harness is connected.

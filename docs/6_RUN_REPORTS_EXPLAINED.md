@@ -40,7 +40,7 @@ This document has two parts:
   coordination plan turns out to depend on the model; with full STJP both
   models are flawless and indistinguishable at 3× lower cost. The full
   trial-by-trial report is
-  [`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
+  [`results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md).
 
 ---
 
@@ -245,7 +245,7 @@ played by a cheap Haiku-class subagent:
 
 Numbers, traces, and honest caveats (token counts are estimates; seconds are
 not comparable to the GPT-5.4 rows above because subagent dispatch was
-batched): [`results/RESULT_8_SKILL_SAFETY.md`](results/RESULT_8_SKILL_SAFETY.md);
+batched): [`results/RESULT_08_SKILL_SAFETY.md`](results/RESULT_08_SKILL_SAFETY.md);
 raw data in `experiments/subagent_trials/reports/ss2026_skill_safety/`.
 
 ### The same real-skills ladder at n=100 with a STRONGER model (Sonnet, 2026-07-07)
@@ -313,7 +313,7 @@ tightens the Wilson interval rather than adding behavioural variety. Full
 numbers, per-case reports and the committed **raw per-trial traces**
 (`.../reports/ss2026_n100_sonnet/traces/`, with `VERIFY.md` showing how to
 re-derive every metric from `state.json`):
-[`results/RESULT_8_SKILL_SAFETY.md`](results/RESULT_8_SKILL_SAFETY.md) and
+[`results/RESULT_08_SKILL_SAFETY.md`](results/RESULT_08_SKILL_SAFETY.md) and
 `experiments/subagent_trials/reports/ss2026_n100_sonnet/`. How to run the
 nuscribble backend that drove it:
 [`reference/NUSCR_CLOUD_INSTALL.md`](reference/NUSCR_CLOUD_INSTALL.md).
@@ -1065,7 +1065,7 @@ Every number in Part 2 is reproducible from files in the repository:
 
 The design rationale for each experiment (the deeper "why") is in
 `reference/BENCHMARK_PLAN_V2.md`; the plain-English component tour is in
-`results/RESULT_7_N100_SCALE.md`.
+`results/RESULT_07_N100_SCALE.md`.
 
 ---
 
@@ -1077,7 +1077,7 @@ instructions that real people actually published?** And **does the answer
 depend on which AI model plays the team members?** Part 3 answers both.
 The short version is below; every number, trace, and honest caveat is in
 the full report,
-[`results/RESULT_9_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_9_REAL_SKILLS_TWO_MODELS.md).
+[`results/RESULT_09_REAL_SKILLS_TWO_MODELS.md`](results/RESULT_09_REAL_SKILLS_TWO_MODELS.md).
 
 ## 13. Why a third run — the motivation
 
@@ -1151,5 +1151,5 @@ attempt. The structure, not the model, did the work.
 - **To understand how this benchmark is designed:** Read `3_BENCHMARK_DESIGN_EXPLAINED.md`
 - **To learn about testing strategies:** Read `2_TESTING_STRATEGIES.md`
 - **To see why safety cases matter:** Read `7_USE_CASE_DEADLOCK_SAFETY.md`
-- **To see the earlier component-validation run (n=10, live model):** Read `results/RESULT_5_SUBAGENT_VALIDATION.md`
-- **For the n=100 technical detail and honest caveats:** Read `results/RESULT_7_N100_SCALE.md`
+- **To see the earlier component-validation run (n=10, live model):** Read `results/RESULT_05_SUBAGENT_VALIDATION.md`
+- **For the n=100 technical detail and honest caveats:** Read `results/RESULT_07_N100_SCALE.md`

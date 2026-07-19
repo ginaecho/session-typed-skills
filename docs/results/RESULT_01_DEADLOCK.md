@@ -1,6 +1,6 @@
 # Result 1 — Only a static checker catches a deadlock
 
-**Measured 2026-06-17. Case: `trade_deadlock`. Model: gpt-5.4. 6 trials per setting.**
+**Measured 2026-06-17. Case: [`trade_deadlock`](../../experiments/cases/trade_deadlock/). Model: gpt-5.4. 6 trials per setting.**
 
 > **At a glance:** Two agents, each following a perfectly reasonable rule written by its own team, waited for each other forever — 0 of 6 trials finished, zero messages were ever sent, and every trial still burned 24,800 tokens (about 27 model calls) discovering nothing. The same task with a checker-validated protocol finished 6 of 6 trials, first try, at half the token cost. The checker found the problem **before any agent ran**, for free.
 
@@ -116,7 +116,7 @@ Run directory: `experiments/cases/trade_deadlock/runs/20260617T183345-n6-dual` �
 - **A runtime watcher cannot see this failure.** A monitor that judges messages has no messages to judge. A deadlock is the *absence* of action, and only a tool that analyzes the whole protocol structure *ahead of time* can detect an absence.
 - **The failure is expensive.** 27 calls, 24,800 tokens, 75 seconds per trial — all pure loss, roughly 149,000 tokens across the 6 trials just to "discover" empirically, six times over, what the checker proves in one pass at zero runtime cost.
 
-Also worth noting: the **lean** contract completed everything at **half the tokens** of the full contract (12,000 vs 24,800) — a preview of the efficiency result in [`RESULT_2_TOKEN_EFFICIENCY.md`](RESULT_2_TOKEN_EFFICIENCY.md).
+Also worth noting: the **lean** contract completed everything at **half the tokens** of the full contract (12,000 vs 24,800) — a preview of the efficiency result in [`RESULT_02_TOKEN_EFFICIENCY.md`](RESULT_02_TOKEN_EFFICIENCY.md).
 
 ### Before the full run: a 2-agent sanity check
 

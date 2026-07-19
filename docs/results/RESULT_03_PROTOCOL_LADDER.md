@@ -1,10 +1,10 @@
 # Result 3 — The protocol ladder: more protocol support, better outcomes
 
-**Measured 2026-05-21. Case: `finance`. Model: gpt-5.4. 8 settings × 10 trials.**
+**Measured 2026-05-21. Case: [`finance`](../../experiments/cases/finance/). Model: gpt-5.4. 8 settings × 10 trials.**
 
 > **At a glance:** Give agents no protocol → **0%** of trials succeed. Give them a protocol that the checker *rejected* → **10%**. Give them a checker-*validated* protocol pasted as text → **40%**. Give each agent *its own projected slice* of the validated protocol plus a runtime monitor → **60–100%**. Every rung of the ladder is one added piece of STJP, and every rung helps. This is the run that first showed the whole mechanism working, end to end, with real traces.
 
-*(This is an earlier run than [`RESULT_4_FULL_STACK.md`](RESULT_4_FULL_STACK.md) — read that one for the current headline numbers. This one is kept because it explains, with real trace examples, exactly what "an error" and "success" mean in every later result.)*
+*(This is an earlier run than [`RESULT_04_FULL_STACK.md`](RESULT_04_FULL_STACK.md) — read that one for the current headline numbers. This one is kept because it explains, with real trace examples, exactly what "an error" and "success" mean in every later result.)*
 
 ---
 

@@ -1,6 +1,6 @@
 # Result 4 — The full STJP stack is the safest AND the cheapest (latest headline)
 
-**Measured 2026-07-02. Case: `finance`. Model: gpt-5.4, real Azure AI Foundry agents. 7 settings × 10 trials. Pre-registered: the predictions were written and committed *before* the run, then graded honestly against the data.**
+**Measured 2026-07-02. Case: [`finance`](../../experiments/cases/finance/). Model: gpt-5.4, real Azure AI Foundry agents. 7 settings × 10 trials. Pre-registered: the predictions were written and committed *before* the run, then graded honestly against the data.**
 
 > **At a glance:** The full STJP stack — projected per-agent contract + enforcement gate + protocol-driven scheduler, all derived from one validated protocol — was simultaneously the **safest** setting (100% completion, 0 disasters) and the **cheapest and fastest** (13,300 tokens, 11.4 model calls, 32 seconds per delivered report). That is **9× cheaper** than the same validated protocol pasted as text on the same runtime, with the same perfect outcome.
 
@@ -110,7 +110,7 @@ Azure AI Foundry portal (see `../reference/FOUNDRY_VISIBILITY.md` and `../1_TECH
 ## 7. Honest limits, unchanged
 
 - On this case and model, the *protocol* (however delivered) fixes correctness; proving enforcement is *necessary* still needs the criticality two-variant design (`../archive/BENCHMARK_DESIGN_V3_CRITICALITY.md`).
-- The contract-**size** token lever is shown in [`RESULT_2_TOKEN_EFFICIENCY.md`](RESULT_2_TOKEN_EFFICIENCY.md), not here — the finance protocol is too small for it; this run isolates the **scheduling** lever.
+- The contract-**size** token lever is shown in [`RESULT_02_TOKEN_EFFICIENCY.md`](RESULT_02_TOKEN_EFFICIENCY.md), not here — the finance protocol is too small for it; this run isolates the **scheduling** lever.
 - The orchestrator baseline needs a clean re-run on the fixed client before any new claim about it.
 
 ## 8. Where the raw data is

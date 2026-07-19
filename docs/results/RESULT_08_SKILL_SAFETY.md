@@ -27,7 +27,7 @@ binary, `STJP_NUSCR_BIN`) — see
 
 ## How this experiment is set
 
-- **Case(s):** [`airline_seat`, `booking_saga`, `code_execution`, `content_pipeline`](../../experiments/cases/skills_safety/) (real public skills from OpenAI Agents SDK, LangGraph, AutoGen, CrewAI)
+- **Case(s):** [`airline_seat`](../../experiments/cases/skills_safety/airline_seat/), [`booking_saga`](../../experiments/cases/skills_safety/booking_saga/), [`code_execution`](../../experiments/cases/skills_safety/code_execution/), [`content_pipeline`](../../experiments/cases/skills_safety/content_pipeline/) (real public skills from OpenAI Agents SDK, LangGraph, AutoGen, CrewAI)
 - **Arms/settings:** R-orig (original skills, no validation); R-C-min (revised skills + local contract as text, no gate); R-STJP (local contract + gate + EFSM scheduler)
 - **Trials:** n=10 per (case, arm) in the original 2026-07-06 run (120 trials total); n=100 per (case, arm) in the 2026-07-07 addendum (1,200 trials)
 - **Who plays the roles:** Claude Haiku 4.5 subagents in the original run; Claude Sonnet subagents in the addendum
@@ -69,7 +69,7 @@ for the settings themselves):
 | **R-C-min** — revised skills + local contract (text only, no gate) | 100% | **50%** | **20** (10 double charges, 10 double seat-writes) | 2.75k | 11.5 |
 | **R-STJP** — local contract + gate + EFSM scheduler | **100%** | **100%** | **0** | **1.52k** | **3.5** |
 
-Appended to the 8-arm study's headline table (finance case, gpt-5.4, n=10;
+Appended to the 8-arm study's headline table ([`finance`](../../experiments/cases/finance/) case, gpt-5.4, n=10;
 first six rows unchanged from RESULT_4/RESULT_7), the new real-skills rows
 read:
 
@@ -194,12 +194,12 @@ compare within this block, not across model tiers.
   when wrong-order sends actually occur.
 - **Payloads are LLM output** (no data source), as everywhere in this
   benchmark suite.
-- The trade_deadlock (anthropics-skills escrow pair — escrow being a neutral
+- The [`trade_deadlock`](../../experiments/cases/trade_deadlock/) (anthropics-skills escrow pair — escrow being a neutral
   third party that holds funds until both sides deliver) case ran earlier on
   gpt-4o through Foundry hosted agents — 0% vs 100%, −44% tokens
   (the 2026-07-06 entry in [the diary](../diary/DIARY.md)) — and on
   Claude subagents at n=100 in
-  [RESULT_7_N100_SCALE.md](RESULT_7_N100_SCALE.md) (0/100 vs 100/100).
+  [RESULT_07_N100_SCALE.md](RESULT_07_N100_SCALE.md) (0/100 vs 100/100).
 
 **Raw data (committed):**
 `experiments/subagent_trials/reports/ss2026_skill_safety/` — per-run

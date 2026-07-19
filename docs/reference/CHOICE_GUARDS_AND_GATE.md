@@ -1,8 +1,8 @@
 # Choice Guards & the Enforcement Gate — closing the "wrong branch" hole
 
-*Implemented 2026-06-12. Companion: `SCRIBBLE_EXTENSIONS.md` (the layering
-this extends), `GAP_CLOSED.md` (the 2026-05-13 payload-guard closure this
-parallels), `docs/results/RUN_REPORT_2026-06-11.md` Part 3 (the failure analysis
+*Implemented 2026-06-12. Companion: [`SCRIBBLE_EXTENSIONS.md`](SCRIBBLE_EXTENSIONS.md) (the layering
+this extends), [`GAP_CLOSED.md`](GAP_CLOSED.md) (the 2026-05-13 payload-guard closure this
+parallels), [`docs/results/runs/RUN_2026-06-11.md`](../results/runs/RUN_2026-06-11.md) Part 3 (the failure analysis
 that motivated it).*
 
 <!-- MENU:START (auto-generated — edit headings, then regenerate) -->
@@ -23,16 +23,20 @@ that motivated it).*
 
 ## 1. The problem this closes
 
-The finance n=10 run had 2/18 typed-arm attempts take the **standard branch
+The [`finance`](../../experiments/cases/finance/) n=10 run had 2/18 typed-arm attempts take the **standard branch
 on high revenue** — skipping the audit, then filing the report. Every layer
 correctly accepted it, because:
 
-- **Classic MPST cannot express value-dependent choice.** At an internal
+- **Classic MPST (multiparty session types — the type theory that describes
+  a multi-agent conversation as one global type) cannot express
+  value-dependent choice.** At an internal
   choice the type says "you may send A or B"; *which one given the data* is
   not in the type. Stock Scribble has no syntax for it.
 - The agent's contract at the choice state listed both branches with equal
   standing; the >$50k rule lived only in prose, and prose is not enforcement.
-- The drafted-protocol arms had **no `.refn` sidecar at all** — only the
+- The drafted-protocol arms had **no `.refn` sidecar at all** (a *sidecar*
+  is a companion file that sits beside the protocol file with the same
+  basename and a different extension) — only the
   canonical vocabulary had guards.
 
 Research basis: Bocchi et al. CONCUR'10 (asserted MPST — assertions at choice
@@ -65,7 +69,7 @@ payloads, referenced by label name** (stateful assertion). Semantics:
 when TRUE the role must take `require`; sending a label in `over` is a
 violation — and symmetrically when FALSE.
 
-Written for: finance (`>$50k ⇒ high branch`) and banking
+Written for: finance (`>$50k ⇒ high branch`) and [`banking`](../../experiments/cases/banking/)
 (`>$10k ⇒ approval route`, `Approval=='true' ⇒ Approved`, which also closes
 the *denied-but-debited* hole the severity grader flagged).
 
@@ -115,7 +119,8 @@ The per-role monitor is now **value-tracking** (stateful):
   against the observed values → new verdict
   **`ViolationType.CHOICE_GUARD` (`"choice_guard_violation"`)** carrying the
   guard, its truth value, the observed values, and what should have been sent.
-- The EFSM still advances on a choice-guard violation (the message *was*
+- The EFSM (extended finite-state machine — the role's contract compiled to
+  states and allowed transitions) still advances on a choice-guard violation (the message *was*
   protocol-legal and did happen) — the monitor stays aligned with reality
   and reports the wrong branch. This is observer mode: harm becomes
   **visible**.
@@ -180,7 +185,7 @@ agents, n=2:
 - **Both arms scored 0% goals this run** — NOT a guard regression: every
   failed attempt stalled at events=1 because ExpenseAnalyst WAITed instead of
   sending `ExpenseData` (the pre-existing role-passivity problem;
-  see RUN_REPORT §3 "EFSM-driven scheduling"). The scheduler fix — prompt
+  see [`RUN_2026-06-11.md`](../results/runs/RUN_2026-06-11.md) §3 "EFSM-driven scheduling"). The scheduler fix — prompt
   exactly the roles whose local type has an enabled SEND — would tell
   ExpenseAnalyst "you are at a SEND state" instead of polling it generically.
 - Harness note: `evaluate_run.VOCABULARY_ARMS` must include any new arm that
@@ -197,7 +202,7 @@ agents, n=2:
   (`stjp_core/compiler/composer.py`, `// @use Child from "file.scr";`
   spliced before validation) and is the intended vehicle for
   "new demand → child protocol composed into the old one"
-  (see `docs/PROTOCOL_EVOLUTION.md` + `docs/EVOLUTION_DEMO_DESIGN.md`).
+  (see [`PROTOCOL_EVOLUTION.md`](PROTOCOL_EVOLUTION.md) + [`docs/archive/EVOLUTION_DEMO_DESIGN.md`](../archive/EVOLUTION_DEMO_DESIGN.md)).
   **Behavioural subtyping** (is the evolved local type a safe replacement?)
   is *not* implemented — currently approximated by contract hash-diff
   ("unchanged role ⇒ trivially safe"); a proper subtyping check is roadmap.
