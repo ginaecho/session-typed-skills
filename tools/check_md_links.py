@@ -37,10 +37,23 @@ HEADING_RE = re.compile(r"^#{1,6}\s+(.*)$", re.MULTILINE)
 
 def slugify(heading: str) -> str:
     """GitHub's anchor rule: strip formatting, lowercase, spaces->hyphens,
-    drop everything that is not a word character or hyphen."""
-    h = re.sub(r"[*_`]", "", heading).strip()
+    drop everything that is not a word character or hyphen.
+
+    Literal underscores are KEPT (a heading naming `revenue_audit` slugs to
+    revenue_audit) — only asterisk/backtick formatting marks are stripped.
+    """
+    # A heading may itself be a link ("### [RESULT_01 — ...](file.md)");
+    # GitHub slugs only the link text, so reduce [text](url) to text first.
+    h = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", heading)
+    h = re.sub(r"[*`]", "", h).strip()
     h = h.lower().replace(" ", "-")
-    return re.sub(r"[^\w\-]", "", h)
+    # GitHub drops emoji/symbols but KEEPS combining marks — an emoji like
+    # 🏗️ (base + variation selector U+FE0F) leaves the invisible selector
+    # in the anchor. Keep word chars, hyphens, and combining marks (Mn).
+    import unicodedata
+    return "".join(ch for ch in h
+                   if ch == "-" or re.match(r"\w", ch)
+                   or unicodedata.category(ch) == "Mn")
 
 
 def anchors_of(md_path: Path, cache: dict[Path, set[str]]) -> set[str]:
@@ -89,7 +102,10 @@ def main() -> int:
                 continue
             for m in LINK_RE.finditer(line):
                 target = m.group(1)
-                if target.startswith(("http://", "https://", "mailto:")):
+                # Skip anything with a URI scheme (https:, mailto:,
+                # javascript:, data:, tel:, ...) — only relative paths and
+                # #anchors are checkable against the working tree.
+                if re.match(r"^[a-zA-Z][a-zA-Z0-9+.\-]*:", target):
                     continue
                 n_links += 1
                 rel = md.relative_to(REPO)
