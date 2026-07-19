@@ -9,6 +9,16 @@ capability axis — the Claude tier ladder haiku → sonnet → opus** — acros
 played the roles, one mind per trial, per-poll reasoning, no scripts. Every
 sonnet and opus trial verified from `state.json` (`malformed=0`, no stray
 scripts; the opus tier and escrow sweep were added 2026-07-05, n=10/arm).*
+*("E3" is this experiment's ID in the n=100 validation plan,
+[`VALIDATION_TODO.md`](VALIDATION_TODO.md).)*
+
+## Menu
+
+- [The curve (revenue_audit) — three Claude tiers](#the-curve-revenue_audit--now-three-claude-tiers)
+- [The curve (escrow_trade) — capability mirrors revenue](#the-curve-escrow_trade--capability-mirrors-revenue-new)
+- [Three findings](#three-findings)
+- [Reconciliation — why this supports the thesis](#reconciliation--why-this-supports-the-thesis)
+- [Honest scope / what's not here](#honest-scope--whats-not-here)
 
 ## The curve (revenue_audit) — now three Claude tiers
 

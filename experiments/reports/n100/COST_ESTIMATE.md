@@ -7,6 +7,16 @@ Agent tool reported (`subagent_tokens`) and the published per-token API pricing.
 It is an **estimate from observed token counts × list price**, not a metered
 invoice — see the caveat.*
 
+## Menu
+
+- [Pricing used](#pricing-used-per-1m-tokens-cached-2026-06-24-from-the-claude-api-skill)
+- [Method](#method)
+- [Per-trial cost](#per-trial-cost)
+- [Per-arm cost-to-goal, in dollars](#per-arm-cost-to-goal-in-dollars-the--column-in-the-ladder-tables)
+- [Whole-suite cost](#whole-suite-cost-if-billed-as-api-subagents)
+- [What this says](#what-this-says)
+- [Provenance / limits](#provenance--limits)
+
 ## Pricing used (per 1M tokens, cached 2026-06-24 from the `claude-api` skill)
 
 | Model | Input | Output |

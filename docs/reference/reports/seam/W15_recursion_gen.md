@@ -1,5 +1,8 @@
 # W15 — recursion generator for D1 (recursion axis was ~9 families, now 200+)
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W15` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Worker: W15 (implementation). Branch `gc/seam-w15-recursion-gen`.
 Spec: `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §3 (D1 structural-
 diversity floor) + task card. Diagnosis this fixes:

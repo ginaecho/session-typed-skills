@@ -7,6 +7,15 @@ re-runs arm **B (global text)** on `revenue_audit` at **n=30** with a
 model-dependent. Opus orchestrated; sonnet played the three roles, one mind per
 trial, per-poll reasoning, no scripts. All 30 verified from `state.json`
 (not agent prose): 30/30 success, `malformed=0`, no stray scripts.*
+*("P0b" is this task's priority ID in the n=100 validation plan,
+[`VALIDATION_TODO.md`](VALIDATION_TODO.md).)*
+
+## Menu
+
+- [Result — the race is model-dependent](#result--the-race-is-model-dependent)
+- [Why — and why it strengthens the thesis](#why--and-why-it-strengthens-the-thesis)
+- [A secondary observation](#a-secondary-observation--safe-behaviour-costs-the-unenforced-arm-more)
+- [Honest scope](#honest-scope)
 
 ## Result — the race is model-dependent
 

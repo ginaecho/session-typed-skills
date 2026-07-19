@@ -73,7 +73,8 @@ anything**:
 1. Full-size `train`/`dev`/`test-syn` JSONL splits from D1–D4 (§1.3 below).
 2. The GBNF grammar text (`gcd_adapter.to_ebnf_for_xgrammar()` output,
    frozen to a file — see §4).
-3. The base model weights (pulled from HF Hub at container-start time, not
+3. The base model weights (pulled from HF Hub — the Hugging Face model
+   hosting service — at container-start time, not
    pre-staged — see §3).
 4. A pinned lockfile for the training image (§3) — **does not exist in the
    repo yet**; the first environment-setup step under whichever provider
@@ -279,7 +280,8 @@ itself is manual, on the owner's own machine.
    az group create --name seam-training-rg --location eastus
    az ml workspace create --name seam-ws --resource-group seam-training-rg
    ```
-3. Create the compute (spot NC A100 v4 — confirm the exact SKU name and
+3. Create the compute (spot NC A100 v4 — *spot* is discounted capacity the
+   cloud may reclaim at any moment, so the job must checkpoint; confirm the exact SKU name and
    quota availability for the chosen region at
    <https://azure.microsoft.com/en-us/pricing/details/machine-learning/>
    and in the portal's **Quotas** blade before scripting this, quota for

@@ -1,5 +1,8 @@
 # R3 — Comparable Datasets & D5 Mining Targets
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `R3` is this report's scout id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Scout report for the seam-training program (`docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md`
 §3 D5, §7). Date of research: 2026-07-11. All GitHub numbers below are from
 live `search_code`/`search_repositories` calls made today; web-search numbers

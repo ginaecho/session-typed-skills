@@ -400,7 +400,12 @@ def summarize_run(run_dir: Path) -> dict:
                     trials.append(cur)
                 cur = None
                 trial_start_ts = None
-            elif m in ("attempt_start", "attempt_end"):
+            elif m is not None:
+                # Any other marker line (attempt_start / attempt_end / gated /
+                # protocol_unprojectable / ...) is bookkeeping, NOT a delivered
+                # message. In particular a "gated" marker is a send the gate
+                # REJECTED pre-delivery — counting it as an event would inflate
+                # the gate arms' event totals (2026-07-19 audit fix).
                 continue
             else:
                 if cur is None:

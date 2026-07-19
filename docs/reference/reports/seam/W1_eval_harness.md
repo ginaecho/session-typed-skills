@@ -1,5 +1,8 @@
 # W1 — Seam-Bench evaluation harness
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W1` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 **Task card:** `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §9, row W1 —
 "eval harness: metric block + splits + JSONL schema + report generator; done
 when metrics reproduce on the 30-corpus smoke set [smoke set = the fixture

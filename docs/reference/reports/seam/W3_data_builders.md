@@ -1,5 +1,8 @@
 # W3 — D1-D3 data builders + EFSM-signature dedupe/splitter
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W3` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Worker: W3 (implementation). Branch `gc/seam-w3-data-builders`.
 Spec: `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §3 + §9 (W3 row);
 `docs/reference/SEAM_AUTOTRAINING_PLAN.md` §2 (A3/A4), §4.1.

@@ -1,5 +1,8 @@
 # W17 — coordination filter + mining scale-up
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W17` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Worker report for the open problem the project owner raised after W16: the
 paper's claim — "independently authored agent skills don't state their
 coordination structure" — currently rests on **n=2** real-world teams

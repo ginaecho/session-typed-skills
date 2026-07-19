@@ -107,7 +107,7 @@ result.** Report validity@1 and validity@k with k ∈ {1, 5, 10, 25}.
 **A3. Back-translation for training data (SFT — supervised fine-tuning:
 training on labeled correct examples, as opposed to reinforcement learning).**
 We already own the data generator: the protocol corpus (30 skeletons in
-`experiments/cases/_corpus` + 19 named-case protocols) plus the mutation
+[`experiments/cases/_corpus`](../../experiments/cases/_corpus/) + 19 named-case protocols) plus the mutation
 operators (`integration_stress.py`, `s2_mutation`) produce unlimited
 *valid* protocols; an LLM back-translates
 each into a natural-language intent; that yields (intent, gold-protocol)
@@ -123,7 +123,9 @@ the repair loop live drafting exhibited (four rejections → pass, banking).
 The counterexample goes *in the prompt*: the model learns to read the
 validator, not to guess.
 
-**A5. RLVR (the ceiling).**
+**A5. RLVR (the ceiling).** RLVR — reinforcement learning from verifiable
+rewards: the training reward comes from a mechanical checker rather than
+from human ratings.
 Policy = the translator (with A1 decoding); reward per sample =
 `w_v·validates + w_e·bisim-to-gold (synthetic split) + w_f·faithfulness
 (Part B, real split) − w_t·token-cost`. GRPO (Group Relative Policy
@@ -144,7 +146,9 @@ panel of LLM judges — under strict isolation:
 
 - **No shared memory.** Judges never see each other's outputs, the drafting
   trace, the repair history, or prior verdicts. Vote aggregation only helps
-  when errors are (approximately) independent — a Condorcet argument; shared
+  when errors are (approximately) independent — the Condorcet jury theorem:
+  many independent, better-than-chance voters are together more accurate
+  than any one of them; shared
   context correlates errors and silently converts a 7-judge panel into one
   judge with seven rubber stamps.
 - **No memory at all.** Each judgment is a fresh, stateless call: fixed
@@ -200,7 +204,9 @@ just validity ones.
 The mutation operators give a free discrimination test: a faithful panel
 must score (intent, gold G) above (intent, mutated-G) for
 behavior-changing mutations. Run the panel over corpus golds vs. their
-single-mutation variants → ROC/AUC per judge class and for the ensemble;
+single-mutation variants → ROC/AUC per judge class and for the ensemble
+(AUC is a 0-to-1 score of how well a judge separates good pairs from bad
+ones: 1.0 is perfect separation, 0.5 is coin-flipping);
 pick vote thresholds from the curve. Then validate against the human
 endorsements already collected in live drafting. A panel that cannot
 separate golds from near-miss mutants is not entitled to be a reward signal
@@ -234,7 +240,7 @@ pipeline is mostly *already implemented* as the bottom-up entry point:
    configs (CrewAI/AutoGen/LangGraph role+handoff definitions), CI/release/
    review pipelines — with permissive-license filtering and dedup.
    Development-workflow cases (code review, triage, release) are the
-   priority, matching the existing `code_review` case.
+   priority, matching the existing [`code_review`](../../experiments/cases/code_review/) case.
 2. **Recover the intent.** Most skill artifacts *ship with their intent
    already written by a human* — description frontmatter, "when to use"
    sections, READMEs. Where present, that text is a gold intent (human-
@@ -250,7 +256,7 @@ pipeline is mostly *already implemented* as the bottom-up entry point:
    outcomes, all valuable: *agree* → a gold real-world (intent, G) pair for
    the benchmark; *disagree with probe counterexample* → either a hard
    training example or a real skills-vs-docs inconsistency in the wild (the
-   trade_deadlock story found in nature — publishable in its own right);
+   [`trade_deadlock`](../../experiments/cases/trade_deadlock/) story found in nature — publishable in its own right);
    *underspecified* → measured evidence of how ambiguous real intents are,
    which motivates the endorsement step in the paper.
 5. **Split discipline.** Train on synthetic back-translations (4.1);

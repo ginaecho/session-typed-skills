@@ -7,7 +7,8 @@ everyone else it shows GitHub's 404 page — use your own fork, e.g.
 `ginaecho/nuscr_coinduction`, as described in the CI-artifact route below),
 branch `coinductive_projection` (HEAD `cc7c72e`) — and drive it as an STJP
 compiler backend. Two routes are documented: the **Docker route** (the fork's own
-recipe, for machines with normal egress) and the **CI-artifact route**
+recipe, for machines with normal egress — that is, unrestricted outbound
+network access) and the **CI-artifact route**
 (verified 2026-07-06 inside the Claude Code cloud execution environment,
 whose network policy blocks Docker Hub blobs, opam.ocaml.org, and
 unscoped GitHub).
@@ -25,7 +26,8 @@ unscoped GitHub).
 ## Route A — Docker (normal egress; the fork's own recipe)
 
 The latest commit of the fork ships a `Dockerfile`, but its `opam install`
-fails without the protobuf depexts, so the repo carries a wrapper image at
+fails without the protobuf depexts (*depexts* are the system-level packages
+opam pulls in through the OS package manager), so the repo carries a wrapper image at
 [tools/nuscr/Dockerfile](../../tools/nuscr/Dockerfile):
 
 ```bash
@@ -119,13 +121,15 @@ nuscr --fsm=Role@Proto file.nuscr             # CFSM as Graphviz DOT
 `coinductive-full`, and `coinductive-plain`. The coinductive modes project
 recursive receive-merges that stock projection leaves as a bare `rec` or
 rejects outright — this is the concrete win of the fork for the loop-shaped
-cases (`retry_loop`, `iterative_polling`, `nested_retry`).
+cases ([`retry_loop`](../../experiments/cases/retry_loop/),
+[`iterative_polling`](../../experiments/cases/iterative_polling/),
+[`nested_retry`](../../experiments/cases/nested_retry/)).
 
 Caveats (unchanged from the original integration):
 
 - nuscr is **not** Scribble-compatible; `.scr` files go through the
   `stjp_core/compiler/nuscr_syntax.py` adapter, and nuscr accepts only a
-  fragment (e.g. the finance protocol is rejected: "Non tail-recursive
+  fragment (e.g. the [`finance`](../../experiments/cases/finance/) protocol is rejected: "Non tail-recursive
   protocol not implemented"). The harness default therefore stays
   `scribble`; nuscr is opt-in per run.
 - The binary prints `%%VERSION%%` for `--version` (the CI build skips

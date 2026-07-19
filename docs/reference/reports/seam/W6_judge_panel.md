@@ -1,5 +1,8 @@
 # W6 — Faithfulness Judge Panel
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W6` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Worker: W6 (Sonnet implementation). Plan: `docs/reference/SEAM_TRAINING_EXECUTION_PLAN.md` §5 (isolation layers) + §6
 (calibration gate binds later, at W7), plan v2.1. Background: `SEAM_AUTOTRAINING_PLAN.md` §3.
 

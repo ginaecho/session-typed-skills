@@ -102,7 +102,7 @@ sees — its personal contract).
 
 ### The miscast reviewer
 
-The old `doc_pipeline` case cast
+The old [`doc_pipeline`](../../experiments/cases/skills_safety/doc_pipeline/) case cast
 [`skills/brand-guidelines/SKILL.md`](https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md)
 as a "BrandReviewer" that approves or rejects drafts. Re-reading the
 file: it contains **no review, approval, or rejection language at all**.
@@ -126,7 +126,7 @@ DocLead (doc-coauthoring) runs the iterative refine → reader-test loop
 and only ships when the reader test passes — that is where the real gate
 lives. The content itself must flow to the DocLead (in the old protocol
 the DocLead shipped a document it never received — the exact failure the
-RESULT_9 traces showed when the no-plan team stalled).
+[RESULT_09](../results/RESULT_09_REAL_SKILLS_TWO_MODELS.md) traces showed when the no-plan team stalled).
 
 The corrected case is implemented and validated (same real toolchain,
 all four projections clean) at

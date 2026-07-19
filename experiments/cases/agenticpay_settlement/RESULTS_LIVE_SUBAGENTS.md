@@ -1,5 +1,15 @@
 # Live subagent benchmark — agenticpay_settlement (2026-07-12)
 
+## Menu
+
+- [The story at a glance (STAR)](#the-story-at-a-glance-star)
+- [How this experiment is set](#how-this-experiment-is-set)
+- [Setup](#setup)
+- [Result](#result)
+- [What this shows](#what-this-shows)
+- [Honest limits of this run](#honest-limits-of-this-run-what-the-foundry-run-fixes)
+- [Run it on Azure AI Foundry (later)](#run-it-on-azure-ai-foundry-later)
+
 ## The story at a glance (STAR)
 
 - **Situation** — AgenticPay's real, MIT-licensed `BuyerAgent`/`SellerAgent` skills reproduce a classic escrow deadlock: each side's rule ("don't pay until goods arrive" / "don't ship until paid") is reasonable alone, but together they wait for each other forever.
@@ -69,7 +79,7 @@ been received yet, so per the settlement rule I must not ship."*
    lets all three tiers reach SettlementComplete in 7 steps.
 4. **The unchecked setting spends tokens for nothing.** Every "WAIT" turn costs
    tokens and produces no settlement — the "meter running, no output" pattern
-   from `docs/results/RESULT_1_DEADLOCK.md`, reproduced here.
+   from `docs/results/RESULT_01_DEADLOCK.md`, reproduced here.
 
 ## Honest limits of this run (what the Foundry run fixes)
 

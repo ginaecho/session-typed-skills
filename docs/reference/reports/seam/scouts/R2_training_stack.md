@@ -1,5 +1,8 @@
 # Scout R2 — Training Stack Verification
 
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `R2` is this report's scout id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+
+
 Scope: `SEAM_TRAINING_EXECUTION_PLAN.md` §2 (system under training) and §4
 (training phases). Verified against current web sources on 2026-07-11.
 Every claim below is backed by either a fetched primary-source doc, the

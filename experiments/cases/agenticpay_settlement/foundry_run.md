@@ -1,7 +1,7 @@
 # Running `agenticpay_settlement` on Azure AI Foundry
 
 This file is the exact, checkable command sequence for reproducing the
-`RESULT_1_DEADLOCK.md`-style comparison on this case: an **unchecked**
+`RESULT_01_DEADLOCK.md`-style comparison on this case: an **unchecked**
 arm (agents follow their own hand-written rules — expected to deadlock,
 0 trades completed) against an **STJP-validated** arm (agents follow a
 Scribble-checked protocol — expected to complete every trial), swept
@@ -9,9 +9,18 @@ across a matrix of Azure AI Foundry model deployments.
 
 Everything below was verified by reading the harness code, not by running
 it — this repo has no Azure credentials. Every command references a script
-or flag that exists today (grep pointers given inline). Section 5 lists the
+or flag that exists today (grep pointers given inline). Section 6 lists the
 one real gap found in the harness and how this setup works around it
 without inventing anything.
+
+## Menu
+
+- [1. Prerequisites](#1-prerequisites-on-the-machine-that-will-actually-run-this)
+- [2. One-time setup: generate the validated protocol draft](#2-one-time-setup-for-this-case-generate-the-validated-protocol-draft)
+- [3. The two arms](#3-the-two-arms)
+- [4. Model-matrix sweep](#4-model-matrix-sweep--mechanism-and-how-to-run-it)
+- [5. Where results land, and how to read them](#5-where-results-land-and-how-to-read-them)
+- [6. Harness gaps found during this setup](#6-harness-gaps-found-during-this-setup-documented-not-faked)
 
 ## 1. Prerequisites (on the machine that will actually run this)
 
@@ -133,7 +142,7 @@ markdown); `min_llmvalid` gives the terse SEND/RECV-per-state table. Both
 project from `protocols/llm_drafts/valid/v1.scr` (Section 2) and are
 monitored against that same file, so this is an apples-to-apples
 comparison of "checked contract" vs "no contract," exactly the
-`trade_deadlock` pattern in `docs/results/RESULT_1_DEADLOCK.md`.
+`trade_deadlock` pattern in `docs/results/RESULT_01_DEADLOCK.md`.
 
 You can also combine both commands into one invocation — Foundry-stack
 arms run in parallel within a single `case_runner.py` call ("WAVE 1" in
@@ -145,7 +154,7 @@ python scripts/case_runner.py agenticpay_settlement 6 \
   --arms unchecked_skills,spec_llmvalid,min_llmvalid
 ```
 
-`6` is the trial count `trade_deadlock` used for `RESULT_1_DEADLOCK.md`;
+`6` is the trial count `trade_deadlock` used for `RESULT_01_DEADLOCK.md`;
 raise it for tighter confidence intervals, at proportional token cost.
 
 ## 4. Model-matrix sweep — mechanism and how to run it
@@ -226,7 +235,7 @@ Each `case_runner.py` invocation writes to
   `unchecked_skills`; see "Persistence policy" in `experiments/CLAUDE.md`).
 
 After a run (or the whole matrix) completes, assemble a
-`RESULT_1_DEADLOCK.md`-style table per deployment by reading each
+`RESULT_01_DEADLOCK.md`-style table per deployment by reading each
 `summary.json`:
 
 | Measure | `unchecked_skills` | `spec_llmvalid` | `min_llmvalid` |
@@ -240,7 +249,7 @@ Expected qualitative outcome (per this case's `README.md`): `unchecked_skills`
 at 0/N with zero real progress messages; `spec_llmvalid` and `min_llmvalid`
 at N/N, `min_llmvalid` at meaningfully fewer tokens/trial than
 `spec_llmvalid` (mirrors `trade_deadlock`'s ~half-cost result in
-`docs/results/RESULT_1_DEADLOCK.md` Section 4).
+`docs/results/RESULT_01_DEADLOCK.md` Section 4).
 
 For the full 5-model matrix, repeat this table once per deployment and
 compare rows across deployments — that comparison itself is not computed

@@ -88,7 +88,9 @@ Two artifacts, one base model:
 **Base model (T and R share it; LoRA heads differ):**
 `Qwen2.5-Coder-7B-Instruct` (Apache-2.0). Rationale: strongest small coder
 family for grammar-disciplined output; fits one A100-80GB with LoRA.
-v2 ladder (R2-verified — Qwen3-Coder ships only as MoE, no dense 3–14B
+v2 ladder (R2-verified — Qwen3-Coder ships only as MoE (mixture-of-experts,
+a model built from many expert subnetworks with a router, so there is no
+single dense equivalent), no dense 3–14B
 successor exists): `-7B` primary → `Qwen2.5-Coder-14B-Instruct` if H3
 misses → `Qwen3.6-27B` dense (Apache-2.0) if the 14B also misses.
 License caveat (R5): the `-3B` twin is **Qwen-Research, not Apache** —
@@ -193,7 +195,7 @@ E5 best-of-n fill ≈ $50–100 API. Total well under $1k for the full program.
 ## 3. Data pipeline
 
 **Ground truth inventory (verified on disk today):** 30 corpus skeletons
-(`experiments/cases/_corpus/corpus_*.scr`) + 19 named cases + mutation
+([`experiments/cases/_corpus/`](../../experiments/cases/_corpus/)`corpus_*.scr`) + 19 named cases + mutation
 operators (`integration_stress.py::s2_mutation`) + incremental composition
 (`compiler/incremental.py`) + EFSM tooling (`efsm_parser`, E5 equivalence).
 
@@ -251,7 +253,7 @@ the signature makes it mechanically impossible.
 
 **D5 — Mined real-world set.** Precedent already in-repo: the
 [`skills_safety/pr_merge`](../../experiments/cases/skills_safety/pr_merge/) case adapted from [`github/awesome-copilot`](https://github.com/github/awesome-copilot) (MIT),
-RESULT_9 ran real Anthropic+Copilot skills. Scale that recipe:
+[RESULT_09](../results/RESULT_09_REAL_SKILLS_TWO_MODELS.md) ran real Anthropic+Copilot skills. Scale that recipe:
 harvest `.claude/skills/**`, `SKILL.md`, agent-role sections of
 CLAUDE.md/AGENTS.md, CrewAI/AutoGen/LangGraph role+handoff configs from
 permissively-licensed public repos (dev-workflow first: review, triage,
@@ -269,7 +271,8 @@ finding (hand-written skills under-determine coordination).
 
 **T0 — prompt-era baselines + E5 fill (no weights; run first, ~days).**
 Best-of-n with validator filter for n∈{1,5,10,25} over Haiku/Sonnet/Opus,
-plus few-shot retrieval (BM25 over train-split intents, 3 exemplars), plus
+plus few-shot retrieval (BM25 — a classic keyword-search ranking formula —
+over train-split intents, 3 exemplars), plus
 the repair loop with the same API model. This (a) fills the pending E5
 cells with measured numbers **before any training**, (b) freezes the
 baseline row of every table, (c) shakes out the eval harness on cheap
@@ -309,7 +312,7 @@ per spawn, payload-only prompt, no inter-seat visibility; billed to the
 session subscription, no API key. Validated live 2026-07-11
 (PANEL_SMOKE report: 14 seats, canary (a planted check item with a known
 correct answer) rejected at 0.99, J-back caught a
-forward-seat confirmation bias on trade_deadlock). Default for all
+forward-seat confirmation bias on [`trade_deadlock`](../../experiments/cases/trade_deadlock/)). Default for all
 interactive/phase-gate judging: calibration sweeps, mined-item judging,
 escalation seats, and T0 drafting baselines. Instruction-level no-tools
 rule plus transcript tool-use audit (tool_uses must be 0 per verdict).
@@ -453,7 +456,7 @@ Lang2LTL) and verifier-checked autoformalization (miniF2F-style pass@k);
 we adopt their *methodology* (verifier-scored pass@k, held-out human-
 written eval) and release ours as the reference benchmark. Working name:
 **Seam-Bench** = `train/dev/test-syn` (synthetic, §3) + `test-real`
-(mined, human intents). Releasing it is a paper deliverable, and RESULT_9's
+(mined, human intents). Releasing it is a paper deliverable, and [RESULT_09](../results/RESULT_09_REAL_SKILLS_TWO_MODELS.md)'s
 mined-skills precedent shows the release pipeline (provenance + license).
 
 **Standing metric block (every system reports all of it):**

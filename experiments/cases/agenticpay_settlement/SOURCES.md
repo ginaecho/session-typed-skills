@@ -9,6 +9,14 @@ of settlement/escrow), this case takes AgenticPay's actual buyer and
 seller agent code and adapts it, then adds the escrow/carrier settlement
 layer AgenticPay does not model.
 
+## Menu
+
+- [What "adapted" vs "authored" means here](#what-adapted-vs-authored-means-here)
+- [The real repository](#the-real-repository)
+- [The real buyer and seller agent files](#the-real-buyer-and-seller-agent-files)
+- [Verification method](#verification-method)
+- [What is NOT claimed](#what-is-not-claimed)
+
 ## What "adapted" vs "authored" means here
 
 - **Buyer.md and Seller.md are ADAPTED**: their negotiation-persona text

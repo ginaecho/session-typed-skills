@@ -1,5 +1,13 @@
 # Source provenance — trade_deadlock
 
+## Menu
+
+- [Authored case; documented lineage (not mined)](#authored-case-documented-lineage-not-mined)
+- [Part 1 — Academic origin of the multiparty pattern](#part-1--academic-origin-of-the-multiparty-pattern)
+- [Part 2 — The pay-vs-ship deadlock and the escrow fix as a real coordination pattern](#part-2--the-pay-vs-ship-deadlock-and-the-escrow-fix-as-a-real-coordination-pattern)
+- [Part 3 — Real agent-framework instances: search results](#part-3--real-agent-framework-instances-search-results)
+- [Summary for anyone auditing this case](#summary-for-anyone-auditing-this-case)
+
 ## Authored case; documented lineage (not mined)
 
 The four files in `unchecked_skills/` (`Buyer.md`, `Seller.md`, `Escrow.md`,

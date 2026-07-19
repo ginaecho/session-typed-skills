@@ -2,7 +2,7 @@
 
 This directory holds the **raw per-trial evidence** for the run reported in
 [`docs/6_RUN_REPORTS_EXPLAINED.md`](../../../../../docs/6_RUN_REPORTS_EXPLAINED.md)
-and [`docs/results/RESULT_8_SKILL_SAFETY.md`](../../../../../docs/results/RESULT_8_SKILL_SAFETY.md).
+and [`docs/results/RESULT_08_SKILL_SAFETY.md`](../../../../../docs/results/RESULT_08_SKILL_SAFETY.md).
 Every headline number is re-derivable from the files here — you do not have to
 trust the summary JSONs one level up.
 

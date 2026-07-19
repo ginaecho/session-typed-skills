@@ -25,6 +25,13 @@ this directory contains — no case-specific code is needed in either
 runner; both read the same drop-in case format the harness already uses
 for every other case under `experiments/cases/`.
 
+## Menu
+
+- [Where the deadlock is](#where-the-deadlock-is)
+- [Expected qualitative result](#expected-qualitative-result)
+- [Running this on Azure AI Foundry](#running-this-on-azure-ai-foundry)
+- [Files](#files)
+
 ## Where the deadlock is
 
 The circular wait is entirely contained in the pair

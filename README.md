@@ -4,6 +4,40 @@
 
 Multi-agent systems fail in the spaces *between* agents: one agent acts before authorization, two agents wait forever (deadlock), everyone wastes tokens negotiating coordination. STJP type-checks the **conversation itself** before any agent runs — catching deadlocks, catching unsafe orderings, and compiling safe per-agent prompts with a runtime guard and scheduler.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
+## Menu
+
+- [📖 Documentation](#-documentation)
+- [🚀 Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Setup (5 minutes)](#setup-5-minutes)
+  - [Configuration](#configuration)
+  - [Protocol checker and extensions are opt-in (safe defaults)](#protocol-checker-and-extensions-are-opt-in-safe-defaults)
+- [🧪 Running Experiments](#-running-experiments)
+  - [1. Run a single case with one arm (5 minutes)](#1-run-a-single-case-with-one-arm-5-minutes)
+  - [2. Compare STJP with baseline (10 minutes)](#2-compare-stjp-with-baseline-10-minutes)
+  - [3. Run the full benchmark (1 hour)](#3-run-the-full-benchmark-1-hour)
+  - [4. Run a different case](#4-run-a-different-case)
+  - [5. Run with custom options](#5-run-with-custom-options)
+- [📊 Understanding the Results](#-understanding-the-results)
+  - [The summary.json (Set A — Conformance & Cost)](#the-summaryjson-set-a--conformance--cost)
+  - [The summary_eval.json (Set B — Goal Achievement)](#the-summary_evaljson-set-b--goal-achievement)
+  - [The events file (detailed trace)](#the-events-file-detailed-trace)
+- [🆕 Creating a New Use Case](#-creating-a-new-use-case)
+- [🔍 Troubleshooting](#-troubleshooting)
+  - ["Protocol validation failed"](#protocol-validation-failed)
+  - ["Agents are getting stuck"](#agents-are-getting-stuck)
+  - ["High token usage"](#high-token-usage)
+  - ["Azure authentication failed"](#azure-authentication-failed)
+- [📁 Project Structure](#-project-structure)
+- [🎯 Key Results (2026-07-02, n=10 finance case, GPT-5.4)](#-key-results-2026-07-02-n10-finance-case-gpt-54)
+- [📖 Next Steps](#-next-steps)
+- [🤝 Contributing](#-contributing)
+- [❓ Questions?](#-questions)
+- [📄 License](#-license)
+- [📖 Citation](#-citation)
+<!-- MENU:END -->
+
 ## 📖 Documentation
 
 **Start here:** Read [`docs/README.md`](docs/README.md) for the full documentation index.
@@ -11,8 +45,10 @@ Multi-agent systems fail in the spaces *between* agents: one agent acts before a
 **Quick tours:**
 - **What is STJP?** → [`docs/1_TECH_SETUP.md`](docs/1_TECH_SETUP.md) (15 min)
 - **How do we test it?** → [`docs/2_TESTING_STRATEGIES.md`](docs/2_TESTING_STRATEGIES.md) (20 min)
+- **What is each "arm"?** → [`docs/5_ARMS_EXPLAINED.md`](docs/5_ARMS_EXPLAINED.md) (10 min)
 - **Latest results** → [`docs/6_RUN_REPORTS_EXPLAINED.md`](docs/6_RUN_REPORTS_EXPLAINED.md) (plain English)
 - **Why safety matters** → [`docs/7_USE_CASE_DEADLOCK_SAFETY.md`](docs/7_USE_CASE_DEADLOCK_SAFETY.md) (real examples)
+- **Is the benchmark fair?** → [`docs/BENCHMARK_FAIRNESS_REVIEW.md`](docs/BENCHMARK_FAIRNESS_REVIEW.md) (the audit)
 
 ---
 
@@ -168,7 +204,7 @@ The current set:
 | [`banking`](experiments/cases/banking/) | Transfer with amount-based approval/rejection branches |
 | [`clinical_enrollment`](experiments/cases/clinical_enrollment/) | Trial enrollment with screening, consent, lab, ethics approvals |
 | [`code_review`](experiments/cases/code_review/) | PR review with reviewer quorum and CI gating |
-| [`composition`](experiments/cases/composition/) | Composed (nested sub-protocol) workflow |
+| [`composition`](experiments/cases/composition/) | Composed sub-protocol examples (audit, banking, pipeline) |
 | [`finance`](experiments/cases/finance/) | Quarterly revenue report with conditional audit (the flagship benchmark case) |
 | [`finance_nested`](experiments/cases/finance_nested/) | Nested 2×2 branching with payload-driven choices |
 | [`intel_report`](experiments/cases/intel_report/) | Multi-source intel fan-in, then review/publish pipeline |
@@ -183,10 +219,10 @@ The current set:
 | [`trade_settlement`](experiments/cases/trade_settlement/) | Goods-for-payment with hidden circular dependency |
 | [`travel`](experiments/cases/travel/) | All-or-nothing travel booking with rollback |
 | [`travel_saga`](experiments/cases/travel_saga/) | 3-supplier booking happy path |
-| [`skills_safety/airline_seat`](experiments/cases/skills_safety/airline_seat/) | Real-skills safety case: seat change with payment |
-| [`skills_safety/booking_saga`](experiments/cases/skills_safety/booking_saga/) | Real-skills safety case: booking saga |
-| [`skills_safety/code_execution`](experiments/cases/skills_safety/code_execution/) | Real-skills safety case: gated code execution |
-| [`skills_safety/content_pipeline`](experiments/cases/skills_safety/content_pipeline/) | Real-skills safety case: content approval pipeline |
+| [`skills_safety/airline_seat`](experiments/cases/skills_safety/airline_seat/) | Airline customer-service team from a real OpenAI Agents SDK example (wrong-order safety) |
+| [`skills_safety/booking_saga`](experiments/cases/skills_safety/booking_saga/) | LangGraph supervisor booking saga (deadlock / saga ordering) |
+| [`skills_safety/code_execution`](experiments/cases/skills_safety/code_execution/) | AutoGen write-then-execute code pair (execute-before-review safety) |
+| [`skills_safety/content_pipeline`](experiments/cases/skills_safety/content_pipeline/) | CrewAI research/write/edit/publish content team (wrong-order safety) |
 | [`skills_safety/doc_pipeline`](experiments/cases/skills_safety/doc_pipeline/) | Announcement team from real Anthropic public skills |
 | [`skills_safety/doc_coauthor_ship`](experiments/cases/skills_safety/doc_coauthor_ship/) | Corrected announcement case (looping protocol) |
 | [`skills_safety/pr_merge`](experiments/cases/skills_safety/pr_merge/) | Code-change team from real GitHub Copilot public files |
@@ -214,6 +250,11 @@ python scripts/case_runner.py finance 3 --semantic
 
 # Run and log to file
 python scripts/case_runner.py finance 5 2>&1 | tee my_run.log
+
+# Run arms one at a time instead of in parallel (--sequential), so wall-clock
+# timings are trustworthy: parallel arms compete for the same API quota, so a
+# "slow" arm may just have been starved by its neighbors
+python scripts/case_runner.py finance 5 --sequential
 
 # See all options
 python scripts/case_runner.py --help
@@ -409,20 +450,24 @@ az login --use-device-code
 │   ├── 2_TESTING_STRATEGIES.md   # Testing methodology
 │   ├── 3_BENCHMARK_DESIGN_EXPLAINED.md
 │   ├── 4_HOW_TO_CREATE_USE_CASES.md
+│   ├── 5_ARMS_EXPLAINED.md       # Every arm as one flow line
 │   ├── 6_RUN_REPORTS_EXPLAINED.md
 │   ├── 7_USE_CASE_DEADLOCK_SAFETY.md
+│   ├── 8_INTENT_TO_PROTOCOL_TRAINING.md
+│   ├── BENCHMARK_FAIRNESS_REVIEW.md   # Fairness audit of the benchmark
 │   ├── reference/                 # Current technical deep-dives (glossary, Scribble
 │   │                              #   extensions, gate internals, Foundry wiring, v3 plan)
-│   ├── results/                   # Current evidence (latest run report, canonical
-│   │                              #   results, deadlock + token-efficiency demos)
-│   └── archive/                   # Superseded docs (nothing deleted)
+│   ├── results/                   # Current evidence (RESULT_00 … RESULT_11 + runs/)
+│   ├── predictions/               # Pre-registered predictions (written before runs)
+│   ├── diary/                     # Project journal
+│   └── archive/                   # Superseded docs (nothing deleted; see its README.md)
 ├── experiments/
-│   ├── cases/
+│   ├── cases/                     # All benchmark cases (see the table above)
 │   │   ├── finance/              # Example case
 │   │   ├── banking/
 │   │   ├── trade_deadlock/
-│   │   └── report_pipeline/
-│   ├── baselines/                # The 7 arms (runners)
+│   │   └── ...                   # 20+ more, incl. skills_safety/
+│   ├── baselines/                # The 15 arms (runners)
 │   ├── scripts/
 │   │   ├── case_runner.py        # Main benchmark driver
 │   │   ├── case_loader.py        # Load case.yaml

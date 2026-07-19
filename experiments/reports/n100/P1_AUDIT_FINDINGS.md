@@ -1,7 +1,9 @@
 # P-1 error audit — findings (2026-07-05)
 
 Forensic re-check of the existing n=100 data, per
-[`VALIDATION_TODO.md`](VALIDATION_TODO.md) §P-1. No agents were run — this is
+[`VALIDATION_TODO.md`](VALIDATION_TODO.md) §P-1 ("P-1" is that plan's
+highest-priority task ID: audit the numbers before running anything new).
+No agents were run — this is
 pure inspection of `.trial_state/ladder_run/**/state.json` + `report.json` and
 the E1 mutation outputs. Reproduction scripts in the scratchpad; every number
 below was read directly from the trial files.
@@ -16,6 +18,18 @@ were incomplete, not failed, which understated that arm's GCR (goal-completion
 rate — % of trials that reached the goal; 79%). **That bug is now fixed:**
 all 22 non-terminal trials across the suite were driven to completion by haiku
 players, moving escrow C+spec to **97%** (see the RESOLVED note at the bottom).
+
+## Menu
+
+- [Item 1 — B revenue_audit genuineness](#item-1--b-revenue_audit-genuineness--real-correctly-detected-with-a-caveat)
+- [Item 2 — A revenue_audit 99/0/1](#item-2--a-revenue_audit-9901--correct-detector-armed-better-story)
+- [Item 3 — C-min 31% vs 100%](#item-3--c-min-31-vs-100--protocol-shape-dependent-not-an-engine-bug)
+- [Item 4 — 11 branch_asymmetry survivors](#item-4--11-branch_asymmetry-survivors--reproduced-adjudication-pending)
+- [Item 5 — escrow STJP 97%](#item-5--escrow-stjp-97--2-deadlocks--1-incomplete-all-safe)
+- [Item 6 — cost-to-clean-goal](#item-6--cost-to-clean-goal--verified)
+- [Filed-at-round histogram](#filed-at-round-histogram-the-p0b-do-it-today-plot)
+- [A/B violation-type histograms](#ab-violation-type-histograms-p1--named-behaviors-behind-the-counts)
+- [NEW FINDING — 22 non-terminal active trials](#new-finding-material--22-non-terminal-active-trials-18-understate-escrow-cspec)
 
 ---
 

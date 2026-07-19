@@ -1,5 +1,72 @@
 # STJP paper v10 — changes from v9
 
+## v10.1 (2026-07-19) — fairness-audit alignment, statistical rigor, reproducibility
+
+Purpose: bring every claim in line with the 2026-07-17 benchmark fairness
+audit (`docs/BENCHMARK_FAIRNESS_REVIEW.md`) and ICLR statistical/reporting
+norms. No experimental number was added or changed; only qualifications,
+pending-framed ablations, and reporting infrastructure. All edits in
+`main.tex`.
+
+1. **Abstract** — the "cuts LLM calls by 73%" scheduler claim is now scoped
+   "relative to round-robin polling", with a note that a protocol-free
+   scheduling control is pre-registered. (The 9× / 73% numbers are tokens
+   and calls, unaffected by the audit's wall-clock finding, so they stand.)
+2. **§5.1 (goal achievement)** — new passage defining the **per-arm fair
+   success rule**: strict label-matching for arms shown the protocol
+   vocabulary, the role-pair rung for bare arms (right sender, right
+   receiver, predicate-satisfying payload, any label), with the
+   essay-answer-key example explaining why strict-for-everyone was unfair.
+   States that pre-fix tables report strict for all arms, are labeled, and
+   that bare-arm scores are lower bounds pending re-runs.
+3. **§5.3 (arms and fairness)** — three new binding rules: Wilson 95%
+   intervals printed at n≤10 (with the 0% vs 40% overlap example);
+   answer-key invariance guard (relabel-only re-anchoring, human sign-off
+   for forced payload-type translations, the two corrected finance
+   predicates); one-time setup cost (drafting/re-anchoring) disclosed.
+4. **Table captions** `tab:ladder`, `tab:gate`, `tab:grand` — strict-rule
+   caveat (A's 0% is a lower bound), concrete Wilson 95% intervals for the
+   cells shown, and "seconds are from contended parallel execution,
+   indicative only" labels. Gate caption also flags the hint-free ablation.
+5. **§6.2 / §6.4 body** — the −28% time and 32s/trial wall-clock figures
+   labeled as contended-parallel/indicative; the scheduler win explicitly
+   scoped against round-robin with the last-receiver control named as the
+   opponent it must beat next (on branching/fan-in, not linear pipelines).
+6. **New §6.5 "Fairness audit, corrected metrics, and pre-registered
+   ablations" (`sec:fairaudit`)** — plain-language account of the audit's
+   five findings and fixes: (1) strict-rule unfairness → per-arm rule;
+   (2) drifted answer keys → invariance guard (with the `"true" in x`
+   /"untrue" example and the forced Bool-translation nuance); (3) shared
+   stopwatch → `--sequential` mode + execution-mode stamping, speed claims
+   withheld; (4) cheap-scheduler control arm `min_llmvalid_gate_lastrecv`
+   (offline linear-flow simulation: 3 sends in 3 polls — the linear case
+   is conceded; pre-registered prediction: control ties on
+   `report_pipeline`, loses on `finance_nested`/`intel_report`/`auction`);
+   (5) hint ablation arm `min_llmvalid_gate_nohint` (prediction: zero
+   disasters preserved, some liveness lost). All framed pending — **no
+   invented numbers**, same discipline as the seam template.
+7. **Limitations** — four additions: n≤10 CI overlap (re-run headline
+   claims at n≥30); scoring-rule history (strict-rule tables are lower
+   bounds for bare arms; contended wall-clock carries no comparative
+   claim); no tools / invented data (C1 provenance certifies message
+   discipline, not data lineage; tool-served-data variant named);
+   single-deployment headline runs (`gpt-5.4` is an unverifiable
+   user-set deployment name).
+8. **Appendix B (Reproducibility)** — expanded from three lines to a full
+   statement: repo layout, runner command with `--sequential`, what
+   summaries record (success_rule, execution_mode, CIs, truncation,
+   prompt checksums), determinism boundary (stochastic hosted role-players,
+   bit-reproducible evaluators), and cost estimates per
+   `docs/reference/COST_ESTIMATES.md` (~$20–45 full finance run on gpt-4o;
+   <$100 for the 1,200-trial suite).
+9. **§6.3** — "0% completion" for the A arm annotated as strict-rule lower
+   bound.
+
+Compile status: pdflatex is not installed in this container; a static
+check passed (braces 1263/1263 balanced, all environments matched, 0
+undefined refs, 0 undefined cites). Re-compile before submission.
+
+
 v10 = v9 plus two things: a **new title** and the **integration of the
 real-skills live-run program** (docs/results RESULT_8–RESULT_11, the last
 two dated 2026-07-15) that v9 predated. v9's structure, section numbering,

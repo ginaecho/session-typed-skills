@@ -40,6 +40,14 @@ the plain meaning first; the short form (if any) is in brackets.
   checker accepted as on-contract versus how many off-contract messages actually
   reached their recipient.
 
+- **Wilson confidence interval** — a formula for putting honest error bars
+  on a percentage that behaves well even at small sample sizes (10/10
+  successes at n=10 still leaves a lower bound of only ~72%).
+
+- **pass^k** — the probability that all of the next k runs succeed in a
+  row; the reliability number an operator actually cares about (a 95%
+  per-run success rate gives only pass^10 ≈ 60%).
+
 ## The severity ladder (how harmful a deviation is)
 
 Instead of counting every difference as a "violation," each off-contract action is
@@ -109,6 +117,24 @@ graded by consequence (this answers the fair objection that "different ≠ wrong
   branch"). Checked by the monitor against values it has already seen.
 - **Refinement / payload guard** — a rule on a message's value (e.g. "this number
   must be positive").
+- **Sidecar file** — a companion file that sits beside the protocol file
+  with the same basename and a different extension (`v1.scr` gets `v1.refn`
+  for value rules and `v1.policy` for cross-message rules), so the stock
+  Scribble compiler never has to be modified to add them.
+- **Critic** — the cross-message checker: a deterministic component that
+  judges the *whole conversation* against `.policy` rules (information
+  flow, ordering, separation of duty, repetition caps) — breaches that no
+  single message reveals, e.g. a leak that happens over three individually
+  legal hops.
+- **Revisor** — the repair half of the Critic: it drafts a corrected
+  protocol when the Critic finds a policy breach, and its output is always
+  re-judged by Scribble and the Critic, never trusted.
+- **Duality** — the simple compatibility idea that every send must be
+  mirrored by a matching receive on the other side; the multiparty version
+  of it is the cheap first check run over skills before synthesis.
+- **Coinductive projection** — a projection algorithm (in the nuscr fork)
+  that reasons about a loop as a whole rather than unrolling it, so it can
+  split up looping protocols that stock projection rejects.
 
 ## STJP itself
 

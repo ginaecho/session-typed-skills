@@ -135,7 +135,13 @@ def _parse_trials(events_path: Path) -> list[dict]:
                 cur["attempts"].append(cur_attempt)
                 cur["events_all_flat"].extend(cur_attempt)
                 cur_attempt = []
-        elif m == "protocol_unprojectable":
+        elif m is not None:
+            # Any other marker line is bookkeeping, not a delivered message.
+            # Critically this skips "gated" markers: those carry sender/
+            # receiver/label/payload for a send the gate REJECTED pre-delivery.
+            # Before this guard they were appended as real events, so a
+            # rejected send could satisfy a goal in strict_pct/role_pair_pct
+            # for the gate arms (2026-07-19 audit fix).
             continue
         else:
             if cur is None:

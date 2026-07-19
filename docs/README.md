@@ -82,7 +82,7 @@ What you'll learn:
 - The fairness rules (one variable per comparison, no confounding)
 - Two axes and four task shapes (how to design an unconfounded benchmark)
 - How we grade results (GCR, CGC, cost-to-goal)
-- The current 7 arms and what changed between them
+- The benchmark arms and what changed between them (the registry has since grown to 15 arms — see [`5_ARMS_EXPLAINED.md`](5_ARMS_EXPLAINED.md) for the current set)
 
 **Read time:** 20 minutes
 
@@ -139,8 +139,9 @@ self-explanatory.
 
 What you'll learn:
 - What a "setting"/"arm" is, and the building blocks every one is made of
-- All 13 configurations, grouped as a ladder: no plan → plan as text →
-  per-agent contracts → enforced contracts → the full STJP stack
+- All 15 configurations, grouped as a ladder: no plan → plan as text →
+  per-agent contracts → enforced contracts (including two ablation settings —
+  comparisons that remove one ingredient at a time) → the full STJP stack
 - Which test cases fit STJP well, and why (the case-fit table)
 
 **Read time:** 10 minutes
@@ -225,6 +226,8 @@ a human doing it by hand.
 | [`6_RUN_REPORTS_EXPLAINED.md`](6_RUN_REPORTS_EXPLAINED.md) | **Results.** How do I read benchmark results? What do the numbers mean? |
 | [`7_USE_CASE_DEADLOCK_SAFETY.md`](7_USE_CASE_DEADLOCK_SAFETY.md) | **Safety cases.** Why do protocols matter? Real examples. |
 | [`8_INTENT_TO_PROTOCOL_TRAINING.md`](8_INTENT_TO_PROTOCOL_TRAINING.md) | **Training the front door.** How does intent → protocol drafting get machine-learned? What exists today, and how do I run it? |
+| [`BENCHMARK_FAIRNESS_REVIEW.md`](BENCHMARK_FAIRNESS_REVIEW.md) | **Fairness audit.** A skeptical review of the benchmark itself: what it already does well, the scoring problems found (all leaning in STJP's favor), and how to fix the measurements. |
+| [`FABLE5_INTERVIEW_DEV_USE_CASES.md`](FABLE5_INTERVIEW_DEV_USE_CASES.md) | **Developer use cases, interview format.** Which real developer workflows fit STJP, argued case by case. |
 
 ### `reference/` — technical deep-dives (current, for researchers)
 
@@ -244,6 +247,7 @@ a human doing it by hand.
 - [`reference/SEAM_AUTOTRAINING_PLAN.md`](reference/SEAM_AUTOTRAINING_PLAN.md) — Strategy proposal for training the intent-to-protocol translation step: the validity ladder, the memoryless faithfulness judge panel, and the corpus-generation design — summarized in [`8_INTENT_TO_PROTOCOL_TRAINING.md`](8_INTENT_TO_PROTOCOL_TRAINING.md)
 - [`reference/SEAM_TRAINING_EXECUTION_PLAN.md`](reference/SEAM_TRAINING_EXECUTION_PLAN.md) — The **executable** version: exact stacks, data formats, hyperparameters, judge-isolation mechanics, worker task cards, and every preregistered go/no-go gate (§8)
 - `reference/GPU_TRAINING_RUNBOOK.md` — How to actually run the GPU fine-tuning (SFT) and reinforcement-learning (GRPO) phases once the data and eval harness are in place
+- [`reference/COST_ESTIMATES.md`](reference/COST_ESTIMATES.md) — Which commands spend Azure money at all, and roughly how much a run costs (per-model dollar table; how to spend almost nothing first)
 - `reference/reports/seam/` — Worker reports behind the intent-to-protocol translation step's training numbers (eval harness, grammar / GCD [grammar-constrained decoding, which forces model output to always be syntactically legal], data builders, judge panel, real-skills miner) and the first live faithfulness-panel run (`PANEL_SMOKE_2026-07-11.md`)
 
 ### `results/` — the evidence behind the guides (current, plain English)

@@ -2,7 +2,7 @@
 
 Committed evidence for the n=100 run described in
 [`docs/6_RUN_REPORTS_EXPLAINED.md`](../../../../docs/6_RUN_REPORTS_EXPLAINED.md)
-§2 and [`docs/results/RESULT_8_SKILL_SAFETY.md`](../../../../docs/results/RESULT_8_SKILL_SAFETY.md).
+§2 and [`docs/results/RESULT_08_SKILL_SAFETY.md`](../../../../docs/results/RESULT_08_SKILL_SAFETY.md).
 
 - **Cases:** the four `experiments/cases/skills_safety/*` cases (real,
   MIT-licensed public skills: openai-agents / langgraph / autogen / crewAI).

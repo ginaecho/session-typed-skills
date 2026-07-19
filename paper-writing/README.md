@@ -73,7 +73,15 @@ This requires:
 
 ## Version History
 
-- **v10** (current) - *"Compile the Conversation of Multi-Agent
+- **v10.1** (2026-07-19, current) - fairness-audit alignment pass: per-arm
+  success rule defined in the methodology, strict-rule tables labeled with
+  Wilson 95% intervals, contended wall-clock numbers marked indicative, a
+  new "Fairness audit, corrected metrics, and pre-registered ablations"
+  subsection (hint-free gate and last-receiver scheduling control, framed
+  pending — no invented numbers), expanded Limitations and a full
+  Reproducibility appendix. See `v10/CHANGELOG_v10.md` ("v10.1") and the
+  readiness assessment in `ICLR_READINESS.md`.
+- **v10** - *"Compile the Conversation of Multi-Agent
   Coordination: Provably Safe and More Token-Efficient"*. Three groups of
   changes over v9:
   1. **Retitled twice** - first from v8/v9's "Guarantees, Not Averages:
