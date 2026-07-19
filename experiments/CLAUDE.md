@@ -131,14 +131,14 @@ guards** in `protocols/v1.refn` matter: without them compiled into the prompt
 
 2. **Dynamic per-turn user prompt** — one per step:
    - Built by `stjp_core/foundry/session_helpers.py::build_view(role, history)`
-     (the session log so far, from this role's POV). Imported by
-     `foundry_runner.py:36` as `ex`.
+     (the session log so far, from this role's point of view). The module is
+     imported near the top of `foundry_runner.py` as `ex`.
    - Posted as a `user` message to that role's thread
    - Then `runs.create_and_process(thread, agent)` is invoked
 
 **Goals** flow through two channels:
-- As prose into the system prompt via `case.goals_text()`
-  (`instructions.py:81-84, 184`)
+- As prose into the system prompt — every builder in `instructions.py`
+  interpolates `case.goals_text()` into its template
 - As executable predicates into the post-trace verifier
   (`summary_eval.json` lifecycle)
 
@@ -150,9 +150,10 @@ guards** in `protocols/v1.refn` matter: without them compiled into the prompt
 
 `case.yaml` is the **case** spec: `intent`, `roles`, `goals`, `branch_hints`,
 `role_descriptions`, `terminal_label`, `max_steps`. It says nothing about
-the 8 arms, about min vs spec, or about why a particular LLM-drafted protocol
+the arms, about min vs spec, or about why a particular LLM-drafted protocol
 is "unsafe" — those are **matrix-level** concerns and belong here, in
-`baselines/README.md`, and in `baselines/registry.py:150-159`. Do not bloat
+`baselines/README.md`, and in the comment block above `SCENARIOS` in
+`baselines/registry.py`. Do not bloat
 `case.yaml` with arm-level prose; if you need to explain something about an
 arm, write it here.
 

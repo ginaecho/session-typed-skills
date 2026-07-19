@@ -5,7 +5,7 @@ STJP's runtime story is a quartet (see the STJP article, §3):
 | component | judges | when | code |
 |---|---|---|---|
 | **Checker** (Scribble) | the protocol's *shape* — deadlock-freedom, projectability | compile time | `compiler/validator.py` |
-| **Monitor** | *one message at a time* against one role's EFSM + refinements | runtime | `monitor/monitor.py` |
+| **Monitor** | *one message at a time* against one role's EFSM (extended finite-state machine — the role's contract compiled to states and allowed moves) + refinements | runtime | `monitor/monitor.py` |
 | **Critic** | the *whole conversation* — properties spanning many messages | compile time **and** runtime | `critic/critic.py` |
 | **Revisor** | nothing — it *repairs* the rules when the Critic flags them | authoring time | `critic/revisor.py` |
 
@@ -51,7 +51,10 @@ policy problem no single message would reveal."*
 
 ## 2. The `.policy` sidecar
 
-Policies live next to the protocol version, like `.refn`:
+A *sidecar* is a companion file that sits beside the protocol file with the
+same basename and a different extension. Policies live next to the protocol
+version, like `.refn` (paths below are from the
+[`finance`](../../experiments/cases/finance/) case):
 
 ```
 experiments/cases/finance/protocols/v1.scr      the global type
@@ -95,20 +98,23 @@ An LLM can draft the sidecar from the user intent
 
 ## 3. Static mode — before any agent runs
 
-`run_static_critic()` parses the global type into an AST
+`run_static_critic()` parses the global type into an AST (abstract syntax
+tree — the protocol as a structured tree rather than text)
 (`critic/protocol_paths.py`), enumerates every execution path (choices
 multiply paths; `rec` loops are unrolled once and flagged), and checks each
 policy on each path:
 
-- *flow* runs a conservative taint propagation (may-flow): once a role has
+- *flow* runs a conservative taint propagation ("may-flow" — treat data as
+  contaminated and track everywhere it *could* spread): once a role has
   observed tainted data, everything it later sends propagates the taint,
   unless the edge matches `declassify`. A violation carries the full witness
   chain — the hop-by-hop route the data can take.
 - *sequence* / *separation* / *aggregate* are checked per path exactly.
 
 A static finding means **the protocol itself permits the breach** — even
-perfectly conformant agents could commit it. This is the same
-shift-left move as the deadlock check: catch it before the expensive run.
+perfectly conformant agents could commit it. This is the same move as the
+deadlock check — catch the problem before the expensive run rather than
+during it (what engineers call "shifting left").
 
 ```bash
 python -m stjp_core.critic.critic experiments/cases/finance/protocols/v1.scr

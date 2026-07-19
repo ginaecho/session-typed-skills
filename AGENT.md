@@ -578,16 +578,16 @@ never publish to the mirror without the source being updated first.
   (local working copy)
         │  hop 1: commit + push
         ▼
-  ginaecho/session-typed-skills  (main)      ← the SOURCE OF TRUTH
+  ginaecho/session-typed-agents  (main)      ← the SOURCE OF TRUTH
         │  hop 2: sync tracked files into a subfolder + PR
         ▼
   mcaps-microsoft/eag-innovation  (main)
         └── agentic-governance/stjp/          ← the MIRROR (internal MS monorepo)
 ```
 
-### Hop 1 — commit & push to the source repo (`ginaecho/session-typed-skills`)
+### Hop 1 — commit & push to the source repo (`ginaecho/session-typed-agents`)
 
-This local repo's `origin` **is** `ginaecho/session-typed-skills`. Commit your work
+This local repo's `origin` **is** `ginaecho/session-typed-agents`. Commit your work
 here first and push to `main`:
 
 ```bash
