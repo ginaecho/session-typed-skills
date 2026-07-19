@@ -12,12 +12,14 @@ superseded design was archived instead of deleted.
 Each entry below says what the file was and which current document replaced
 it (the "successor"). Successor links point back up into `docs/`.
 
+<!-- MENU:START (auto-generated — edit headings, then regenerate) -->
 ## Menu
 
 - [Designs and strategies](#designs-and-strategies)
 - [Run reports and demo write-ups](#run-reports-and-demo-write-ups)
 - [Research reports, analyses, and notes](#research-reports-analyses-and-notes)
 - [Proposals that were retired](#proposals-that-were-retired)
+<!-- MENU:END -->
 
 ## Designs and strategies
 

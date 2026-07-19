@@ -393,7 +393,11 @@ def evaluate(case: Case, run_dir: Path, semantic: bool = True) -> dict:
 
     out_path = run_dir / "summary_eval.json"
     out_path.write_text(json.dumps(out, indent=2), encoding="utf-8")
-    print(f"\nWROTE {out_path.relative_to(TESTING_IDEAS)}")
+    try:
+        shown = out_path.relative_to(TESTING_IDEAS)
+    except ValueError:      # run_dir outside the repo (e.g. a temp dir)
+        shown = out_path
+    print(f"\nWROTE {shown}")
     return out
 
 

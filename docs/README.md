@@ -251,6 +251,9 @@ a human doing it by hand.
 - [`reference/SEAM_TRAINING_EXECUTION_PLAN.md`](reference/SEAM_TRAINING_EXECUTION_PLAN.md) — The **executable** version: exact stacks, data formats, hyperparameters, judge-isolation mechanics, worker task cards, and every preregistered go/no-go gate (§8)
 - `reference/GPU_TRAINING_RUNBOOK.md` — How to actually run the GPU fine-tuning (SFT) and reinforcement-learning (GRPO) phases once the data and eval harness are in place
 - [`reference/COST_ESTIMATES.md`](reference/COST_ESTIMATES.md) — Which commands spend Azure money at all, and roughly how much a run costs (per-model dollar table; how to spend almost nothing first)
+- [`reference/MINED_SKILLS_SOURCES.md`](reference/MINED_SKILLS_SOURCES.md) — Verified source registry for every mined "real-world skill": where each file really came from, so provenance claims can be audited
+- [`reference/NUSCR_AND_SKILL_SAFETY_PLAN.md`](reference/NUSCR_AND_SKILL_SAFETY_PLAN.md) — The implementation plan behind the nuscr backend and the "unsafe skills" demo (working notes; the install guide itself is `NUSCR_CLOUD_INSTALL.md` above)
+- [`reference/TRAINING_ROADMAP.md`](reference/TRAINING_ROADMAP.md) — Who does what, in what order, for the intent-to-protocol training effort (the checklist view of the two SEAM plans above)
 - `reference/reports/seam/` — Worker reports behind the intent-to-protocol translation step's training numbers (eval harness, grammar / GCD [grammar-constrained decoding, which forces model output to always be syntactically legal], data builders, judge panel, real-skills miner) and the first live faithfulness-panel run (`PANEL_SMOKE_2026-07-11.md`)
 
 ### `results/` — the evidence behind the guides (current, plain English)
