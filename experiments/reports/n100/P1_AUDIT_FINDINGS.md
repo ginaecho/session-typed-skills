@@ -120,7 +120,7 @@ seeded RNG; verdicts already known = all SURVIVED / Scribble-accepted):
 | 088 | `M7(Int) from R3 to R4` |
 
 **RESOLVED (2026-07-05)** — full adjudication in
-[`../e1/branch_asymmetry_adjudication.md`](../e1/branch_asymmetry_adjudication.md).
+[`e1/branch_asymmetry_adjudication.md`](e1/branch_asymmetry_adjudication.md).
 Each of the 11 was reconstructed, re-validated (all confirmed ACCEPT), and
 projected per-role. Verdict: **4 genuine checker gaps** (corpus_016/059/080/088)
 + **7 accidentally-valid**. The 4 gaps share one reproducible defect pattern:

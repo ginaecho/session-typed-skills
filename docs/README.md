@@ -23,6 +23,7 @@ Clean, organized guides to the Session-Typed Judge Panel (STJP) — a system tha
   - [Main documents (read these)](#main-documents-read-these)
   - [`reference/` — technical deep-dives (current, for researchers)](#reference--technical-deep-dives-current-for-researchers)
   - [`results/` — the evidence behind the guides (current, plain English)](#results--the-evidence-behind-the-guides-current-plain-english)
+  - [`predictions/` — pre-registered predictions](#predictions--pre-registered-predictions)
   - [`diary/` — the project journal](#diary--the-project-journal)
   - [Archived documents (`archive/` — kept for reference, nothing deleted)](#archived-documents-archive--kept-for-reference-nothing-deleted)
 - [🎯 Reading paths by role](#-reading-paths-by-role)
@@ -51,6 +52,8 @@ Clean, organized guides to the Session-Typed Judge Panel (STJP) — a system tha
 - **Running the nuscr / nuscribble compiler backend?** → See [`reference/NUSCR_CLOUD_INSTALL.md`](reference/NUSCR_CLOUD_INSTALL.md) (install routes + `STJP_COMPILER_BACKEND=nuscr`)
 - **Verifying the results from the raw traces?** → See [`reference/HOW_TO_USE_TRACES.md`](reference/HOW_TO_USE_TRACES.md) (re-derive every metric; read a trace by eye)
 - **Which developer use cases fit STJP (interview format)?** → See [`FABLE5_INTERVIEW_DEV_USE_CASES.md`](FABLE5_INTERVIEW_DEV_USE_CASES.md)
+- **Is the benchmark itself fair?** → See [`BENCHMARK_FAIRNESS_REVIEW.md`](BENCHMARK_FAIRNESS_REVIEW.md) (a skeptical audit of the scoring and cost claims)
+- **What does a run cost in real money?** → See [`reference/COST_ESTIMATES.md`](reference/COST_ESTIMATES.md) (which commands touch Azure; per-model dollar table)
 
 ---
 
@@ -304,11 +307,22 @@ Earlier run reports, kept here for history (technical, not rewritten):
 - [`results/runs/RUN_2026-06-17.md`](results/runs/RUN_2026-06-17.md) — drafting prompt A/B, criticality-gate smoke (a quick end-to-end check) results
 - [`results/RESULT_00_SUMMARY.md`](results/RESULT_00_SUMMARY.md) — results from the deleted legacy runner (earliest run)
 
+### `predictions/` — pre-registered predictions
+
+Predictions written down BEFORE a run and graded after — so a "confirmed"
+can't be quietly rewritten to match whatever happened.
+
+- [`predictions/BENCHMARK_V2_PREREGISTRATION.md`](predictions/BENCHMARK_V2_PREREGISTRATION.md) — The Benchmark Plan v2 experiments (verdict corpus, E1–E7): each prediction registered 2026-07-04 and its graded outcome
+- [`predictions/EXTENSIONS_PREREGISTRATION.md`](predictions/EXTENSIONS_PREREGISTRATION.md) — The three typed extensions (session ledger, lawful-slack gate, typed crash handling — P1/P2/P3, graded as E8/E9/E10), registered 2026-07-05 before their first run
+
 ### `diary/` — the project journal
 
 - [`diary/DIARY.md`](diary/DIARY.md) — newest-first development log; the history of every decision. (The former standalone `SESSION_2026-06-17.md` session index is merged into its 2026-06-17 entry.)
 
 ### Archived documents (`archive/` — kept for reference, nothing deleted)
+
+Each archived file is also indexed, with what superseded it, in
+[`archive/README.md`](archive/README.md).
 
 | Document | Why archived |
 |---|---|
@@ -372,18 +386,21 @@ Earlier run reports, kept here for history (technical, not rewritten):
 
 ```
 docs/
-├── 1_...md … 6_...md + README.md   ← the numbered guides (plain English; start here)
+├── 1_...md … 8_...md + README.md   ← the numbered guides (plain English; start here)
+│                                      plus the top-level reviews (BENCHMARK_FAIRNESS_REVIEW,
+│                                      FABLE5_INTERVIEW_DEV_USE_CASES)
 ├── reference/                       ← current technical deep-dives (glossary, Scribble
 │                                      extensions, gate internals, Foundry wiring, v3 plan,
-│                                      Benchmark Plan v2)
-├── results/                         ← current evidence, plain English: RESULT_01_DEADLOCK …
-│                                      RESULT_07_N100_SCALE (latest)
+│                                      Benchmark Plan v2, cost estimates)
+├── results/                         ← current evidence, plain English: RESULT_00_SUMMARY …
+│                                      RESULT_11_DOC_COAUTHOR_SHIP (latest), plus runs/
 ├── predictions/                     ← pre-registered predictions (written BEFORE a run,
 │                                      graded after) — e.g. BENCHMARK_V2_PREREGISTRATION
 ├── diary/                           ← the project journal (DIARY.md, newest-first)
 └── archive/                         ← superseded designs, earlier reports, technical
                                        originals of the RESULT_* rewrites
-                                       (nothing deleted, nothing here is current)
+                                       (nothing deleted, nothing here is current;
+                                       indexed in archive/README.md)
 ```
 
 Rules:
@@ -397,7 +414,7 @@ Rules:
 ## 🔄 Where to get the latest
 
 - **Latest plan:** [`reference/STJP_V3_PLAN.md`](reference/STJP_V3_PLAN.md) (governance plane + execution plane; summarized in [`1_TECH_SETUP.md`](1_TECH_SETUP.md) section 7)
-- **Latest results:** [`results/RESULT_07_N100_SCALE.md`](results/RESULT_07_N100_SCALE.md) (all deterministic benchmarks at n=100) and [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) (finance case, gpt-5.4, n=10 — the pre-registered live-model run)
+- **Latest results:** [`results/RESULT_10_PR_REVIEW_MERGE.md`](results/RESULT_10_PR_REVIEW_MERGE.md) and [`results/RESULT_11_DOC_COAUTHOR_SHIP.md`](results/RESULT_11_DOC_COAUTHOR_SHIP.md) (the corrected real-skills cases, 2026-07-15); [`results/RESULT_07_N100_SCALE.md`](results/RESULT_07_N100_SCALE.md) (all deterministic benchmarks at n=100); [`results/RESULT_04_FULL_STACK.md`](results/RESULT_04_FULL_STACK.md) (finance case, gpt-5.4, n=10 — the pre-registered live-model run)
 - **Latest code status:** [`reference/GAP_CLOSED.md`](reference/GAP_CLOSED.md)
 - **Latest experiment design:** [`archive/EXPERIMENT_DESIGN_V3_EXECUTION.md`](archive/EXPERIMENT_DESIGN_V3_EXECUTION.md) (pre-registered; graded by the 2026-07-02 run report)
 

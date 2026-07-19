@@ -9,6 +9,13 @@ safe. STJP's mapping is direct: the scheduler is the coordinator, the monitors
 hold the per-role EFSMs, and the audit's 22 non-terminal trials were the untyped
 version of exactly this problem.*
 
+## Menu
+
+- [What was built](#what-was-built-all-on-this-branch)
+- [E10 result — deterministic (no LLM)](#e10-result--deterministic-no-llm)
+- [E10 result — live flaky-role](#e10-result--live-flaky-role-haiku-roles-n15-one-crashtrial)
+- [Paper insertion](#paper-insertion)
+
 ## What was built (all on this branch)
 
 - **`.fail` sidecar + parser** — `stjp_core/compiler/crash_handling.py`:

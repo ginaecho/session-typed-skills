@@ -1,6 +1,6 @@
 # W19 — Self-observed coordination failures, and the protocol that would have prevented them
 
-*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W19` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W19` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../../SEAM_TRAINING_EXECUTION_PLAN.md).)*
 
 
 Worker report for the case-study assignment: this project (STJP) was itself

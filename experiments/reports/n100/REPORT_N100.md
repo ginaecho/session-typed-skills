@@ -6,6 +6,14 @@ synthetic). The subagent interaction trials use a contract-following strategy
 (simulating a capable model that obeys its STJP contract) to measure
 infrastructure correctness at scale.
 
+## Menu
+
+- [Summary table](#summary-table)
+- [The finding that matters most](#the-finding-that-matters-most)
+- [Detailed results](#detailed-results)
+- [Where the data lives](#where-the-data-lives)
+- [Honest caveats](#honest-caveats)
+
 ## Summary table
 
 | Experiment | Component | n=100 Result | n=10/30 Baseline | Improvement |
@@ -170,7 +178,8 @@ experiments/reports/n100/
 1. **The STJP arm uses a contract-following strategy**, not a live LLM. This
    measures infrastructure correctness (does the gate reject correctly? does the
    scheduler poll the right role? does the monitor report clean traces?) — not
-   model quality. The n=10 live-LLM run (RESULT_5) already showed real models
+   model quality. The n=10 live-LLM run (RESULT_05,
+   `docs/results/RESULT_05_SUBAGENT_VALIDATION.md`) already showed real models
    follow the contract.
 
 2. **5 swap_fifo failures** in the stress suite are known and documented: a FIFO

@@ -6,6 +6,14 @@ PPDP'24** — session subtyping characterises every safe deviation from a local
 type, and preciseness (soundness + completeness) makes the relation maximal:
 anything inside is safe in all contexts, anything outside fails in some context.*
 
+## Menu
+
+- [What was built](#what-was-built-all-on-this-branch)
+- [E9 part 2 — safety non-regression](#e9-part-2--safety-non-regression-mandatory-control--holds)
+- [E9 part 1 — deadlock replay (decomposition)](#e9-part-1--deadlock-replay-decomposition)
+- [E9 part 3 — live tolerant-gate rerun](#e9-part-3--live-tolerant-gate-rerun-haiku-roles-n15arm)
+- [Paper insertion](#paper-insertion)
+
 ## What was built (all on this branch)
 
 - **(2a) compile-time subtype checker** — `stjp_core/compiler/check_subtype.py`

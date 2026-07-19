@@ -19,6 +19,19 @@ cost, with 0 violations under four cross-message policies.** The stress suite
 also caught (and led to the fix of) one real bug: chained extensions used to
 splice the `do` call into an aux block (`incremental.py::_main_header_match`).
 
+(E1/E2/E3 below are this report's own experiment numbers — they are *not* the
+E1–E10 numbering used by the n=100 suite in `experiments/reports/n100/`.)
+
+## Menu
+
+- [1. Method — agent interaction without Foundry](#1-method--agent-interaction-without-foundry)
+- [2. E1 — Compaction gauntlet](#2-e1--compaction-gauntlet-10-runs)
+- [3. E2 — Interaction trials, unchecked vs STJP](#3-e2--interaction-trials-unchecked-vs-stjp-10-trials-each)
+- [4. E3 — Incrementally extended protocol](#4-e3--incrementally-extended-protocol-10-trials)
+- [5. Integration stress suite](#5-integration-stress-suite-deterministic-10-seeded-iterations)
+- [6. Honest limitations](#6-honest-limitations)
+- [7. Reproduce](#7-reproduce)
+
 ---
 
 ## 1. Method — agent interaction without Foundry

@@ -11,6 +11,14 @@ Part of the combined ladder writeup:
 [`docs/6_RUN_REPORTS_EXPLAINED.md` §10](../../../../docs/6_RUN_REPORTS_EXPLAINED.md#10-the-full-arm-ladder-at-n100-reproduced-without-foundry)
 (plain-English).
 
+## Menu
+
+- [The table](#the-table)
+- [Two real findings](#two-real-findings-both-new-at-n100--neither-was-visible-at-n10)
+- [Integrity incidents during this run](#integrity-incidents-during-this-run-full-transparency)
+- [Where the data lives](#where-the-data-lives)
+- [What this run cost](#what-this-run-cost)
+
 ## The table
 
 **GCR** = goal-completion rate (% of trials that reached the goal). **CGC** =

@@ -15,7 +15,17 @@ reusing the STJP scheduler, runtime monitor and the Critic — a checker that
 looks across several messages in the conversation at once, catching
 violations no single message reveals on its own). Every poll is a real
 model decision (no auto shortcut); cost = LLM agent-calls (tokens aren't metered
-without Foundry).
+without Foundry). (The *arm ladder* is the graded series of arms from "prose
+intent only" up to the full STJP stack — each rung adds one ingredient.)
+
+## Menu
+
+- [The six arms — three knobs, and how to read the tables](#the-six-arms--three-knobs-and-how-to-read-the-tables)
+- [Use case 1 — revenue_audit: the SAFETY axis](#use-case-1--revenue_audit-the-safety-axis-n100)
+- [Use case 2 — escrow_trade: the COST axis](#use-case-2--escrow_trade-the-cost-axis-n100)
+- [What the two cases show together](#what-the-two-cases-show-together)
+- [Honest limitations and integrity notes](#honest-limitations-and-integrity-notes)
+- [Reproduce](#reproduce)
 
 ## The six arms — three knobs, and how to read the tables
 

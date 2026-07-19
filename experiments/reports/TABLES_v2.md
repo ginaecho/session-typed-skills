@@ -8,7 +8,8 @@ land — delete the "synthesized targets; measurement pending" note when you do.
 
 ## Table 5 — reliability (pass^k)
 
-**Real, n=10 (subagent trials — E2/E3 of RESULT_5):**
+**Real, n=10 (subagent trials — experiments E2/E3 of RESULT_05,
+`docs/results/RESULT_05_SUBAGENT_VALIDATION.md`):**
 
 | Arm | succ/n | per-run | 95% CI (Wilson) | pass^10 | pass^10 @ CI-LB |
 |---|---|---|---|---|---|

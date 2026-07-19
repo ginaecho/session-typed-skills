@@ -18,6 +18,13 @@ haiku subagent** — the cheap model requested. n=10 independent trials per arm.
 There is **no auto/shortcut mode**; every poll is a real model decision, and
 cost is counted per answered poll.
 
+## Menu
+
+- [The table (n=10 per arm)](#the-table-n10-per-arm)
+- [What this shows (and doesn't)](#what-this-shows-and-doesnt)
+- [Honest process notes](#honest-process-notes-why-you-can-trust-these-numbers)
+- [Reproduce](#reproduce)
+
 ## The table (n=10 per arm)
 
 | arm | GCR | CGC | Disasters | Calls/trial | Cost-to-goal (calls) |

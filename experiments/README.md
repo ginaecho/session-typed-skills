@@ -75,7 +75,9 @@ the arms form a ladder:
   per-role skill files that were never formally checked (the deadlock demo's
   no-checker arm).
 - **global type as text** — `maf_groupchat_unsafe` (an LLM-drafted protocol
-  Scribble *rejected*), `maf_groupchat_llmvalid` (one Scribble *accepted*),
+  that Scribble — the protocol-description language whose checker proves
+  deadlock-freedom — *rejected*), `maf_groupchat_llmvalid` (one Scribble
+  *accepted*),
   `global_decentralized` (the accepted text, but on the decentralized runner —
   no orchestrator).
 - **projected per-role local type + monitor** — `spec_llmvalid` (verbose

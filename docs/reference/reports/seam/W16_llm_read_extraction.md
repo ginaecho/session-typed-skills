@@ -1,6 +1,6 @@
 # W16 — LLM-read extraction over W8's 13 mined teams
 
-*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W16` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W16` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../../SEAM_TRAINING_EXECUTION_PLAN.md).)*
 
 
 Worker report for the open question W8 (`docs/reference/reports/seam/W8_miner.md`)

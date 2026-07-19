@@ -1,6 +1,16 @@
 # VALIDATION_TODO — what to run next, what to re-check, and where suspected errors hide
 
-*Written 2026-07-05, after integrating the n=100 suite into paper v4. Ordered by priority. Each item: why, how, effort, and what changes in the paper when done. The "error audit" section lists the places where I suspect the current numbers could be wrong — check those BEFORE running anything new, because they're cheap and they feed the paper's integrity story either way.*
+*Written 2026-07-05, after integrating the n=100 suite into paper v4. Ordered by priority — the P-labels below (P-1, P0, P0b, P1, P2) are priority tiers, P-1 being "before anything else". Each item: why, how, effort, and what changes in the paper when done. The "error audit" section lists the places where I suspect the current numbers could be wrong — check those BEFORE running anything new, because they're cheap and they feed the paper's integrity story either way.*
+
+## Menu
+
+- [P-1: error audit of the existing n=100 data](#p-1-do-first-half-a-day-error-audit-of-the-existing-n100-data)
+- [P0: E3 capability sweep](#p0-the-keystone-24-days-incl-api-access-e3-capability-sweep)
+- [P0b: mid-tier replication](#p0b-protects-the-headline-1-day-mid-tier-replication-of-revenue_audit-ladder)
+- [P1: forensics feeding paper edits](#p1-forensics-already-listed-in-p-1-items-45-feed-these-paper-edits-1-day)
+- [P2: nice-to-have](#p2-nice-to-have-post-submission-or-rebuttal-ammunition)
+- [What NOT to redo](#what-not-to-redo)
+- [Order of operations](#order-of-operations)
 
 > **Status (2026-07-05) — most of the plan is done:**
 > - **P-1: complete.** All 5 suspected spots correct-as-reported; item 4

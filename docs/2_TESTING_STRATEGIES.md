@@ -30,7 +30,7 @@ How we test STJP fairly, and why it took multiple tries to get it right.
 - [5. How we grade results](#5-how-we-grade-results)
   - [Grading criteria](#grading-criteria)
   - [Example: The finance case results (2026-07-02)](#example-the-finance-case-results-2026-07-02)
-- [6. The current arms (2026-07-02 run)](#6-the-current-arms-2026-07-02-run)
+- [6. The arms of the 2026-07-02 run](#6-the-arms-of-the-2026-07-02-run)
 - [7. What to read next](#7-what-to-read-next)
 <!-- MENU:END -->
 
@@ -50,7 +50,9 @@ STJP makes four distinct promises. Each one is testable only in isolation:
 > **What's an "arm"?** An *arm* is one configuration being compared in an
 > experiment — e.g. "agents with a protocol" vs "agents without one" — the same
 > way a clinical trial has a treatment arm and a control arm. This document
-> compares seven arms (listed in §7).
+> compares the seven arms of the 2026-07-02 run (listed in §6). The registry
+> has since grown to 15 arms — see [`5_ARMS_EXPLAINED.md`](5_ARMS_EXPLAINED.md)
+> for the current full set.
 >
 > **Acronyms used below:** **MPST** = Multiparty Session Types (the theory that
 > guarantees a protocol can't deadlock); **EFSM** = Extended Finite-State
@@ -198,9 +200,9 @@ From weakest to strongest support:
 
 | Task | What it tests | Why | Example case |
 |---|---|---|---|
-| **Deadlock-prone** | Claim D (static deadlock check) | A circular dependency hidden in plausible local rules; unchecked specs deadlock, checked specs don't | `trade_deadlock`: Agent A can't give report until Agent B approves, but Agent B won't approve until getting Agent A's report |
-| **Coordination-heavy, always completable** | Claims T/W (token/time savings) | Everyone finishes; we measure cost per delivered result | `report_pipeline`: 6 agents in sequence, each adds to a report |
-| **Safety-critical** | Claim I (value-dependent correctness) | An irreversible action (like filing) that must be authorized first; mistakes are disasters, not just slower | `finance`: Revenue report triggers audit if over $50k |
+| **Deadlock-prone** | Claim D (static deadlock check) | A circular dependency hidden in plausible local rules; unchecked specs deadlock, checked specs don't | [`trade_deadlock`](../experiments/cases/trade_deadlock/): Agent A can't give report until Agent B approves, but Agent B won't approve until getting Agent A's report |
+| **Coordination-heavy, always completable** | Claims T/W (token/time savings) | Everyone finishes; we measure cost per delivered result | [`report_pipeline`](../experiments/cases/report_pipeline/): 6 agents in sequence, each adds to a report |
+| **Safety-critical** | Claim I (value-dependent correctness) | An irreversible action (like filing) that must be authorized first; mistakes are disasters, not just slower | [`finance`](../experiments/cases/finance/): Revenue report triggers audit if over $50k |
 | **Scale** | Claim T at scale | Many roles, deep nesting; does projection's context benefit grow with size? | (Future: 20-role supply chain) |
 
 ---
@@ -231,9 +233,12 @@ For each trial (run of an agent group), we measure:
 
 ---
 
-## 6. The current arms (2026-07-02 run)
+## 6. The arms of the 2026-07-02 run
 
-Seven implementations tested on finance case, gpt-5.4, n=10 trials each:
+Seven implementations tested on the finance case, gpt-5.4, n=10 trials each
+(the registry has since grown to 15 arms — the full current set, including
+the two ablation settings that remove one ingredient at a time, is in
+[`5_ARMS_EXPLAINED.md`](5_ARMS_EXPLAINED.md)):
 
 | Arm | Spec | Runtime | Notes |
 |---|---|---|---|

@@ -6,7 +6,7 @@ protocol.)
 Scope: `SEAM_TRAINING_EXECUTION_PLAN.md` (exec) + `SEAM_AUTOTRAINING_PLAN.md`
 (strategy), checked against repo reality (`stjp_core/compiler/`,
 `experiments/scripts/{gen_corpus,integration_stress,mutate_protocol,efsm_equiv}.py`,
-`experiments/cases/_corpus/`, RESULT_5/7/9, `paper-writing/v8/CHANGELOG_v8.md`).
+`experiments/cases/_corpus/`, RESULT_05/07/09, `paper-writing/v8/CHANGELOG_v8.md`).
 Read-only. Verified 2026-07-11.
 
 **Tally: 2 blockers, 7 majors, 5 minors.**
@@ -102,11 +102,11 @@ Math: p̂=0.85, n=100 → Wilson 95% CI ≈ [0.758, 0.898]. To make the CI *lowe
 
 ## MINORS
 
-- **m1 (factual drift).** Strategy doc says "100-protocol corpus" (`SEAM_AUTOTRAINING_PLAN.md:86,188`); disk has **30** `_corpus` skeletons. Exec plan correctly says 30+19. RESULT_7's "n=100" is 100 *freshly generated* protocols, not a stored corpus. Reconcile the strategy doc.
+- **m1 (factual drift).** Strategy doc says "100-protocol corpus" (`SEAM_AUTOTRAINING_PLAN.md:86,188`); disk has **30** `_corpus` skeletons. Exec plan correctly says 30+19. RESULT_07's "n=100" is 100 *freshly generated* protocols, not a stored corpus. Reconcile the strategy doc.
 - **m2 (repair generalization).** The validator error space the repairer trains on is only **5–7 mutation classes** (`integration_stress.MUTATIONS` = 5; `mutate_protocol.OPERATORS` = 7). R may not generalize to validator errors outside this hand-authored set; report R's fix-rate on *held-out error types*, not just held-out protocols.
 - **m3 (eval fairness).** best-of-k (S2) vs 3-round repair (S3) spend different token budgets; the plan *does* carry tokens/$-to-accepted columns, so it's not fatal, but never present validity@k next to repair@3 as a headline without the cost columns in the same table.
 - **m4 (hypothesis lawyering).** H1 "semantic validity within ±2 pts of unconstrained" is ill-defined when the *unconstrained* 7B emits non-parsing output (is a syntax-fail counted as semantic-invalid? then GCD "wins" by construction) and its split is unstated. H3's "−10 pts" slack lets an SFT model that is *worse* than zero-shot Sonnet be reported as a pass. H4's "+10 pts validity@1" collides with the validity ceiling implied by a successful H3 — if SFT reaches ~90%, +10 is near-impossible, so a good SFT makes GRPO look like a failure by arithmetic. Tighten each to name split, measurement, and ceiling handling.
-- **m5 (doc hygiene).** Acronym drift: RESULT_9 expands STJP as "Session-Typed Judge Panel." Cosmetic but confusing in a benchmark release.
+- **m5 (doc hygiene).** Acronym drift: RESULT_09 expands STJP as "Session-Typed Judge Panel." Cosmetic but confusing in a benchmark release.
 
 ---
 

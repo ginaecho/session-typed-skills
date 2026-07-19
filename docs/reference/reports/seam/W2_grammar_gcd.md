@@ -1,6 +1,6 @@
 # W2 — Lark grammar for Scribble surface + vLLM guided-decoding adapter
 
-*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W2` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../SEAM_TRAINING_EXECUTION_PLAN.md).)*
+*(Codenames: the "seam" is the intent-to-protocol translation step — a plain-language request becomes a Scribble-validated protocol; `W2` is this report's worker task-card id in the seam-training program, [`SEAM_TRAINING_EXECUTION_PLAN.md`](../../SEAM_TRAINING_EXECUTION_PLAN.md).)*
 
 
 Task card: `SEAM_TRAINING_EXECUTION_PLAN.md` §9 row W2 (see also §2

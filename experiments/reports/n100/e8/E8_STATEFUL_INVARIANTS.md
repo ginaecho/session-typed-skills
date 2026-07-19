@@ -7,6 +7,14 @@ the whole conversation. STJP's structural advantage: the gate sits at delivery
 and sees the ordered message stream, so v1 checks these invariants centrally at
 the gate.*
 
+## Menu
+
+- [The violation class](#the-violation-class)
+- [What was built](#what-was-built-all-on-this-branch)
+- [E8 result (deterministic seeded corpus)](#e8-result-deterministic-seeded-corpus-n50-overrun--50-legal-seed-fixed)
+- [Live-subagent portion](#live-subagent-portion-haiku-roles-n15arm--done)
+- [Paper insertion](#paper-insertion)
+
 ## The violation class
 
 `budget_run`: a recursion loop of debit requests. **Per-message limit $5,000**
