@@ -1,5 +1,8 @@
 # AI_verf — Research Notes & Bibliography
 
+> **Name note:** `AI_verf` is this project's internal codename; the public
+> name is **STJP** (Session-Typed Judge Panel) — see the [README](README.md).
+
 Durable record of the literature survey conducted on 2026-05-02 across three areas: multiparty session types, the AI agent harness landscape, and agent verification & formal methods. The three sub-reports below were produced by parallel research agents and are preserved verbatim (with light editorial unification).
 
 These notes are the authoritative source the project's design decisions are drawn from. See `PROPOSAL.md` for the synthesis and `MPST_STATIC.md` for the technical core.
@@ -94,7 +97,7 @@ The thinnest area in the literature.
 ## 5. Tools and implementations
 
 - **Scribble** (Imperial / MRG, Yoshida group). Industrial protocol description language; Java/Python/Go runtime monitors; deployed with Ocean Observatories Initiative. The reference design for "spec → projected local types → generated runtime monitors."
-- **nuScr** (`github.com/nuscr/nuscr`) — actively maintained OCaml successor; parses Scribble syntax, projects, builds CFSMs, generates OCaml endpoints. Most mature open-source codebase to fork or embed.
+- **nuScr** (`github.com/nuscr/nuscr`) — actively maintained OCaml successor; parses Scribble syntax, projects, builds CFSMs, generates OCaml endpoints. Most mature open-source codebase to fork or embed. *(Since integrated: available as the opt-in checker backend `STJP_COMPILER_BACKEND=nuscr` — see the README's "Protocol checker and extensions are opt-in".)*
 - **mpstk** (Scalas, `github.com/alcestes/mpstk`) — Scala toolkit implementing "Less is More"; checks deadlock-freedom and liveness on projected types. The right implementation for the modern theoretical core.
 - **StMungo + Mungo** (Glasgow, Gay/Voinea) — Scribble→Java typestate. Pattern transferable to TypeScript/Python.
 - **Effpi** (Imperial; Scalas, Yoshida) — Scala embedded DSL, type-level session encoding. How far compile-time checking can go inside a host language.

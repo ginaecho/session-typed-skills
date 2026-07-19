@@ -6,7 +6,7 @@ authors:
   - family-names: Chen
     given-names: Tzu-Chun
     alias: ginaecho
-repository-code: "https://github.com/ginaecho/session-typed-skills"
+repository-code: "https://github.com/ginaecho/session-typed-agents"
 license: MIT
 version: 0.1.0
 date-released: "2026-07-02"

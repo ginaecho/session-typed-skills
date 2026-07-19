@@ -2,7 +2,7 @@
 
 How multiparty session types prove agent-system interactions are efficient and cost-saving *before* anything runs, and how monitors derived from local projection enforce that property at runtime — decentralised, no central observer.
 
-This is the technical heart of `AI_verf`. Drafted 2026-05-02. Companion: `PROPOSAL.md` (architecture), `RESEARCH.md` (bibliography).
+This is the technical heart of `AI_verf` (the project's internal codename; the public name is **STJP**, the Session-Typed Judge Panel — see the [README](README.md)). Drafted 2026-05-02. Companions: [`ROADMAP.md`](ROADMAP.md) (architecture and phases; it superseded the earlier `PROPOSAL.md`), [`RESEARCH.md`](RESEARCH.md) (bibliography).
 
 ---
 

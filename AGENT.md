@@ -210,7 +210,7 @@ See [`docs/5_ARMS_EXPLAINED.md`](docs/5_ARMS_EXPLAINED.md) for each arm drawn as
 **Task:** Test a new idea—e.g., "what if we add a confidence score to the gate?"
 
 **What to do:**
-1. Read `experiments/CLAUDE.md` section "The 8 arms, mechanically" (the mechanics still apply; the registry has since grown to 15 arms)
+1. Read `experiments/CLAUDE.md` section "The 15 arms, mechanically"
 2. Add to `experiments/baselines/registry.py` (SCENARIOS dict) with a new key and factory
 3. Add a new builder in `experiments/baselines/instructions.py` (e.g., `build_my_new_variant`)
 4. Register in `case_runner.py` under `_FOUNDRY_INSTALL_KEYS` and `FOUNDRY_KEYS`

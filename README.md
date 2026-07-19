@@ -497,6 +497,15 @@ az login --use-device-code
 
 **The headline:** STJP is 9× cheaper, 4× faster, same safety as global protocol text.
 
+**Read this table with two caveats** (from the
+[fairness review](docs/BENCHMARK_FAIRNESS_REVIEW.md)): bare's 0% was scored
+under the strict label-matching rule, which grades the bare team on message
+labels it was never shown — so treat 0% as a lower bound until the fair-rule
+re-run lands. And the seconds column came from arms running in parallel
+against one rate-limited deployment, so speed claims should rest on the
+tokens and calls columns; re-measure time with
+`case_runner.py --sequential`.
+
 See [`docs/6_RUN_REPORTS_EXPLAINED.md`](docs/6_RUN_REPORTS_EXPLAINED.md) for the full breakdown.
 
 ---

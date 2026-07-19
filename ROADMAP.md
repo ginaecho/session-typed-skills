@@ -1,8 +1,27 @@
 # AI_ST_verf — Roadmap (Epic)
 
+> **Name note:** `AI_ST_verf` (and `AI_verf` in the companion research docs)
+> is this project's internal codename; the public name is **STJP**
+> (Session-Typed Judge Panel), also called Session-Typed Skills — the same
+> system the [README](README.md) describes.
+
 A compiler-with-prover for AI agent specifications, grounded in **multiparty session types** (MPST) on top of Scribble. This is the single planning document for the project, organised as a three-phase epic. Per-phase technical references live in `MPST_STATIC.md` (semantics + runtime data model) and `SCRIBBLE.md` (compiler integration). Bibliography is in `RESEARCH.md`.
 
 Last updated 2026-05-07. Supersedes the previously fragmented `PROPOSAL.md`, `PLAN_STJP.md`, `EXTENSIONS_PROPOSAL.md`, `SUBSESSIONS.md`, `REFINEMENTS.md`.
+
+> **Status update (2026-07-19)** — shipped since this roadmap was written,
+> so its "future" lists undercount reality:
+> the opt-in **nuscr checker backend** (`STJP_COMPILER_BACKEND=nuscr`) and
+> **stateful ledger invariants** (`__ledger__` refinements) — see the
+> README's "Protocol checker and extensions are opt-in";
+> the benchmark grew to a **15-arm registry** including the
+> gate-without-hints and last-receiver-scheduling ablation controls;
+> the **fairness review and fixes** ([docs/BENCHMARK_FAIRNESS_REVIEW.md](docs/BENCHMARK_FAIRNESS_REVIEW.md)):
+> per-arm fair success rule, goal re-anchoring invariance guard, Wilson
+> confidence intervals, `--sequential` timing mode;
+> a full **code audit** ([docs/reference/CODE_AUDIT_2026-07-19.md](docs/reference/CODE_AUDIT_2026-07-19.md))
+> and **cost guide** ([docs/reference/COST_ESTIMATES.md](docs/reference/COST_ESTIMATES.md)).
+> The phase structure below is otherwise still the plan of record.
 
 ---
 

@@ -1,5 +1,8 @@
 # Scribble: The Compiler Backbone of AI_verf
 
+> **Name note:** `AI_verf` is this project's internal codename; the public
+> name is **STJP** (Session-Typed Judge Panel) — see the [README](README.md).
+
 Scribble is the multiparty session type compiler that AI_verf builds on top of. This document covers why we picked it, what we installed, what we proved by running it, and the concrete extensions AI_verf needs to ship on top.
 
 Drafted 2026-05-02.
